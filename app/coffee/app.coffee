@@ -15,14 +15,20 @@ define [
 	# Configure LayoutManager with Backbone Boilerplate defaults.
 	Backbone.LayoutManager.configure
 		# Allow LayoutManager to augment Backbone.View.prototype.
-    manage: true
+		manage: true
 
-		prefix: "app/templates/"
+		#prefix: "templates/"
+
+		paths:
+			layout: "templates/layouts/"
+			template: "templates/"
 
 		fetch: (path) ->
 			path += ".html"
+			console.log 'Using template: ' + path
 
 			return app.templates[path] if app.templates[path]?
+			console.log 'Template cache MISS, fetching'
 
 			done = @async()
 
@@ -41,7 +47,7 @@ define [
 			, additionalProps
 
 		# Helper for using layouts.
-		useLayout: (name) ->
+		useLayout: (name, options) ->
 			# If already using this Layout, then don't re-inject into the DOM.
 			return @layout	if @layout and @layout.options.template is name
 
