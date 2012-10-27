@@ -1,6 +1,6 @@
 ### require modules ###
 express = require 'express'
-espresso = require './espresso.coffee'
+espresso = require './espresso'
 
 ### create express server ###
 app = express.createServer()
@@ -19,17 +19,17 @@ app.configure ->
 	app.set 'views', __dirname + '/views'
 	app.set 'view engine', 'jade'
 	app.use express.bodyParser()
-	app.use express.static __dirname + '/public'
+	app.use express.static __dirname + '/../assets'
 
 
 ### watch coffeescript sources ###
-coffee = espresso.core.exec espresso.core.node_modules_path + 'coffee -o public/js -w -c coffee'
+coffee = espresso.core.exec 'coffee -o ../assets/js -w -c coffee'
 coffee.stdout.on 'data', (data) ->
 	espresso.core.minify() if app.env == 'production'
 
 
 ### watch stylus sources ###
-espresso.core.exec espresso.core.node_modules_path + 'stylus -w -c styl -o public/css'
+espresso.core.exec 'stylus -w -c styl -o ../assets/css'
 
 
 ### app routes ###
