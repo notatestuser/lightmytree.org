@@ -14,9 +14,14 @@ I've envisioned three 'environment' modes:
 Data URL Schemes
 ----------------
 
+These will have fixtures made up for them (as above):
+
 ```
 /data/recent_charities
-/data/donation/direct/charity/{charityId}/donate?amount=<amount>&reference=<ref>&defaultMessage=<msg>&exitUrl=<back to us>
+/data/donation/direct/charity/{charityId}/donate
+	?amount=<amount>&frequency=single
+		&exitUrl=http://our.app/?donationId=JUSTGIVING-DONATION-ID&id=<our_id>
+** todo: add social network/auth stuff **
 ```
 
 Using the JustGiving API
