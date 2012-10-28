@@ -34,6 +34,8 @@ require.config
 			deps: ["eve"]
 			exports: "Raphael"
 
+		"plugins/bootstrap": ["jquery"]
+
 		# Backbone.LayoutManager depends on Backbone.
 		"plugins/backbone.layoutmanager": ["backbone"]
 
