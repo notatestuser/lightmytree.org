@@ -13,12 +13,14 @@ define [
 
 		index: ->
 			app.active = false
-			app.useLayout('home_page').render()
+			app.useLayout('home_page').setViews
+				".create_tree": new Tree.Views.Sketch @
+				".existing_tree": new Tree.Views.List @
+			.render()
 
 		tree: (treeName) ->
-			app.active = false
 			app.useLayout('tree_page').setViews
-				".trees": new Tree.Views.List(@)
+				#".trees": new Tree.Views.List(@)
 			.render()
 
 		# Shortcut for building a URL
