@@ -17,7 +17,7 @@ define [
 
 		initialize: ->
 			@on 'change', (model) ->
-				console.log model.get('strokeCount')
+				console.log "#{model.get('strokeCount')} stroke(s)"
 
 	Tree.Collection = Backbone.Collection.extend
 		url: -> "/api/trees/" + @user
