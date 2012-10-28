@@ -1,6 +1,15 @@
 LightMyTree
 ===========
 
+Flow
+----
+
+```
+[Home Page] -> [Tree Sketcher] -> [Tree Page] -> Back
+[Tree Page] -> [Donate] -> [Tree Page] -> Back
+[Tree Page] -> [Tree Sketcher] -> [Tree Page] -> Back
+```
+
 Testing Strategy
 ----------------
 
@@ -17,11 +26,17 @@ Data URL Schemes
 These will have fixtures made up for them (as above):
 
 ```
-/data/recent_charities
-/data/donation/direct/charity/{charityId}/donate
-	?amount=<amount>&frequency=single
-		&exitUrl=http://our.app/?donationId=JUSTGIVING-DONATION-ID&id=<our_id>
-** todo: add social network/auth stuff **
+Live feeds:
+	/json/recent_charities
+
+Mocked APIs (fixture mode):
+	/api/donation/direct/charity/{charityId}/donate
+		?amount=<amount>&frequency=single
+			&exitUrl=http://our.app/?donationId=JUSTGIVING-DONATION-ID&id=<our_id>
+	/api/<api_key>/v1/donation/<donation_id>
+
+** to add: REST stuff for trees **
+** to add: add social network/auth stuff **
 ```
 
 Using the JustGiving API
