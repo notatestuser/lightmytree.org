@@ -1,9 +1,10 @@
 define [
 	"app",
-	"backbone"
+	"backbone",
+	"raphael"
 ],
 
-(app, Backbone) ->
+(app, Backbone, Raphael) ->
 
 	Tree = app.module()
 
@@ -25,6 +26,12 @@ define [
 		template: "tree/sketch"
 
 		className: "sketchpad-wrapper"
+
+		afterRender: ->
+			new Raphael @$('.sketchpad-editor')[0], 256, 256, ->
+				editor = Raphael.sketchpad @
+				console.log('editor created:')
+				console.log(editor);
 
 	Tree.Views.Solo = Backbone.View.extend
 		template: "tree/view"

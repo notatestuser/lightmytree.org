@@ -15,6 +15,8 @@ require.config
 		jquery: "../js/libs/jquery"
 		lodash: "../js/libs/lodash"
 		backbone: "../js/libs/backbone"
+		raphael: "../js/libs/raphael"
+		eve: "../js/libs/eve"
 
 	shim:
 
@@ -23,5 +25,18 @@ require.config
 			deps: ["lodash", "jquery"]
 			exports: "Backbone"
 
+		# Eve is required by Raphael for internal namespacing
+		eve:
+			exports: "eve"
+
+		raphael:
+			# Eve is required by Raphael for internal namespacing
+			deps: ["eve"]
+			exports: "Raphael"
+
 		# Backbone.LayoutManager depends on Backbone.
 		"plugins/backbone.layoutmanager": ["backbone"]
+
+		"plugins/raphael.sketchpad":
+			deps: ["raphael"]
+			exports: "Raphael.sketchpad"
