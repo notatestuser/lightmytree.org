@@ -33,9 +33,13 @@ espresso.core.exec 'stylus -w -c styl -o ../assets/css'
 
 
 ### app routes ###
+if app.env isnt 'production'
+	require('./routes/fixtures') app
+else
+	require('./routes/api') app
+
 app.get '/*', (req, res) ->
 	res.render 'index', { title : 'LightMyTree' }
-
 
 ### start server ###
 app.listen 3000, ->
