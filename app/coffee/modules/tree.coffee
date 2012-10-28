@@ -37,14 +37,23 @@ define [
 		template: "tree/sketch"
 		className: "sketchpad-wrapper"
 
+		resizeCanvas: ->
+			if @$container
+				console.log "New canvas dimensions: #{@$container.width()} #{@$container.height()}"
+				@sketchpad.paper().setSize @$container.width(), @$container.height()
+
 		afterRender: ->
-			model = @model
-			new Raphael @$('.sketchpad-editor')[0], 256, 256, ->
-				sketchpad = Raphael.sketchpad @
+			self = @
+			$container = @$container = @$('.sketchpad-editor')
+			new Raphael $container[0], $container.width(), $container.height(), ->
+				sketchpad = self.sketchpad = Raphael.sketchpad @
 				sketchpad.change ->
-					model.set
+					self.model.set
 						strokes: strokes = sketchpad.strokes()
 						strokeCount: strokes.length
+
+				# bind resize handler here in lieu of watching the element itself
+				$(window).resize self.resizeCanvas.bind(self)
 
 	Tree.Views.Solo = Backbone.View.extend
 		template: "tree/view"
