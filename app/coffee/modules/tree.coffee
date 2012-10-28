@@ -1,7 +1,8 @@
 define [
 	"app",
 	"backbone",
-	"raphael"
+	"raphael",
+	"plugins/raphael.sketchpad"
 ],
 
 (app, Backbone, Raphael) ->

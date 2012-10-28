@@ -1,8 +1,8 @@
 # Application.
 define [
 	"jquery", "lodash", "backbone",
-	"plugins/backbone.layoutmanager",
-	"plugins/raphael.sketchpad"
+	"plugins/bootstrap"
+	"plugins/backbone.layoutmanager"
 ],
 
 ($, _, Backbone) ->
