@@ -15,13 +15,14 @@ define [
 		index: ->
 			app.active = false
 			app.useLayout('home_page').setViews
-				".create_tree": new Tree.Views.Sketch @
+				#".create_tree": new Tree.Views.Sketch @
 				".existing_tree": new Tree.Views.List @
 			.render()
 
 		sketch: ->
 			app.useLayout('sketch_page').setViews
-				".sketchpad": new Tree.Views.Sketch @
+				".sketchpad": new Tree.Views.Sketch
+					model: @newTree
 			.render()
 
 		tree: (treeName) ->
@@ -35,8 +36,8 @@ define [
 
 		initialize: ->
 			models =
-				@user: null # get authed user model here
-				@newTree: new Tree.Model()
+				user: null # get authed user model here
+				newTree: new Tree.Model()
 				myTrees: new Tree.Collection()
 
 			_.extend @, models
