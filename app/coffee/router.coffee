@@ -19,7 +19,7 @@ define [
 			.render()
 
 		tree: (treeName) ->
-			app.useLayout('tree_page').setViews
+			app.useLayout('tree_page').setViews({})
 				#".trees": new Tree.Views.List(@)
 			.render()
 
