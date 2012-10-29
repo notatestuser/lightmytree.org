@@ -10,13 +10,19 @@ Flow
 [Tree Page] -> [Tree Sketcher] -> [Tree Page] -> Back
 ```
 
+The Never Ending 'To Do'
+------------------------
+
+* Sandbox/prod routing configuration
+* Convert Bootstrap to use individual AMD modules to reduce initial payload size
+
 Testing Strategy
 ----------------
 
 I've envisioned three 'environment' modes:
 
 * _dev_ uses "canned response" fixtures to emulate real back-end data calls (for rapid front-end dev.)
-* _test_ will use a mocked server that appropriately deals with input data
+* _test_ will use a mocked server that appropriately deals with input data (sandboxes?)
 * _production_ will be hooked up to real APIs and such
 
 
