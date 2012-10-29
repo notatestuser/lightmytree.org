@@ -10,6 +10,13 @@ define [
 	app =
 		root: '/'
 
+	# Prepare to fetch client configuration
+	$.get app.root + 'json/client_init', (data) ->
+		_.extend(app, data)
+		console.log 'Client configuration initialised'
+		console.log app
+	, 'json'
+
 	# Localize or create a new JavaScript Template object.
 	app.templates ||= window.JST ||= {}
 
