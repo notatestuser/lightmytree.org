@@ -14,10 +14,11 @@ define [
 			name: 'Default Charity'
 			registrationNumber: 0
 
-	Charity.RecentCharitiesCollection = Backbone.Collection.extend
+	Charity.Collection = Backbone.Collection.extend
 		model: Charity.Model
 		cache: yes
 
+	Charity.RecentCharitiesCollection = Charity.Collection.extend
 		initialize: ->
 			app.waitForUrl 'recent_charities', (urlFn) =>
 				@url = eval(urlFn)()
@@ -36,7 +37,7 @@ define [
 
 	Charity.Views.Item = Backbone.View.extend
 		template: "charity/list_item"
-		className: "span2"
+		className: "span3"
 		tagName: "li"
 
 		serialize: ->
