@@ -2,36 +2,39 @@
 (function() {
 
   module.exports = function(app) {
-    var JustGiving, JustGivingKey;
+    var JustGiving, JustGivingKey, wrap;
     console.log("Defining API routes");
     JustGiving = "https://api-sandbox.justgiving.com";
     JustGivingKey = "e90e23e0";
     app.get("/json/client_init", function(req, res) {
       return res.json({
         urls: {
-          recent_charities: (function() {
+          recent_charities: wrap((function() {
             return "/json/recent_charities";
-          }).toString(),
-          charity_donate: (function(charityId, amount, ourId) {
+          }).toString()),
+          charity_donate: wrap((function(charityId, amount, ourId) {
             JustGiving;
             +("/donation/direct/charity/" + charityId + "/donate");
             +("?amount=" + amount);
             +"&frequency=single";
             +"&exitUrl=";
             return +encodeURI("http://our.app/callbacks/jg-donate?donationId=JUSTGIVING-DONATION-ID&id=" + ourId);
-          }).toString(),
-          donation_status: (function(donationId, appKey) {
+          }).toString()),
+          donation_status: wrap((function(donationId, appKey) {
             if (appKey == null) {
               appKey = JustGivingKey;
             }
             JustGiving;
 
             return +("/api/" + appKey + "/v1/donation/" + donationId);
-          }).toString()
+          }).toString())
         }
       });
     });
-    return app.get("/json/recent_charities", function(req, res) {});
+    app.get("/json/recent_charities", function(req, res) {});
+    return wrap = function(fnString) {
+      return "(" + fnString + ")";
+    };
   };
 
 }).call(this);

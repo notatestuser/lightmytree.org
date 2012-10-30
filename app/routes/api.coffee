@@ -7,11 +7,11 @@ module.exports = (app) ->
 	# /json/client_init
 	app.get "/json/client_init", (req, res) ->
 		res.json urls:
-			recent_charities: (() ->
+			recent_charities: wrap (() ->
 				"/json/recent_charities"
 			).toString()
 
-			charity_donate: ((charityId, amount, ourId) ->
+			charity_donate: wrap ((charityId, amount, ourId) ->
 				JustGiving
 				+ "/donation/direct/charity/#{charityId}/donate"
 				+ "?amount=#{amount}"
@@ -20,15 +20,16 @@ module.exports = (app) ->
 				+ encodeURI("http://our.app/callbacks/jg-donate?donationId=JUSTGIVING-DONATION-ID&id=#{ourId}")
 			).toString()
 
-			donation_status: ((donationId, appKey = JustGivingKey) ->
+			donation_status: wrap ((donationId, appKey = JustGivingKey) ->
 				JustGiving
 				+ "/api/#{appKey}/v1/donation/#{donationId}"
 			).toString()
 
-
-
 	# /json/recent_charities
 	app.get "/json/recent_charities", (req, res) ->
 
+	# needed because eval() in Chrome requires that anonymous functions are surrounded with parenthesis
+	wrap = (fnString) ->
+		"(" + fnString + ")"
 
 # # real response

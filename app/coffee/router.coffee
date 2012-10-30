@@ -1,9 +1,10 @@
 define [
 	"app",
-	"modules/tree"
+	"modules/tree",
+	"modules/charity"
 ],
 
-(app, Tree) ->
+(app, Tree, Charity) ->
 
 	# Defining the application router, you can attach sub routers here.
 	Router = Backbone.Router.extend
@@ -23,6 +24,8 @@ define [
 			app.useLayout('sketch_page').setViews
 				".sketchpad": new Tree.Views.Sketch
 					model: @newTree
+				".charity_picker": new Charity.Views.Picker
+					collection: @recentCharities
 			.render()
 
 		tree: (treeName) ->
@@ -39,5 +42,6 @@ define [
 				user: null # get authed user model here
 				newTree: new Tree.Model()
 				myTrees: new Tree.Collection()
+				recentCharities: new Charity.RecentCharitiesCollection()
 
 			_.extend @, models

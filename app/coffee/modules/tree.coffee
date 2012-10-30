@@ -1,7 +1,5 @@
 define [
-	"app",
-	"backbone",
-	"raphael",
+	"app", "backbone", "raphael",
 	"plugins/raphael.sketchpad"
 ],
 
@@ -35,7 +33,7 @@ define [
 
 	Tree.Views.Sketch = Backbone.View.extend
 		template: "tree/sketch"
-		className: "sketchpad-wrapper"
+		className: "sketchpad-view"
 
 		resizeCanvas: ->
 			if @$container
@@ -57,16 +55,16 @@ define [
 
 	Tree.Views.Solo = Backbone.View.extend
 		template: "tree/view"
-		className: "tree-wrapper"
+		className: "tree-view"
 
 	Tree.Views.List = Backbone.View.extend
 		template: "tree/list"
 		tagName: "ul"
-		className: "trees-wrapper"
+		className: "trees-view"
 
 	Tree.Views.Item = Backbone.View.extend
 		template: "tree/list_item"
 		tagName: "li"
-		className: "mini-tree-wrapper"
+		className: "mini-tree-view"
 
 	Tree
