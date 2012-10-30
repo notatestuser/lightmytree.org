@@ -34,6 +34,8 @@ These will have fixtures made up for them (as above):
 ```
 Live feeds:
 	/json/recent_charities
+	/json/recent_trees
+	/json/tree/<id>
 
 Mocked APIs (fixture mode):
 	/api/donation/direct/charity/{charityId}/donate
