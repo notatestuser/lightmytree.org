@@ -48,18 +48,18 @@ module.exports = (app) ->
 			"logoFileName": "\/Utils\/imaging.ashx?width=120&square=120&imageType=charitybrandinglogo&img=d7e248bb-12b9-4efc-a201-ec89c8c756ff.jpg"
 			"name": "Liverpool Cancer Care Group"
 			"registrationNumber": "516462"
-		,
-			"charityId": "185040"
-			"description": "Bradford Cancer Support is a local independent charity supporting those people touched by cancer in the Bradford and Airedale area.  The aim is to help and support patients, carers, families and the bereaved by offering practical, social and emotional support."
-			"logoFileName": "\/Utils\/imaging.ashx?width=120&square=120&imageType=charitybrandinglogo&img=895931f9-d2d3-4f9a-978f-5ca58e2bf7ae.GIF"
-			"name": "Bradford Cancer Support"
-			"registrationNumber": "519429"
-		,
-			"charityId": "185470"
-			"description": "Sunflowers provides a unique support service to individuals and families affected by a cancer diagnosis in the Merseyside region.Our aim is to see every patient with a cancer diagnosis have access to our service. \u000a\u000a"
-			"logoFileName": "\/Utils\/imaging.ashx?width=120&square=120&imageType=charitybrandinglogo&img=d7e248bb-12b9-4efc-a201-ec89c8c756ff.jpg"
-			"name": "Liverpool Cancer Care Group"
-			"registrationNumber": "516462"
+		# ,
+		# 	"charityId": "185040"
+		# 	"description": "Bradford Cancer Support is a local independent charity supporting those people touched by cancer in the Bradford and Airedale area.  The aim is to help and support patients, carers, families and the bereaved by offering practical, social and emotional support."
+		# 	"logoFileName": "\/Utils\/imaging.ashx?width=120&square=120&imageType=charitybrandinglogo&img=895931f9-d2d3-4f9a-978f-5ca58e2bf7ae.GIF"
+		# 	"name": "Bradford Cancer Support"
+		# 	"registrationNumber": "519429"
+		# ,
+		# 	"charityId": "185470"
+		# 	"description": "Sunflowers provides a unique support service to individuals and families affected by a cancer diagnosis in the Merseyside region.Our aim is to see every patient with a cancer diagnosis have access to our service. \u000a\u000a"
+		# 	"logoFileName": "\/Utils\/imaging.ashx?width=120&square=120&imageType=charitybrandinglogo&img=d7e248bb-12b9-4efc-a201-ec89c8c756ff.jpg"
+		# 	"name": "Liverpool Cancer Care Group"
+		# 	"registrationNumber": "516462"
 		]
 
 	# /api/donation/direct/charity/{charityId}/donate
