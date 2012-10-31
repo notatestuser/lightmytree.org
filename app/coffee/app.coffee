@@ -14,13 +14,12 @@ define [
 	deferred = $.get app.root + 'json/client_init', (data) ->
 		_.extend(app, data)
 		console.log 'Client configuration initialised'
-		console.log app
 	, 'json'
 
 	# This simple function will allow higher-level layers to request a URL and only sync when it has arrived
 	app.waitForUrl = (key, callback) ->
 		callbackFn = ->
-			callback app.urls[key]
+			callback eval app.urls[key]
 		if deferred.state() is 'resolved'
 			callbackFn()
 		else

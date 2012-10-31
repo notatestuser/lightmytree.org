@@ -7,6 +7,7 @@ define [
 	Charity = app.module()
 
 	Charity.Model = Backbone.Model.extend
+		idAttribute: 'charityId'
 		defaults:
 			charityId: 0
 			description: ''
@@ -21,26 +22,46 @@ define [
 	Charity.RecentCharitiesCollection = Charity.Collection.extend
 		initialize: ->
 			app.waitForUrl 'recent_charities', (urlFn) =>
-				@url = eval(urlFn)()
+				@url = urlFn()
 				@fetch()
 
 	Charity.Views.Picker = Backbone.View.extend
 		template: "charity/picker"
-		className: "charity-picker-view"
+		className: "thumbnails"
 		tagName: "ul"
 
+		initialize: (options) ->
+			@treeModel = options.treeModel if options.treeModel
+
 		beforeRender: ->
+			treeModel = @treeModel
 			@collection.forEach (charityModel) ->
-				@insertView new Charity.Views.Item
+				view = new Charity.Views.Item
 					model: charityModel
+				view.on 'selected', ->
+					treeModel.charities.push view.model
+				view.on 'unselected', ->
+					treeModel.charities.remove treeModel.charities.get(view.model.id)
+				@insertView view
 			, @
 
 	Charity.Views.Item = Backbone.View.extend
 		template: "charity/list_item"
-		className: "span3"
+		className: "span3 thumbnail"
 		tagName: "li"
+
+		events:
+			"click input": "toggleSelected"
 
 		serialize: ->
 			@model.toJSON()
+
+		toggleSelected: ->
+			if @$("input").is(":checked")
+				@trigger('selected')
+				@$el.css('background-color', 'lightgreen')
+			else
+				@trigger('unselected')
+				@$el.css('background-color', 'transparent')
 
 	Charity

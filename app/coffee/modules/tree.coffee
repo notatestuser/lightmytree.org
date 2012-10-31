@@ -1,9 +1,10 @@
 define [
 	"app", "backbone", "raphael",
+	"modules/charity"
 	"plugins/raphael.sketchpad"
 ],
 
-(app, Backbone, Raphael) ->
+(app, Backbone, Raphael, Charity) ->
 
 	Tree = app.module()
 
@@ -12,14 +13,19 @@ define [
 			user: null
 			strokes: []
 			strokeCount: 0
+			charityIds: []
 
 		initialize: ->
+			@loadCharities()
 			@on 'change', (model) ->
 				console.log "#{model.get('strokeCount')} stroke(s)"
 
+		loadCharities: ->
+			ids = @get('charityIds')
+			@charities = new Charity.Collection ids
+
 	Tree.Collection = Backbone.Collection.extend
 		url: -> "/api/trees/" + @user
-
 		cache: yes
 
 		parse: (obj) ->

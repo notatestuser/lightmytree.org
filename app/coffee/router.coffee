@@ -26,6 +26,7 @@ define [
 					model: @newTree
 				".charity_picker": new Charity.Views.Picker
 					collection: @recentCharities
+					treeModel: @newTree
 			.render()
 
 		tree: (treeName) ->
