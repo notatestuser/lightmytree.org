@@ -7,7 +7,6 @@ define [
 	Charity = app.module()
 
 	class Charity.Model extends Backbone.Model
-
 		idAttribute: 'charityId'
 		defaults:
 			charityId: 0
@@ -16,18 +15,15 @@ define [
 			name: 'Default Charity'
 			registrationNumber: 0
 
-
 	class Charity.Collection extends Backbone.Collection
 		model: Charity.Model
 		cache: yes
-
 
 	class Charity.RecentCharitiesCollection extends Charity.Collection
 		initialize: ->
 			app.waitForUrl 'recent_charities', (urlFn) =>
 				@url = urlFn()
 				@fetch()
-
 
 	class Charity.Views.Picker extends Backbone.View
 		template: "charity/picker"
@@ -48,7 +44,6 @@ define [
 					treeModel.charities.remove treeModel.charities.get(view.model.id)
 				@insertView view
 			, @
-
 
 	class Charity.Views.Item extends Backbone.View
 		template: "charity/list_item"
