@@ -8,7 +8,8 @@ define [
 
 	Tree = app.module()
 
-	Tree.Model = Backbone.Model.extend
+	class Tree.Model extends Backbone.Model
+
 		defaults:
 			user: null
 			strokes: []
@@ -24,7 +25,9 @@ define [
 			ids = @get('charityIds')
 			@charities = new Charity.Collection ids
 
-	Tree.Collection = Backbone.Collection.extend
+
+	class Tree.Collection extends Backbone.Collection
+
 		url: -> "/api/trees/" + @user
 		cache: yes
 
@@ -37,7 +40,8 @@ define [
 		comparator: (tree) ->
 			-new Date(tree.get 'updated_at')
 
-	Tree.Views.Sketch = Backbone.View.extend
+
+	class Tree.Views.Sketch extends Backbone.View
 		template: "tree/sketch"
 		className: "sketchpad-view"
 
@@ -59,22 +63,24 @@ define [
 				# bind resize handler here in lieu of watching the element itself
 				$(window).resize self.resizeCanvas.bind(self)
 
-	Tree.Views.Save = Backbone.View.extend
+
+	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"
 		className: "tree-save-view"
 
-	Tree.Views.Solo = Backbone.View.extend
+	class Tree.Views.Solo extends Backbone.View
 		template: "tree/view"
 		className: "tree-view"
 
-	Tree.Views.List = Backbone.View.extend
+	class Tree.Views.List extends Backbone.View
 		template: "tree/list"
 		tagName: "ul"
 		className: "trees-view"
 
-	Tree.Views.Item = Backbone.View.extend
+	class Tree.Views.Item extends Backbone.View
 		template: "tree/list_item"
 		tagName: "li"
 		className: "mini-tree-view"
+
 
 	Tree

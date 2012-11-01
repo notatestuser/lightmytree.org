@@ -6,7 +6,8 @@ define [
 
 	Charity = app.module()
 
-	Charity.Model = Backbone.Model.extend
+	class Charity.Model extends Backbone.Model
+
 		idAttribute: 'charityId'
 		defaults:
 			charityId: 0
@@ -15,17 +16,20 @@ define [
 			name: 'Default Charity'
 			registrationNumber: 0
 
-	Charity.Collection = Backbone.Collection.extend
+
+	class Charity.Collection extends Backbone.Collection
 		model: Charity.Model
 		cache: yes
 
-	Charity.RecentCharitiesCollection = Charity.Collection.extend
+
+	class Charity.RecentCharitiesCollection extends Charity.Collection
 		initialize: ->
 			app.waitForUrl 'recent_charities', (urlFn) =>
 				@url = urlFn()
 				@fetch()
 
-	Charity.Views.Picker = Backbone.View.extend
+
+	class Charity.Views.Picker extends Backbone.View
 		template: "charity/picker"
 		className: "thumbnails"
 		tagName: "ul"
@@ -45,7 +49,8 @@ define [
 				@insertView view
 			, @
 
-	Charity.Views.Item = Backbone.View.extend
+
+	class Charity.Views.Item extends Backbone.View
 		template: "charity/list_item"
 		className: "span3 thumbnail"
 		tagName: "li"
@@ -63,5 +68,6 @@ define [
 			else
 				@trigger('unselected')
 				@$el.css('background-color', 'transparent')
+
 
 	Charity
