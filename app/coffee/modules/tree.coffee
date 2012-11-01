@@ -59,6 +59,10 @@ define [
 				# bind resize handler here in lieu of watching the element itself
 				$(window).resize self.resizeCanvas.bind(self)
 
+	Tree.Views.Save = Backbone.View.extend
+		template: "tree/save"
+		className: "tree-save-view"
+
 	Tree.Views.Solo = Backbone.View.extend
 		template: "tree/view"
 		className: "tree-view"
