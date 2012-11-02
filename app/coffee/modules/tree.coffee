@@ -9,6 +9,8 @@ define [
 	Tree = app.module()
 
 	class Tree.Model extends Backbone.Model
+		@LocalStorageKey = "Tree.Model"
+
 		defaults:
 			user: null
 			strokes: []
@@ -16,9 +18,26 @@ define [
 			charityIds: []
 
 		initialize: ->
+			@fetch()
 			@loadCharities()
 			@on 'change', (model) ->
 				console.log "#{model.get('strokeCount')} stroke(s)"
+				model.save()
+
+		sync: (method, model, options, first = true) ->
+			if not (user = @get('user')) or user.isMe()
+				# intercept sync() attempt with localStorage persistence
+				switch method
+					when "create", "update"
+						$.jStorage.set Tree.Model.LocalStorageKey, @toJSON()
+					when "read"
+						try
+							model.set $.jStorage.get(Tree.Model.LocalStorageKey, {})
+						catch ex
+							console.error "Gracefully handling Tree.Model.sync() exception"
+					when "delete"
+						$.jStorage.deleteKey Tree.Model.LocalStorageKey
+			super method, model, options, false if user
 
 		loadCharities: ->
 			ids = @get('charityIds')
@@ -50,7 +69,8 @@ define [
 			self = @
 			$container = @$container = @$('.sketchpad-editor')
 			new Raphael $container[0], $container.width(), $container.height(), ->
-				sketchpad = self.sketchpad = Raphael.sketchpad @
+				sketchpad = self.sketchpad = Raphael.sketchpad @,
+					strokes: self.model.get('strokes')
 				sketchpad.change ->
 					self.model.set
 						strokes: strokes = sketchpad.strokes()

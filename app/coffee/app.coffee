@@ -1,7 +1,8 @@
 # Application.
 define [
-	"jquery", "lodash", "backbone",
+	"jquery", "lodash", "backbone"
 	"../vendor/bootstrap/js/bootstrap"
+	"plugins/jquery.jstorage"
 	"plugins/backbone.layoutmanager"
 ],
 

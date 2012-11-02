@@ -35,6 +35,7 @@ require.config
 			exports: "Raphael"
 
 		"../vendor/bootstrap/js/bootstrap": ["jquery"]
+		"plugins/jquery.jstorage":          ["jquery"]
 
 		# Backbone.LayoutManager depends on Backbone.
 		"plugins/backbone.layoutmanager": ["backbone"]
