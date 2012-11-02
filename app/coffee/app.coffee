@@ -2,6 +2,7 @@
 define [
 	"jquery", "lodash", "backbone"
 	"../vendor/bootstrap/js/bootstrap"
+	"plugins/jquery.json-2.3.min"
 	"plugins/jquery.jstorage"
 	"plugins/backbone.layoutmanager"
 ],

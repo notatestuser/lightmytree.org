@@ -1,10 +1,11 @@
 define [
-	"app", "backbone", "raphael",
+	"app", "lodash",
+	"backbone", "raphael",
 	"modules/charity"
 	"plugins/raphael.sketchpad"
 ],
 
-(app, Backbone, Raphael, Charity) ->
+(app, _, Backbone, Raphael, Charity) ->
 
 	Tree = app.module()
 
@@ -37,11 +38,21 @@ define [
 							console.error "Gracefully handling Tree.Model.sync() exception"
 					when "delete"
 						$.jStorage.deleteKey Tree.Model.LocalStorageKey
-			super method, model, options, false if user
+			Backbone.sync method, model, options if user
 
 		loadCharities: ->
 			ids = @get('charityIds')
 			@charities = new Charity.Collection ids
+
+		addCharity: (model) ->
+			console.log "added charity to Tree.Model"
+			@set 'charityIds', _.union(@get('charityIds'), [model.id])
+			@charities.push model
+
+		removeCharity: (model) ->
+			console.log "removing charity from Tree.Model"
+			@set 'charityIds', _.without(@get('charityIds'), model.id)
+			@charities.remove model
 
 	class Tree.Collection extends Backbone.Collection
 		url: -> "/api/trees/" + @user
@@ -82,6 +93,12 @@ define [
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"
 		className: "tree-save-view"
+
+		events:
+			"click .btn-save": "save"
+
+		save: ->
+			@model.save()
 
 	class Tree.Views.Solo extends Backbone.View
 		template: "tree/view"

@@ -39,9 +39,11 @@ define [
 				view = new Charity.Views.Item
 					model: charityModel
 				view.on 'selected', ->
-					treeModel.charities.push view.model
+					treeModel.addCharity view.model
 				view.on 'unselected', ->
-					treeModel.charities.remove treeModel.charities.get(view.model.id)
+					treeModel.removeCharity view.model
+				if _(@treeModel.get('charityIds')).contains view.model.id
+					view.renderSelected()
 				@insertView view
 			, @
 
@@ -56,13 +58,26 @@ define [
 		serialize: ->
 			@model.toJSON()
 
+		renderSelected: ->
+			@selected = yes
+			@$el.css('background-color', 'lightgreen')
+			@$("input").prop('checked', true)
+
+		renderUnselected: ->
+			@selected = no
+			@$el.css('background-color', 'transparent')
+			@$("input").prop('checked', false)
+
 		toggleSelected: ->
 			if @$("input").is(":checked")
 				@trigger('selected')
-				@$el.css('background-color', 'lightgreen')
+				@renderSelected()
 			else
 				@trigger('unselected')
-				@$el.css('background-color', 'transparent')
+				@renderUnselected()
+
+		afterRender: ->
+			if @selected then @renderSelected() else @renderUnselected()
 
 
 	Charity
