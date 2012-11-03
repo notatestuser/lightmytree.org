@@ -27,19 +27,22 @@ define [
 				model.save()
 
 		sync: (method, model, options, first = true) ->
-			if not (user = @get('user')) or user.isMe()
-				# intercept sync() attempt with localStorage persistence
-				switch method
-					when "create", "update"
-						$.jStorage.set Tree.Model.LocalStorageKey, @toJSON()
-					when "read"
-						try
-							model.set $.jStorage.get(Tree.Model.LocalStorageKey, {})
-						catch ex
-							console.error "Gracefully handling Tree.Model.sync() exception"
-					when "delete"
-						$.jStorage.deleteKey Tree.Model.LocalStorageKey
-			Backbone.sync method, model, options if app.authed
+			defaultSyncFn = ->
+				Backbone.sync method, model, options
+
+			# intercept sync() attempt with localStorage persistence
+			switch method
+				when "create", "update"
+					$.jStorage.set Tree.Model.LocalStorageKey, @toJSON()
+					defaultSyncFn() if @remotePersist
+				when "read"
+					try
+						model.set $.jStorage.get(Tree.Model.LocalStorageKey, {})
+					catch ex
+						console.error "Gracefully handling Tree.Model.sync() exception"
+					defaultSyncFn() if app.authed
+				when "delete"
+					$.jStorage.deleteKey Tree.Model.LocalStorageKey
 
 		loadCharities: ->
 			ids = @get('charityIds')
@@ -57,6 +60,10 @@ define [
 
 	class Tree.MyModel extends Tree.Model
 		url: -> "/api/my_tree"
+
+		initialize: ->
+			@remotePersist = false
+			super()
 
 	class Tree.Collection extends Backbone.Collection
 		url: -> "/api/trees/" + @user
@@ -110,6 +117,7 @@ define [
 			"click .btn-save": "save"
 
 		save: ->
+			@model.remotePersist = yes if app.authed
 			@model.save()
 			(new Modal.Views.Authenticate()).show() if not app.authed
 

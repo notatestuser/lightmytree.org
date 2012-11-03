@@ -32,6 +32,7 @@ define [
 
 		initialize: (options) ->
 			@treeModel = options.treeModel if options.treeModel
+			@collection.on 'reset', => @beforeRender()
 
 		beforeRender: ->
 			treeModel = @treeModel
