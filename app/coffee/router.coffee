@@ -45,7 +45,7 @@ define [
 		initialize: ->
 			models =
 				user: null # get authed user model here
-				newTree: new Tree.Model()
+				newTree: new Tree.MyModel()
 				myTrees: new Tree.Collection()
 				recentCharities: new Charity.RecentCharitiesCollection()
 

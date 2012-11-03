@@ -5,7 +5,7 @@ module.exports = (app) ->
 	# /json/client_init
 	app.get "/json/client_init", (req, res) ->
 		res.json
-			authed: no
+			authed: req.user?
 			urls:
 				recent_charities: wrap (()->
 					"/json/recent_charities"

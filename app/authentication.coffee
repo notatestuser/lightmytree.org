@@ -2,6 +2,14 @@ module.exports = (config) ->
 	everyauth = require 'everyauth'
 	{UserDatabase} = require './database'
 
+	# TODO should we make a new UserDatabase each time?
+
+	everyauth.everymodule
+		.userPkey('_id') # CouchDB primary key field
+		.findUserById (userId, callback) ->
+			db = new UserDatabase config
+			db.findById userId, callback
+
 	everyauth.twitter
 		.consumerKey( config.twitter.consumerKey )
 		.consumerSecret( config.twitter.consumerSecret )

@@ -6,7 +6,7 @@
     console.log("Defining FIXTURE routes");
     app.get("/json/client_init", function(req, res) {
       return res.json({
-        authed: false,
+        authed: req.user != null,
         urls: {
           recent_charities: wrap((function() {
             return "/json/recent_charities";

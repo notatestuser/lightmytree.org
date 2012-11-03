@@ -55,6 +55,9 @@ define [
 			@set 'charityIds', _.without(@get('charityIds'), model.id)
 			@charities.remove model
 
+	class Tree.MyModel extends Tree.Model
+		url: -> "/api/my_tree"
+
 	class Tree.Collection extends Backbone.Collection
 		url: -> "/api/trees/" + @user
 		cache: yes

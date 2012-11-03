@@ -3,7 +3,7 @@ module.exports =
 	sessionSecret: 'fortytwo'
 
 	couchdb:
-		url: 'http://admin:admin@dev.lightmytree.com'
+		url: 'http://admin:admin@dev.lightmytree.org'
 		port: 5984
 
 	dbs:
