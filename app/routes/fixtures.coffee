@@ -4,23 +4,25 @@ module.exports = (app) ->
 
 	# /json/client_init
 	app.get "/json/client_init", (req, res) ->
-		res.json urls:
-			recent_charities: wrap (()->
-				"/json/recent_charities"
-			).toString()
+		res.json
+			authed: no
+			urls:
+				recent_charities: wrap (()->
+					"/json/recent_charities"
+				).toString()
 
-			charity_donate: wrap ((charityId, amount, ourId) ->
-				"/api"
-				+ "/donation/direct/charity/#{charityId}/donate"
-				+ "?amount=#{amount}"
-				+ "&frequency=single"
-				+ "&exitUrl="
-				+ encodeURI("http://localhost:3000/callbacks/jg-donate?donationId=JUSTGIVING-DONATION-ID&id=#{ourId}")
-			).toString()
+				charity_donate: wrap ((charityId, amount, ourId) ->
+					"/api"
+					+ "/donation/direct/charity/#{charityId}/donate"
+					+ "?amount=#{amount}"
+					+ "&frequency=single"
+					+ "&exitUrl="
+					+ encodeURI("http://localhost:3000/callbacks/jg-donate?donationId=JUSTGIVING-DONATION-ID&id=#{ourId}")
+				).toString()
 
-			donation_status: wrap ((apiKey, donationId) ->
-				"/api/#{apiKey}/v1/donation/#{donationId}"
-			).toString()
+				donation_status: wrap ((apiKey, donationId) ->
+					"/api/#{apiKey}/v1/donation/#{donationId}"
+				).toString()
 
 	# /json/recent_charities
 	app.get "/json/recent_charities", (req, res) ->

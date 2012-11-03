@@ -1,10 +1,11 @@
 define [
 	"app",
 	"modules/tree",
-	"modules/charity"
+	"modules/charity",
+	"modules/modal"
 ],
 
-(app, Tree, Charity) ->
+(app, Tree, Charity, Modal) ->
 
 	# Defining the application router, you can attach sub routers here.
 	Router = Backbone.Router.extend
@@ -29,6 +30,7 @@ define [
 					treeModel: @newTree
 				".save": new Tree.Views.Save
 					model: @newTree
+				".authenticate_modal": new Modal.Views.Authenticate
 			.render()
 
 		tree: (treeName) ->

@@ -2,10 +2,11 @@ define [
 	"app", "lodash",
 	"backbone", "raphael",
 	"modules/charity"
+	"modules/modal"
 	"plugins/raphael.sketchpad"
 ],
 
-(app, _, Backbone, Raphael, Charity) ->
+(app, _, Backbone, Raphael, Charity, Modal) ->
 
 	Tree = app.module()
 
@@ -38,7 +39,7 @@ define [
 							console.error "Gracefully handling Tree.Model.sync() exception"
 					when "delete"
 						$.jStorage.deleteKey Tree.Model.LocalStorageKey
-			Backbone.sync method, model, options if user
+			Backbone.sync method, model, options if app.authed
 
 		loadCharities: ->
 			ids = @get('charityIds')
@@ -76,6 +77,13 @@ define [
 				console.log "New canvas dimensions: #{@$container.width()} #{@$container.height()}"
 				@sketchpad.paper().setSize @$container.width(), @$container.height()
 
+		showSavedAlert: ->
+			if not @shownSavedAlert
+				@shownSavedAlert = yes
+				@$('.alert-saved-container')
+					.fadeIn('slow')
+					.slideDown('slow')
+
 		afterRender: ->
 			self = @
 			$container = @$container = @$('.sketchpad-editor')
@@ -86,6 +94,7 @@ define [
 					self.model.set
 						strokes: strokes = sketchpad.strokes()
 						strokeCount: strokes.length
+					self.showSavedAlert()
 
 				# bind resize handler here in lieu of watching the element itself
 				$(window).resize self.resizeCanvas.bind(self)
@@ -99,6 +108,7 @@ define [
 
 		save: ->
 			@model.save()
+			(new Modal.Views.Authenticate()).show() if not app.authed
 
 	class Tree.Views.Solo extends Backbone.View
 		template: "tree/view"
