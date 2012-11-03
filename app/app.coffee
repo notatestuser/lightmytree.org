@@ -14,29 +14,40 @@ for s in ARGV
 	m = rargs.exec s
 	app.env = 'production' if m and m[0] and m[0].match rprod
 
+### environment configuration ###
+if app.env isnt 'production'
+	console.log "Welcome to development mode"
+	dataRoutes = './routes/fixtures'
+	envConfig = require './configs/development'
+else
+	console.log "Welcome to production mode"
+	dataRoutes = './routes/api'
+	envConfig = require './configs/production'
+
+### init authentication ###
+everyauth = require('./authentication')(envConfig)
+
 ### express configuration ###
 app.configure ->
 	app.set 'views', __dirname + '/views'
 	app.set 'view engine', 'jade'
 	app.use express.bodyParser()
 	app.use express.static __dirname + '/../assets'
-
+	app.use express.cookieParser()
+	app.use express.session secret: envConfig.sessionSecret
+	app.use everyauth.middleware()
+	app.use express.errorHandler()
 
 ### watch coffeescript sources ###
 coffee = espresso.core.exec 'coffee -o ../assets/js -w -c coffee'
 coffee.stdout.on 'data', (data) ->
 	espresso.core.minify() if app.env == 'production'
 
-
 ### watch stylus sources ###
 espresso.core.exec 'stylus -w -c styl -o ../assets/css'
 
-
 ### app routes ###
-if app.env isnt 'production'
-	require('./routes/fixtures') app
-else
-	require('./routes/api') app
+require(dataRoutes) app
 
 app.get '/*', (req, res) ->
 	res.render 'index', { title : 'LightMyTree' }
