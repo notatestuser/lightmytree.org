@@ -2,6 +2,14 @@ module.exports =
 
 	sessionSecret: 'fortytwo'
 
+	couchdb:
+		url: 'http://admin:admin@dev.lightmytree.com'
+		port: 5984
+
+	dbs:
+		usersDB: 'lmt_users'
+		treesDB: 'lmt_trees'
+
 	twitter:
 		# Light My Tree Labs
 		consumerKey: 'Ev4MopNlRrygyAYDCEkFUg'

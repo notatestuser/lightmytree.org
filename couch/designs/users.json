@@ -1,0 +1,12 @@
+{
+	"_id": "_design/users",
+	"views": {
+		"byTwitter": {
+			"map": "function (doc) { if (doc.twitter && doc.twitter.id) { emit(doc.twitter.id, doc) } }"
+		},
+		"all": {
+			"map": "function (doc) { if (doc.fullName) emit(doc.fullName, doc); }"
+		}
+	}
+}
+
