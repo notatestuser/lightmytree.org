@@ -8,8 +8,8 @@
       port: 5984
     },
     dbs: {
-      usersDB: 'lmt_users',
-      treesDB: 'lmt_trees'
+      users: 'lmt_users',
+      trees: 'lmt_trees'
     },
     twitter: {
       consumerKey: 'Ev4MopNlRrygyAYDCEkFUg',

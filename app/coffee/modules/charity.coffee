@@ -32,11 +32,13 @@ define [
 
 		initialize: (options) ->
 			@treeModel = options.treeModel if options.treeModel
-			@collection.on 'reset', => @beforeRender()
+			# @collection.on 'reset', =>
+			# 	@beforeRender() if not @hasViews?
 
 		beforeRender: ->
 			treeModel = @treeModel
 			@collection.forEach (charityModel) ->
+				@hasViews = yes
 				view = new Charity.Views.Item
 					model: charityModel
 				view.on 'selected', ->

@@ -16,14 +16,13 @@ define [
 		defaults:
 			user: null
 			strokes: []
-			strokeCount: 0
 			charityIds: []
 
 		initialize: ->
 			@fetch()
 			@loadCharities()
-			@on 'change', (model) ->
-				console.log "#{model.get('strokeCount')} stroke(s)"
+			@on 'change:strokes change:charityIds', (model) ->
+				console.log "#{(model.get('strokes')).length} stroke(s)"
 				model.save()
 
 		sync: (method, model, options, first = true) ->
@@ -59,7 +58,7 @@ define [
 			@charities.remove model
 
 	class Tree.MyModel extends Tree.Model
-		url: -> "/api/my_tree"
+		url: -> "/json/my_tree"
 
 		initialize: ->
 			@remotePersist = false
@@ -101,9 +100,7 @@ define [
 				sketchpad = self.sketchpad = Raphael.sketchpad @,
 					strokes: self.model.get('strokes')
 				sketchpad.change ->
-					self.model.set
-						strokes: strokes = sketchpad.strokes()
-						strokeCount: strokes.length
+					self.model.set strokes: strokes = sketchpad.strokes()
 					self.showSavedAlert()
 
 				# bind resize handler here in lieu of watching the element itself

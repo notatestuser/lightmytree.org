@@ -1,0 +1,8 @@
+{
+   "_id": "_design/trees",
+   "views": {
+	   "byId": {
+		   "map": "function (doc) { if (doc._id) { emit(doc._id, doc) } }"
+	   }
+   }
+}

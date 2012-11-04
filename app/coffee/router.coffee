@@ -14,6 +14,14 @@ define [
 			"sketch":         "sketch"
 			"tree/:treeName": "tree"
 
+		initialize: ->
+			models =
+				user: null # get authed user model here
+				newTree: new Tree.MyModel()
+				myTrees: new Tree.Collection()
+				recentCharities: new Charity.RecentCharitiesCollection()
+			_.extend @, models
+
 		index: ->
 			app.active = false
 			app.useLayout('home_page').setViews
@@ -42,11 +50,3 @@ define [
 		go: ->
 			this.navigate(_.toArray(arguments).join("/"), true)
 
-		initialize: ->
-			models =
-				user: null # get authed user model here
-				newTree: new Tree.MyModel()
-				myTrees: new Tree.Collection()
-				recentCharities: new Charity.RecentCharitiesCollection()
-
-			_.extend @, models

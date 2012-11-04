@@ -17,11 +17,11 @@ for s in ARGV
 ### environment configuration ###
 if app.env isnt 'production'
 	console.log "Welcome to development mode"
-	dataRoutes = './routes/fixtures'
+	apiRoutes = './routes/fixtures'
 	envConfig = require './configs/development'
 else
 	console.log "Welcome to production mode"
-	dataRoutes = './routes/api'
+	apiRoutes = './routes/api'
 	envConfig = require './configs/production'
 
 ### init authentication ###
@@ -47,7 +47,8 @@ coffee.stdout.on 'data', (data) ->
 espresso.core.exec 'stylus -w -c styl -o ../assets/css'
 
 ### app routes ###
-require(dataRoutes) app
+require('./routes/data') app, envConfig
+require(apiRoutes) app
 
 app.get '/*', (req, res) ->
 	res.render 'index', { title : 'LightMyTree' }
