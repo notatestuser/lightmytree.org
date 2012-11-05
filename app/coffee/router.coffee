@@ -13,12 +13,13 @@ define [
 			"":               "index"
 			"sketch":         "sketch"
 			"tree/:treeName": "tree"
+			"my_trees":       "myTrees"
 
 		initialize: ->
 			models =
 				user: null # get authed user model here
 				newTree: new Tree.MyModel()
-				myTrees: new Tree.Collection()
+				myTrees: new Tree.Collection null, '' # will return our stuff if authed
 				recentCharities: new Charity.RecentCharitiesCollection()
 			_.extend @, models
 
@@ -44,6 +45,12 @@ define [
 		tree: (treeName) ->
 			app.useLayout('tree_page').setViews({})
 				#".trees": new Tree.Views.List(@)
+			.render()
+
+		myTrees: ->
+			app.useLayout('my_trees_page').setViews
+				".my_trees": new Tree.Views.List
+					collection: @myTrees
 			.render()
 
 		# Shortcut for building a URL

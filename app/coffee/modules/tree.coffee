@@ -65,14 +65,19 @@ define [
 			super()
 
 	class Tree.Collection extends Backbone.Collection
-		url: -> "/api/trees/" + @user
+		url: "/json/trees/"
 		cache: yes
 
-		parse: (obj) ->
-			if obj.data.message isnt 'Error' then obj.data else @models
-
 		initialize: (models, options) ->
-			@user = options.user if options and options.user?
+			@userId = options.userId if options and options.userId?
+			@url += @userId if @userId
+			super models, options
+			@fetch()
+
+		parse: (docs) ->
+			(_.extend(doc, id: doc._id) for doc in docs)
+			# example handling of an error response from the server
+			#if obj.data.message isnt 'Error' then obj.data else @models
 
 		comparator: (tree) ->
 			-new Date(tree.get 'updated_at')
@@ -125,12 +130,34 @@ define [
 	class Tree.Views.List extends Backbone.View
 		template: "tree/list"
 		tagName: "ul"
-		className: "trees-view"
+		className: "tree-list-view"
+
+		beforeRender: ->
+			@collection.on 'reset', =>
+				@render()
+
+			@collection.forEach (treeModel) ->
+				view = new Tree.Views.Item
+					model: treeModel
+				@insertView view
+			, @
 
 	class Tree.Views.Item extends Backbone.View
 		template: "tree/list_item"
 		tagName: "li"
 		className: "mini-tree-view"
+
+		afterRender: ->
+			self = @
+			$container = @$el
+			new Raphael $container[0], 256, 256, ->
+				# sketchpad = self.sketchpad = Raphael.sketchpad @,
+				# 	strokes: self.model.get('strokes')
+				# 	width: 256
+				# 	height: 256
+				# .editing false
+				@add self.model.get('strokes')
+				@setViewBox 0, 0, 617, 498, true
 
 
 	Tree

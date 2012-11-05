@@ -1,8 +1,11 @@
 {
-   "_id": "_design/trees",
-   "views": {
-	   "byId": {
-		   "map": "function (doc) { if (doc._id) { emit(doc._id, doc) } }"
-	   }
-   }
+	"_id": "_design/trees",
+	"views": {
+		"byId": {
+			"map": "function (doc) { if (doc._id) { emit(doc._id, doc) } }"
+		},
+		"byUserId": {
+			"map": "function (doc) { if (doc.user && doc.user.id) { emit(doc.user.id, doc) } }"
+		}
+	}
 }

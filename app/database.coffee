@@ -1,4 +1,5 @@
 {Connection} = require 'cradle'
+{_}          = require 'underscore'
 
 class BaseDatabase
 	constructor: (@config, @dbKey) ->
@@ -64,6 +65,11 @@ class TreeDatabase extends BaseDatabase
 			callback err, null
 		args.push callback
 		@db.save.apply @db, args
+
+	findByUserId: (userId, callback) ->
+		@db.view "#{@dbKey}/byUserId", key: userId, (err, res) ->
+			return callback err, (doc.value for doc in res) if res
+			callback err, null
 
 exports.UserDatabase = UserDatabase
 exports.TreeDatabase = TreeDatabase

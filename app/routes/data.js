@@ -25,7 +25,7 @@
       createOrUpdateFn = function() {
         return treeDb.createOrUpdate(userId, data, function(err, dbRes) {
           if (err) {
-            console.error("ERROR: in treeDb.createOrUpdate");
+            console.error("ERROR: in createOrUpdateFn");
             console.error(inspect(err));
             return res.send("Database error", 500);
           } else {
@@ -39,11 +39,11 @@
         return treeDb.findById(data.id, function(err, doc) {
           if (doc && doc.user.id !== req.user._id) {
             console.error("ERROR: attempt to sabotage another user's tree");
-            console.error("(user: " + req.user._id + ", target ID: " + data.id + ")");
+            console.error("(user: " + userId + ", target ID: " + data.id + ")");
             return res.send("Unauthorised", 401);
           } else {
             if (!doc) {
-              console.error("ERROR: tree `" + data.id + "` doesn't exist but referenced by `" + req.user._id + "`; removing ID");
+              console.error("ERROR: tree `" + data.id + "` doesn't exist but referenced by `" + userId + "`; removing ID");
               delete data.id;
             }
             return createOrUpdateFn();
@@ -54,7 +54,18 @@
       }
     });
     app.post("/json/my_tree", myTreeFn);
-    return app.put("/json/my_tree", myTreeFn);
+    app.put("/json/my_tree", myTreeFn);
+    return app.get(/^\/json\/trees\/([a-z0-9]+)?$/, ensureAuth(function(req, res, userId) {
+      return treeDb.findByUserId(req.params[0] || userId, function(err, docs) {
+        if (err) {
+          console.error("ERROR: in callback passed to treeDb.findByUserId");
+          console.error(inspect(err));
+          return res.send("Database error", 500);
+        } else {
+          return res.json(docs);
+        }
+      });
+    }));
   };
 
 }).call(this);
