@@ -15,8 +15,10 @@ define [
 
 		defaults:
 			user: null
-			strokes: []
 			charityIds: []
+			strokes: []
+			viewBoxWidth: 600
+			viewBoxHeight: 500
 
 		initialize: ->
 			@fetch()
@@ -105,7 +107,10 @@ define [
 				sketchpad = self.sketchpad = Raphael.sketchpad @,
 					strokes: self.model.get('strokes')
 				sketchpad.change ->
-					self.model.set strokes: strokes = sketchpad.strokes()
+					self.model.set
+						strokes: strokes = sketchpad.strokes()
+						viewBoxWidth: $container.width()
+						viewBoxHeight: $container.height()
 					self.showSavedAlert()
 
 				# bind resize handler here in lieu of watching the element itself
@@ -130,12 +135,13 @@ define [
 	class Tree.Views.List extends Backbone.View
 		template: "tree/list"
 		tagName: "ul"
-		className: "tree-list-view"
+		className: "tree-list-view row-fluid"
 
 		beforeRender: ->
 			@collection.on 'reset', =>
 				@render()
 
+			# TODO: dynamically create rows to prevent padding issues?
 			@collection.forEach (treeModel) ->
 				view = new Tree.Views.Item
 					model: treeModel
@@ -145,19 +151,15 @@ define [
 	class Tree.Views.Item extends Backbone.View
 		template: "tree/list_item"
 		tagName: "li"
-		className: "mini-tree-view"
+		className: "mini-tree-view span4"
 
 		afterRender: ->
 			self = @
 			$container = @$el
 			new Raphael $container[0], 256, 256, ->
-				# sketchpad = self.sketchpad = Raphael.sketchpad @,
-				# 	strokes: self.model.get('strokes')
-				# 	width: 256
-				# 	height: 256
-				# .editing false
+				@setViewBox 0, 0,
+					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
 				@add self.model.get('strokes')
-				@setViewBox 0, 0, 617, 498, true
 
 
 	Tree
