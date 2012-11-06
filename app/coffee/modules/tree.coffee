@@ -124,6 +124,7 @@ define [
 			"click .btn-save": "save"
 
 		save: ->
+			@$('.btn-save').button 'loading'
 			@model.remotePersist = yes if app.authed
 			@model.save()
 			(new Modal.Views.Authenticate()).show() if not app.authed
