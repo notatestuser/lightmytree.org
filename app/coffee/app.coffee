@@ -63,6 +63,7 @@ define [
 		module: (additionalProps) ->
 			_.extend
 				Views: {}
+				Partials: {}
 			, additionalProps
 
 		# Helper for using layouts.

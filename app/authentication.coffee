@@ -21,6 +21,6 @@ module.exports = (config) ->
 			catch err
 				console.error 'Error whilst finding or creating Twitter user', err
 			promise
-		.redirectPath('/sketch')
+		.redirectPath('/my_trees')
 
 	everyauth

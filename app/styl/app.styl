@@ -14,12 +14,18 @@ transform-rotate(degs)
 
 
 body
-	background: #FFFFFC
-	padding-top 40px
+	background: #EEECDF
+	// padding-top 40px
 
 header
 	text-align center
-	padding 30px 0 30px 0
+	padding 0 0 50px 0
+	margin-bottom 50px
+	background transparent url('../img/bg-content-top.jpg') repeat-x scroll center bottom
+
+	.peek-banner
+		background transparent url('../img/bg-banner-top-green.png') repeat-x scroll center bottom
+		height 50px
 
 	> h1
 		font-size 2rem
@@ -42,7 +48,7 @@ header
 			height 500px
 
 			position relative
-			background #fff
+			background whiteSmoke
 			padding 10px
 			border 1px solid rgba(0, 0, 0, 0.150)
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.18))
@@ -55,7 +61,7 @@ header
 			content: ''
 			width: 100%
 			height: 100%
-			background-color: #fff
+			background-color: whiteSmoke
 			border: 1px solid rgba(0, 0, 0, 0.150)
 
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.19))
@@ -70,7 +76,7 @@ header
 			content ''
 			width 100%
 			height 100%
-			background-color #fff
+			background-color whiteSmoke
 			border 1px solid rgba(0, 0, 0, 0.150)
 
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.2))
@@ -83,4 +89,12 @@ header
 
 		> li
 			border 1px solid black
+
+	.tree-share-view
+		.share_preview
+			text-align center
+
+		.alert-not-logged-in
+			margin-bottom 0
+			margin-top 20px
 

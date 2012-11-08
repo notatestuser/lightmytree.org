@@ -27,8 +27,7 @@ define [
 
 	class Charity.Views.Picker extends Backbone.View
 		template: "charity/picker"
-		className: "thumbnails"
-		tagName: "ul"
+		tagName: "div"
 
 		initialize: (options) ->
 			@treeModel = options.treeModel if options.treeModel
@@ -47,7 +46,7 @@ define [
 					treeModel.removeCharity view.model
 				if _(@treeModel.get('charityIds')).contains view.model.id
 					view.renderSelected()
-				@insertView view
+				@insertView '.charities', view
 			, @
 
 	class Charity.Views.Item extends Backbone.View

@@ -49,8 +49,14 @@ define [
 
 		myTrees: ->
 			app.useLayout('my_trees_page').setViews
+				".share_my_tree": new Tree.Views.Share
+					model: @newTree
+					views:
+						".share_preview": new Tree.Views.Item
+							model: @newTree
 				".my_trees": new Tree.Views.List
 					collection: @myTrees
+				".authenticate_modal": new Modal.Views.Authenticate
 			.render()
 
 		# Shortcut for building a URL
