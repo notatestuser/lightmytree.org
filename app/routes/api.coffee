@@ -7,8 +7,8 @@ urls =
 		"/json/recent_charities"
 	).toString()
 
-	lookahead_charities: wrap (() ->
-		"/json/lookahead_charities"
+	typeahead_charities: wrap (() ->
+		"/json/typeahead_charities"
 	).toString()
 
 	charity_donate: wrap ((charityId, amount, ourId) ->

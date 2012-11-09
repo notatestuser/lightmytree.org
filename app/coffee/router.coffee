@@ -21,7 +21,7 @@ define [
 				newTree: new Tree.MyModel()
 				myTrees: new Tree.Collection null, '' # will return our stuff if authed
 				recentCharities: new Charity.RecentCharitiesCollection()
-				lookaheadCharities: new Charity.LookaheadCollection()
+				typeaheadCharities: new Charity.TypeaheadCollection()
 
 			_.extend @, models
 
@@ -39,7 +39,7 @@ define [
 				".charity_picker": new Charity.Views.Picker
 					collection: @recentCharities
 					treeModel: @newTree
-					lookaheadCharities: @lookaheadCharities
+					typeaheadCharities: @typeaheadCharities
 				".save": new Tree.Views.Save
 					model: @newTree
 				".authenticate_modal": new Modal.Views.Authenticate

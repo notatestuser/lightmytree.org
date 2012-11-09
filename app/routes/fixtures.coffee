@@ -7,8 +7,8 @@ urls =
 		"/json/recent_charities"
 	).toString()
 
-	lookahead_charities: wrap (() ->
-		"/json/lookahead_charities"
+	typeahead_charities: wrap (() ->
+		"/json/typeahead_charities"
 	).toString()
 
 	charity_donate: wrap ((charityId, amount, ourId) ->
@@ -34,8 +34,8 @@ module.exports = (app) ->
 			authed: req.user?
 			urls: urls
 
-	# /json/lookahead_charities
-	app.get "/json/lookahead_charities", (req, res) ->
+	# /json/typeahead_charities
+	app.get "/json/typeahead_charities", (req, res) ->
 		res.json [
 				"charityId": "188496"
 				"name": "Care for Cancer"

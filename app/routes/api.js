@@ -10,8 +10,8 @@
     recent_charities: wrap((function() {
       return "/json/recent_charities";
     }).toString()),
-    lookahead_charities: wrap((function() {
-      return "/json/lookahead_charities";
+    typeahead_charities: wrap((function() {
+      return "/json/typeahead_charities";
     }).toString()),
     charity_donate: wrap((function(charityId, amount, ourId) {
       JustGiving;

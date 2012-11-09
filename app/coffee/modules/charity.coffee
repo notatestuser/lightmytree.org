@@ -20,14 +20,14 @@ define [
 		cache: yes
 
 	class Charity.RecentCharitiesCollection extends Charity.Collection
-		initialize: ->
-			app.waitForUrl 'recent_charities', (urlFn) =>
-				@url = urlFn()
-				@fetch()
+		url: "/json/recent_charities"
 
-	class Charity.LookaheadCollection extends Backbone.Collection
-		url: "/json/lookahead_charities"
-		model: Charity.Model
+		initialize: ->
+			# TODO are we sure we'd like to fetch on init?
+			@fetch()
+
+	class Charity.TypeaheadCollection extends Charity.Collection
+		url: "/json/typeahead_charities"
 
 		getSource: ->
 			@map (charity) -> charity.get 'name'
@@ -38,9 +38,7 @@ define [
 
 		initialize: (options) ->
 			@treeModel = options.treeModel if options.treeModel
-			@lookaheadCharities = options.lookaheadCharities if options.lookaheadCharities
-			@collection.on 'reset', =>
-				@beforeRender() if not @hasViews?
+			@typeaheadCharities = options.typeaheadCharities if options.typeaheadCharities
 
 		beforeRender: ->
 			treeModel = @treeModel
@@ -58,9 +56,9 @@ define [
 			, @
 
 		afterRender: ->
-			@lookaheadCharities.on 'reset', =>
+			@typeaheadCharities.on 'reset', =>
 				@$('.search-query').typeahead
-					source: @lookaheadCharities.getSource()
+					source: @typeaheadCharities.getSource()
 			.fetch()
 
 	class Charity.Views.Item extends Backbone.View

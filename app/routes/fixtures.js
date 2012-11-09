@@ -10,8 +10,8 @@
     recent_charities: wrap((function() {
       return "/json/recent_charities";
     }).toString()),
-    lookahead_charities: wrap((function() {
-      return "/json/lookahead_charities";
+    typeahead_charities: wrap((function() {
+      return "/json/typeahead_charities";
     }).toString()),
     charity_donate: wrap((function(charityId, amount, ourId) {
       "/api";
@@ -34,7 +34,7 @@
         urls: urls
       });
     });
-    app.get("/json/lookahead_charities", function(req, res) {
+    app.get("/json/typeahead_charities", function(req, res) {
       return res.json([
         {
           "charityId": "188496",
