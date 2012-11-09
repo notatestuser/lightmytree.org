@@ -1,3 +1,29 @@
+# needed because eval() in Chrome requires that anonymous functions are surrounded with parenthesis
+wrap = (fnString) ->
+	"(" + fnString + ")"
+
+urls =
+	recent_charities: wrap (()->
+		"/json/recent_charities"
+	).toString()
+
+	lookahead_charities: wrap (() ->
+		"/json/lookahead_charities"
+	).toString()
+
+	charity_donate: wrap ((charityId, amount, ourId) ->
+		"/api"
+		+ "/donation/direct/charity/#{charityId}/donate"
+		+ "?amount=#{amount}"
+		+ "&frequency=single"
+		+ "&exitUrl="
+		+ encodeURI("http://localhost:3000/callbacks/jg-donate?donationId=JUSTGIVING-DONATION-ID&id=#{ourId}")
+	).toString()
+
+	donation_status: wrap ((apiKey, donationId) ->
+		"/api/#{apiKey}/v1/donation/#{donationId}"
+	).toString()
+
 module.exports = (app) ->
 
 	console.log "Defining FIXTURE routes"
@@ -6,23 +32,23 @@ module.exports = (app) ->
 	app.get "/json/client_init", (req, res) ->
 		res.json
 			authed: req.user?
-			urls:
-				recent_charities: wrap (()->
-					"/json/recent_charities"
-				).toString()
+			urls: urls
 
-				charity_donate: wrap ((charityId, amount, ourId) ->
-					"/api"
-					+ "/donation/direct/charity/#{charityId}/donate"
-					+ "?amount=#{amount}"
-					+ "&frequency=single"
-					+ "&exitUrl="
-					+ encodeURI("http://localhost:3000/callbacks/jg-donate?donationId=JUSTGIVING-DONATION-ID&id=#{ourId}")
-				).toString()
-
-				donation_status: wrap ((apiKey, donationId) ->
-					"/api/#{apiKey}/v1/donation/#{donationId}"
-				).toString()
+	# /json/lookahead_charities
+	app.get "/json/lookahead_charities", (req, res) ->
+		res.json [
+				"charityId": "188496"
+				"name": "Care for Cancer"
+			,
+				"charityId": "123456"
+				"name": "Cancer Research UK"
+			,
+				"charityId": "789012"
+				"name": "Unicef UK"
+			,
+				"charityId": "987654"
+				"name": "Oxfam UK"
+		]
 
 	# /json/recent_charities
 	app.get "/json/recent_charities", (req, res) ->
@@ -83,6 +109,3 @@ module.exports = (app) ->
 			source: "SponsorshipDonations"
 			status: "Accepted"
 
-	# needed because eval() in Chrome requires that anonymous functions are surrounded with parenthesis
-	wrap = (fnString) ->
-		"(" + fnString + ")"

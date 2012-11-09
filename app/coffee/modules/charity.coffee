@@ -25,14 +25,22 @@ define [
 				@url = urlFn()
 				@fetch()
 
+	class Charity.LookaheadCollection extends Backbone.Collection
+		url: "/json/lookahead_charities"
+		model: Charity.Model
+
+		getSource: ->
+			@map (charity) -> charity.get 'name'
+
 	class Charity.Views.Picker extends Backbone.View
 		template: "charity/picker"
 		tagName: "div"
 
 		initialize: (options) ->
 			@treeModel = options.treeModel if options.treeModel
-			# @collection.on 'reset', =>
-			# 	@beforeRender() if not @hasViews?
+			@lookaheadCharities = options.lookaheadCharities if options.lookaheadCharities
+			@collection.on 'reset', =>
+				@beforeRender() if not @hasViews?
 
 		beforeRender: ->
 			treeModel = @treeModel
@@ -48,6 +56,12 @@ define [
 					view.renderSelected()
 				@insertView '.charities', view
 			, @
+
+		afterRender: ->
+			@lookaheadCharities.on 'reset', =>
+				@$('.search-query').typeahead
+					source: @lookaheadCharities.getSource()
+			.fetch()
 
 	class Charity.Views.Item extends Backbone.View
 		template: "charity/list_item"
