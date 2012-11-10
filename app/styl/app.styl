@@ -35,8 +35,15 @@ coloured-pencil($colour)
 
 
 body
-	background #EEECDF
 	overflow-x hidden
+
+	background #eeecdf
+	background -moz-linear-gradient(left,  #eeecdf 0%, #edead7 24%, #eae6cc 50%, #edead7 79%, #eeecdf 100%)
+	background -webkit-gradient(linear, left top, right top, color-stop(0%,#eeecdf), color-stop(24%,#edead7), color-stop(50%,#eae6cc), color-stop(79%,#edead7), color-stop(100%,#eeecdf))
+	background -webkit-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
+	background -o-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
+	background -ms-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
+	background linear-gradient(to right,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
 
 header
 	text-align center
@@ -227,17 +234,17 @@ header
 		.row-sketchpad
 			margin-bottom -50px
 
+		.row-picker,.row-share-button
+			background -moz-linear-gradient(left,  rgba(238,236,223,0.4) 0%, rgba(237,235,222,0.85) 22%, rgba(236,234,222,1) 31%, rgba(234,232,222,1) 50%, rgba(236,234,222,1) 73%, rgba(237,235,222,0.85) 81%, rgba(238,236,223,0.4) 100%)
+			background -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(238,236,223,0.4)), color-stop(22%,rgba(237,235,222,0.85)), color-stop(31%,rgba(236,234,222,1)), color-stop(50%,rgba(234,232,222,1)), color-stop(73%,rgba(236,234,222,1)), color-stop(81%,rgba(237,235,222,0.85)), color-stop(100%,rgba(238,236,223,0.4)))
+			background -webkit-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
+			background -o-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
+			background -ms-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
+			background linear-gradient(to right,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
+
 		.row-picker
 			padding-top 100px
 			position relative
-
-			background #eeecdf
-			background -moz-linear-gradient(left,  #eeecdf 0%, #edead7 24%, #eae6cc 50%, #edead7 79%, #eeecdf 100%)
-			background -webkit-gradient(linear, left top, right top, color-stop(0%,#eeecdf), color-stop(24%,#edead7), color-stop(50%,#eae6cc), color-stop(79%,#edead7), color-stop(100%,#eeecdf))
-			background -webkit-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
-			background -o-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
-			background -ms-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
-			background linear-gradient(to right,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
 
 			.hr
 				position absolute
@@ -270,8 +277,8 @@ header
 				margin-top 15px
 
 		.row-share-button
-			margin-top 30px
-			margin-bottom 60px
+			padding-top 30px
+			padding-bottom 60px
 
 	ul.charities
 		list-style-type none
