@@ -68,9 +68,7 @@ header
 			height: 100%
 			background-color: whiteSmoke
 			border: 1px solid rgba(0, 0, 0, 0.150)
-
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.19))
-
 			transform-rotate(2deg)
 
 		.sketchpad-editor:after
@@ -83,10 +81,81 @@ header
 			height 100%
 			background-color whiteSmoke
 			border 1px solid rgba(0, 0, 0, 0.150)
-
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.2))
-
 			transform-rotate(358deg)
+
+		.sketchpad-tools
+			.pencil
+				height 240px
+				width 30px
+
+				> div
+					clear both
+
+				// nib section
+				> div:first-child
+					> div
+						float left
+						height 20px
+					> div:first-child
+						width 33.3%
+					> div:nth-child(2)
+						width 33.6%
+						> div
+							float left
+							border-bottom 20px solid
+						> div:first-child
+							border-bottom-color rgb(124, 141, 6)
+							border-left 4px solid transparent
+						> div:nth-child(2)
+							border-bottom-color rgb(164, 186, 8)
+							border-left 1px solid rgb(124, 141, 6)
+							border-right 1px solid rgb(199, 226, 10)
+						> div:last-child
+							border-bottom-color rgb(199, 226, 10)
+							border-right 4px solid transparent
+					> div:last-child
+						width 33.2%
+
+				// sharpened section
+				> div:nth-child(2)
+					> div
+						float left
+						width 0px
+						height 0px
+					> div:first-child
+						border-left 10px solid transparent
+						border-bottom 40px solid rgb(204, 182, 135)
+					> div:nth-child(2)
+						width 4px !important
+						border-bottom 40px solid rgb(229, 202, 173)
+						border-left 3px solid rgb(204, 182, 135)
+						border-right 3px solid rgb(255, 231, 191)
+					> div:last-child
+						border-bottom 40px solid rgb(255, 231, 191)
+						border-right 10px solid transparent
+
+				// long section
+				> div:last-child
+					height 100%
+					width 30px
+					background-color rgb(199, 226, 10)
+					> div
+						float left
+						width 33.3%
+						height 100%
+						margin-top -4px
+						padding-bottom 5px
+						border-top-left-radius 5px
+						border-top-right-radius 5px
+					> div:first-child
+						background-color rgb(124, 141, 6)
+					> div:nth-child(2)
+						background-color rgb(164, 186, 8)
+					> div:last-child
+						background-color rgb(199, 226, 10)
+
+
 
 	.sketch_page
 		.row-picker
