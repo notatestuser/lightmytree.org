@@ -15,9 +15,9 @@ transform-rotate(degs)
 	transform: rotate(degs)
 
 coloured-pencil($colour)
-	$darker = desaturate(darken($colour, 10), 28)
+	$original = darken($colour, 15)
+	$darker = darken($original, 10)
 	$darkest = darken($darker, 10)
-	$original = $colour
 	.darkest-bb
 		border-bottom-color $darkest !important
 	.darkest-bg
@@ -104,24 +104,35 @@ header
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.2))
 			transform-rotate(358deg)
 
-		.sketchpad-tools-left
-			.pencil
-				float right
-				margin-left 5px
-
-		.sketchpad-tools-right
-			.pencil
-				float left
-				margin-right 5px
-
 		.sketchpad-tools
+			height 100%
+			padding 0 20px
+
+			.pencil-case
+				height 325px
+				overflow hidden
+				position relative
 
 			.pencil-blue
 				coloured-pencil(#3FC1FF)
+			.pencil-green
+				coloured-pencil(#C7E20A)
+			.pencil-yellow
+				coloured-pencil(#FFCC00)
+			.pencil-purple
+				coloured-pencil(#FA64FB)
+			.pencil-pink
+				coloured-pencil(#FC4A98)
+			.pencil-orange
+				coloured-pencil(#EE6401)
 
 			.pencil
-				height 240px
+				height 270px
 				width 30px
+				position absolute
+
+				div
+					outline 1px solid transparent
 
 				> div
 					clear both
@@ -166,7 +177,6 @@ header
 				> div:last-child
 					height 100%
 					width 30px
-					background-color rgb(199, 226, 10)
 					> div
 						float left
 						width 33.3%
