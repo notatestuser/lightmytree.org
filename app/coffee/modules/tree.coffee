@@ -134,10 +134,16 @@ define [
 			@$el.addClass(SketchPencil.PencilColours.pop() or "pencil-blue")
 
 		afterRender: ->
+			wouldBeOffset = (@position * 35)
 			@$el.css
-				top: (@position * 35)
+				top: (@$el.parent().outerHeight() - 60)
 				zIndex: 100 - (@position * 10)
 			@$el.css @pencilFloat, (@position * (@$el.outerWidth() - 1))
+
+			# animate box slide out
+			setTimeout =>
+				@$el.animate top: wouldBeOffset, 1500
+			, 200
 
 	class Tree.Views.Sketchpad extends Backbone.View
 		afterRender: ->
