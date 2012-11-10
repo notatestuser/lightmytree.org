@@ -84,14 +84,12 @@ define [
 		comparator: (tree) ->
 			-new Date(tree.get 'updated_at')
 
-	class Tree.Views.Sketch extends Backbone.View
+	class Tree.Views.SketchWorkspace extends Backbone.View
 		template: "tree/sketch"
-		className: "sketchpad-view"
+		className: "workspace-view"
 
-		resizeCanvas: ->
-			if @$container
-				console.log "New canvas dimensions: #{@$container.width()} #{@$container.height()}"
-				@sketchpad.paper().setSize @$container.width(), @$container.height()
+		initialize: ->
+			@model.on 'change', => @showSavedAlert()
 
 		showSavedAlert: ->
 			if not @shownSavedAlert
@@ -100,21 +98,26 @@ define [
 					.fadeIn('slow')
 					.slideDown('slow')
 
+	class Tree.Views.Sketchpad extends Backbone.View
 		afterRender: ->
 			self = @
-			$container = @$container = @$('.sketchpad-editor')
+			$container = @$container = @$el
 			new Raphael $container[0], $container.width(), $container.height(), ->
 				sketchpad = self.sketchpad = Raphael.sketchpad @,
 					strokes: self.model.get('strokes')
 				sketchpad.change ->
-					self.model.set
+					self.model.save
 						strokes: strokes = sketchpad.strokes()
 						viewBoxWidth: $container.width()
 						viewBoxHeight: $container.height()
-					self.showSavedAlert()
 
 				# bind resize handler here in lieu of watching the element itself
 				$(window).resize self.resizeCanvas.bind(self)
+
+		resizeCanvas: ->
+			if @$container
+				console.log "New canvas dimensions: #{@$container.width()} #{@$container.height()}"
+				@sketchpad.paper().setSize @$container.width(), @$container.height()
 
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"
