@@ -98,6 +98,17 @@ define [
 					.fadeIn('slow')
 					.slideDown('slow')
 
+	class Tree.Views.SketchToolkit extends Backbone.View
+		className: "sketchpad-tools span12"
+
+		afterRender: ->
+			for i in [1..5]
+				@insertView(new Tree.Views.SketchPencil()).render()
+
+	class Tree.Views.SketchPencil extends Backbone.View
+		template: "tree/sketch/pencil"
+		className: "pencil pencil-blue"
+
 	class Tree.Views.Sketchpad extends Backbone.View
 		afterRender: ->
 			self = @

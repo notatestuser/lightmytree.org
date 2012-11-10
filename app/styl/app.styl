@@ -1,6 +1,7 @@
 @import '../vendor/bootstrap/css/bootstrap.min.css'
 @import url('https://fonts.googleapis.com/css?family=Lobster');
 
+
 box-shadow(x, y, z, colour)
 	-webkit-box-shadow x y z colour
 	-moz-box-shadow x y z colour
@@ -12,6 +13,25 @@ transform-rotate(degs)
 	-o-transform: rotate(degs)
 	-ms-transform: rotate(degs)
 	transform: rotate(degs)
+
+coloured-pencil($colour)
+	$darker = desaturate(darken($colour, 10), 28)
+	$darkest = darken($darker, 10)
+	$original = $colour
+	.darkest-bb
+		border-bottom-color $darkest !important
+	.darkest-bg
+		background-color $darkest
+	.darker-mb
+		border-left-color $darkest !important
+		border-bottom-color $darker !important
+		border-right-color $original !important
+	.darker-bg
+		background-color $darker
+	.original-bb
+		border-bottom-color $original !important
+	.original-bg
+		background-color $original
 
 
 body
@@ -84,7 +104,21 @@ header
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.2))
 			transform-rotate(358deg)
 
+		.sketchpad-tools-left
+			.pencil
+				float right
+				margin-left 5px
+
+		.sketchpad-tools-right
+			.pencil
+				float left
+				margin-right 5px
+
 		.sketchpad-tools
+
+			.pencil-blue
+				coloured-pencil(#3FC1FF)
+
 			.pencil
 				height 240px
 				width 30px
@@ -95,22 +129,20 @@ header
 				// nib section
 				> div:first-child
 					> div
-						height 20px
+						height 15px
 						width 33.6%
 						margin auto auto
 						> div
 							float left
-							border-bottom 20px solid
+							border-bottom 15px solid
 						> div:first-child
-							border-bottom-color rgb(124, 141, 6)
-							border-left 4px solid transparent
+							border-left 3px solid transparent
+							margin-left 1px
 						> div:nth-child(2)
-							border-bottom-color rgb(164, 186, 8)
-							border-left 1px solid rgb(124, 141, 6)
-							border-right 1px solid rgb(199, 226, 10)
+							border-left 1px solid
+							border-right 1px solid
 						> div:last-child
-							border-bottom-color rgb(199, 226, 10)
-							border-right 4px solid transparent
+							border-right 3px solid transparent
 
 				// sharpened section
 				> div:nth-child(2)
@@ -143,12 +175,6 @@ header
 						padding-bottom 5px
 						border-top-left-radius 5px
 						border-top-right-radius 5px
-					> div:first-child
-						background-color rgb(124, 141, 6)
-					> div:nth-child(2)
-						background-color rgb(164, 186, 8)
-					> div:last-child
-						background-color rgb(199, 226, 10)
 
 
 
