@@ -39,8 +39,10 @@ define [
 					views:
 						".sketchpad-editor": new Tree.Views.Sketchpad
 							model: @newTree
-						".sketchpad-tools-left": new Tree.Views.SketchToolkit()
-						".sketchpad-tools-right": new Tree.Views.SketchToolkit()
+						".sketchpad-tools-left": new Tree.Views.SketchToolkit
+							pencilFloat: 'right'
+						".sketchpad-tools-right": new Tree.Views.SketchToolkit
+							pencilFloat: 'left'
 				".charity_picker": new Charity.Views.Picker
 					collection: @recentCharities
 					treeModel: @newTree

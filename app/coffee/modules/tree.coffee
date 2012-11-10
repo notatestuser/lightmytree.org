@@ -99,15 +99,45 @@ define [
 					.slideDown('slow')
 
 	class Tree.Views.SketchToolkit extends Backbone.View
+		template: "tree/sketch/tools"
 		className: "sketchpad-tools span12"
 
+		initialize: (options) ->
+			@pencilFloat = options.pencilFloat or 'left'
+			console.log @pencilFloat
+
 		afterRender: ->
-			for i in [1..5]
-				@insertView(new Tree.Views.SketchPencil()).render()
+			for i in [0..4]
+				@insertView '.pencil-case', new Tree.Views.SketchPencil
+					position: i
+					pencilFloat: @pencilFloat
+				.render()
 
 	class Tree.Views.SketchPencil extends Backbone.View
+		@PencilColours = _.shuffle [
+			"pencil-blue"
+			"pencil-green"
+			"pencil-yellow"
+			"pencil-purple"
+			"pencil-pink"
+			"pencil-orange"
+		]
+
 		template: "tree/sketch/pencil"
-		className: "pencil pencil-blue"
+		className: "pencil"
+
+		initialize: (options) ->
+			@position = options.position or 0
+			@pencilFloat = options.pencilFloat or 'left'
+
+		beforeRender: ->
+			@$el.addClass(SketchPencil.PencilColours.pop() or "pencil-blue")
+
+		afterRender: ->
+			@$el.css
+				top: (@position * 35)
+				zIndex: 100 - (@position * 10)
+			@$el.css @pencilFloat, (@position * (@$el.outerWidth() - 1))
 
 	class Tree.Views.Sketchpad extends Backbone.View
 		afterRender: ->
