@@ -47,6 +47,7 @@ define [
 							pencilFloat: 'right'
 							views:
 								".eraser-panel": new Sketch.Views.EraserPanel
+									model: @_sketch
 						".sketchpad-tools-right": new Sketch.Views.Toolkit
 							model: @_sketch
 							pencilFloat: 'left'

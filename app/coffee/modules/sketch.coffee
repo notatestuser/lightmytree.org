@@ -12,6 +12,7 @@ define [
 		defaults:
 			pencilWidth: 5
 			pencilColour: '#000000'
+			erasing: no
 
 		initialize: (options) ->
 			@set('tree', options.tree) if options.tree
@@ -37,16 +38,35 @@ define [
 		template: "sketch/eraser-panel"
 		className: "eraser-panel-view"
 
+		events:
+			"click": "_toggleErasing"
+
+		initialize: ->
+			@model.on 'change:erasing', @_changeErasing
+
 		afterRender: ->
+			@$eraser = @$('.eraser')
 			@$('.btn-undo').tooltip
 				title: 'Undo last stroke'
 				placement: 'top'
 			@$('.btn-redo').tooltip
 				title: 'Repeat stroke'
 				placement: 'bottom'
-			@$('.eraser').tooltip
-				title: 'Erase lines'
+			@$eraser.tooltip
+				title: 'Erase lines (click lines to erase)'
 				placement: 'top'
+
+		_toggleErasing: ->
+			erasing = @model.get 'erasing'
+			@model.set
+				erasing: not erasing
+				pencilColour: '#000001'
+
+		_changeErasing: (model, erasing) =>
+			if erasing
+				@$eraser.addClass 'selected'
+			else
+				@$eraser.removeClass 'selected'
 
 	class Sketch.Views.Toolkit extends Backbone.View
 		template: "sketch/tools"
@@ -81,6 +101,7 @@ define [
 			@model
 				.on('change:pencilColour', @_changePencilColour)
 				.on('change:pencilWidth', @_changePencilWidth)
+				.on('change:erasing', @_changeErasing)
 
 		afterRender: ->
 			$('<div class="colour-blob"></div>')
@@ -105,6 +126,12 @@ define [
 				@$el.addClass 'selected'
 			else
 				@$el.removeClass 'selected'
+
+		_changeErasing: (model, newErasing) =>
+			if newErasing
+				@$el.addClass 'disabled'
+			else if not newErasing
+				@$el.removeClass 'disabled'
 
 	class Sketch.Views.Pencil extends Backbone.View
 		template: "sketch/pencil"
@@ -148,7 +175,9 @@ define [
 
 		_setThisColour: ->
 			if @ourColour
-				@model.set 'pencilColour', @ourColour
+				@model.set
+					pencilColour: @ourColour
+					erasing: no
 
 		_changePencilColour: (model, newColour) =>
 			newTop = if newColour is @ourColour then 0 else 200
@@ -159,6 +188,7 @@ define [
 			@model
 				.on('change:pencilColour', @_changePencilColour)
 				.on('change:pencilWidth', @_changePencilWidth)
+				.on('change:erasing', @_changeErasing)
 
 		afterRender: ->
 			self = @
@@ -188,5 +218,8 @@ define [
 
 		_changePencilWidth: (model, newWidth) =>
 			@sketchpad.pen().width newWidth
+
+		_changeErasing: (model, newErasing) =>
+			@sketchpad.editing if newErasing then 'erase' else yes
 
 	Sketch
