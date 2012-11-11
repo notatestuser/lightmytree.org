@@ -55,7 +55,7 @@ define [
 				title: 'Repeat stroke'
 				placement: 'bottom'
 			@$eraser.tooltip
-				title: 'Erase lines (click lines to erase)'
+				title: 'Erase lines (click to erase)'
 				placement: 'top'
 
 		_toggleErasing: ->
