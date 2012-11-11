@@ -8,6 +8,18 @@ define [
 
 	Sketch = app.module()
 
+	class Sketch.Model extends Backbone.Model
+		defaults:
+			pencilWidth: 5
+			pencilColour: '#000000'
+			erasing: no
+
+		initialize: (options) ->
+			@set('tree', options.tree) if options.tree
+
+		tree: ->
+			@get('tree')
+
 	class Sketch.Views.Workspace extends Backbone.View
 		template: "sketch/workspace"
 		className: "workspace-view"
@@ -22,6 +34,48 @@ define [
 					.fadeIn('slow')
 					.slideDown('slow')
 
+	class Sketch.Views.EraserPanel extends Backbone.View
+		template: "sketch/eraser-panel"
+		className: "eraser-panel-view"
+
+		events:
+			"click .eraser": "_toggleErasing"
+			"click .btn-undo": "_attemptUndo"
+			"click .btn-redo": "_attemptRedo"
+
+		initialize: ->
+			@model.on 'change:erasing', @_changeErasing
+
+		afterRender: ->
+			@$eraser = @$('.eraser')
+			@$('.btn-undo').tooltip
+				title: 'Undo last stroke'
+				placement: 'top'
+			@$('.btn-redo').tooltip
+				title: 'Repeat stroke'
+				placement: 'bottom'
+			@$eraser.tooltip
+				title: 'Erase lines (click to erase)'
+				placement: 'top'
+
+		_toggleErasing: ->
+			erasing = @model.get 'erasing'
+			@model.set
+				erasing: not erasing
+				pencilColour: '#000001'
+
+		_changeErasing: (model, erasing) =>
+			if erasing
+				@$eraser.addClass 'selected'
+			else
+				@$eraser.removeClass 'selected'
+
+		_attemptUndo: ->
+			@model.trigger 'undo'
+
+		_attemptRedo: ->
+			@model.trigger 'redo'
+
 	class Sketch.Views.Toolkit extends Backbone.View
 		template: "sketch/tools"
 		className: "sketchpad-tools span12"
@@ -34,29 +88,58 @@ define [
 		afterRender: ->
 			for width in Toolkit.PencilWidths
 				@insertView '.pencil-config', new Sketch.Views.PencilWidth
+					model: @model
 					width: width
 				.render()
 			for i in [0..4]
 				@insertView '.pencil-case', new Sketch.Views.Pencil
+					model: @model
 					position: i
 					pencilFloat: @pencilFloat
-				.on('select', @selectPencil)
 				.render()
-
-		selectPencil: (pencil) ->
-			console.log arguments
 
 	class Sketch.Views.PencilWidth extends Backbone.View
 		className: "thumbnail"
 
+		events:
+			"click": "_setThisWidth"
+
 		initialize: (options) ->
 			@width = options.width or 10
+			@model
+				.on('change:pencilColour', @_changePencilColour)
+				.on('change:pencilWidth', @_changePencilWidth)
+				.on('change:erasing', @_changeErasing)
 
 		afterRender: ->
 			$('<div class="colour-blob"></div>')
 				.width(@width)
 				.height(@width)
 				.appendTo(@$el)
+			@_changePencilColour null, @model.get('pencilColour')
+			@_changePencilWidth null, @model.get('pencilWidth')
+			@$el.tooltip
+				title: 'Change pencil thickness'
+				placement: 'top'
+
+		_setThisWidth: ->
+			if @width
+				@model.set 'pencilWidth', @width
+
+		_changePencilColour: (model, newColour) =>
+			@$('.colour-blob').css backgroundColor: newColour
+
+		_changePencilWidth: (model, newWidth) =>
+			if newWidth is @width
+				@$el.addClass 'selected'
+			else
+				@$el.removeClass 'selected'
+
+		_changeErasing: (model, newErasing) =>
+			if newErasing
+				@$el.addClass 'disabled'
+			else if not newErasing
+				@$el.removeClass 'disabled'
 
 	class Sketch.Views.Pencil extends Backbone.View
 		template: "sketch/pencil"
@@ -65,6 +148,7 @@ define [
 		@PencilColours = _.shuffle [
 			"pencil-blue"
 			"pencil-green"
+			"pencil-darkgreen"
 			"pencil-yellow"
 			"pencil-purple"
 			"pencil-pink"
@@ -72,12 +156,13 @@ define [
 		]
 
 		events:
-			"click": "_selected"
+			"click": "_setThisColour"
 
 		initialize: (options) ->
 			@position = options.position or 0
 			@pencilFloat = options.pencilFloat or 'left'
-			@ourClass = Pencil.PencilColours.pop() or "pencil-blue"
+			@ourClass = Pencil.PencilColours.pop() or 'pencil-blue'
+			@model.on 'change:pencilColour', @_changePencilColour
 
 		beforeRender: ->
 			@$el.addClass @ourClass
@@ -91,26 +176,44 @@ define [
 				zIndex: 100 - (@position * 10)
 			@$el.css @pencilFloat, (@position * (@$el.outerWidth() - 1))
 
-			# animate box slide out
+			# animate slide out in a little bit
 			setTimeout =>
 				@$el.animate top: wouldBeOffset, 1500
 			, 200
 
-		_selected: ->
-			@trigger 'select', @
+		_setThisColour: ->
+			if @ourColour
+				@model.set
+					pencilColour: @ourColour
+					erasing: no
+
+		_changePencilColour: (model, newColour) =>
+			newTop = if newColour is @ourColour then 0 else 200
+			@$el.animate top: newTop, 'fast'
 
 	class Sketch.Views.Sketchpad extends Backbone.View
+		initialize: ->
+			@model
+				.on('change:pencilColour', @_changePencilColour)
+				.on('change:pencilWidth', @_changePencilWidth)
+				.on('change:erasing', @_changeErasing)
+				.on('undo', @_attemptUndo)
+				.on('redo', @_attemptRedo)
+
 		afterRender: ->
 			self = @
 			$container = @$container = @$el
 			new Raphael $container[0], $container.width(), $container.height(), ->
 				sketchpad = self.sketchpad = Raphael.sketchpad @,
-					strokes: self.model.get('strokes')
+					strokes: self.model.tree().get('strokes')
 				sketchpad.change ->
-					self.model.save
+					self.model.tree().save
 						strokes: strokes = sketchpad.strokes()
 						viewBoxWidth: $container.width()
 						viewBoxHeight: $container.height()
+				pen = sketchpad.pen()
+				pen.color self.model.get('pencilColour')
+				pen.width self.model.get('pencilWidth')
 
 				# bind resize handler here in lieu of watching the element itself
 				$(window).resize self.resizeCanvas.bind(self)
@@ -119,5 +222,20 @@ define [
 			if @$container
 				console.log "New canvas dimensions: #{@$container.width()} #{@$container.height()}"
 				@sketchpad.paper().setSize @$container.width(), @$container.height()
+
+		_changePencilColour: (model, newColour) =>
+			@sketchpad.pen().color newColour
+
+		_changePencilWidth: (model, newWidth) =>
+			@sketchpad.pen().width newWidth
+
+		_changeErasing: (model, newErasing) =>
+			@sketchpad.editing if newErasing then 'erase' else yes
+
+		_attemptUndo: =>
+			@sketchpad.undo() if @sketchpad and @sketchpad.undoable()
+
+		_attemptRedo: =>
+			@sketchpad.redo() if @sketchpad and @sketchpad.redoable()
 
 	Sketch
