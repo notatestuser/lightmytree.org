@@ -37,6 +37,14 @@ define [
 		template: "sketch/eraser-panel"
 		className: "eraser-panel-view"
 
+		afterRender: ->
+			@$('.btn-undo').tooltip
+				title: 'Undo last stroke'
+				placement: 'top'
+			@$('.btn-redo').tooltip
+				title: 'Repeat stroke'
+				placement: 'bottom'
+
 	class Sketch.Views.Toolkit extends Backbone.View
 		template: "sketch/tools"
 		className: "sketchpad-tools span12"
@@ -76,6 +84,9 @@ define [
 				.width(@width)
 				.height(@width)
 				.appendTo(@$el)
+			@$el.tooltip
+				title: 'Change pencil thickness'
+				placement: 'bottom'
 			@_changePencilColour null, @model.get('pencilColour')
 			@_changePencilWidth null, @model.get('pencilWidth')
 
