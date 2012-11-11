@@ -1,7 +1,7 @@
 @import '../vendor/bootstrap/css/bootstrap.min.css'
 @import url('https://fonts.googleapis.com/css?family=Lobster');
 
-// Mixins
+// Prefixer mixins
 
 box-shadow(x, y, z, colour)
 	-webkit-box-shadow x y z colour
@@ -26,6 +26,13 @@ transition(a, b, c)
 	transition a b c
 	-webkit-transition a b c
 	-moz-transition a b c
+
+box-sizing(sizing)
+	-webkit-box-sizing sizing
+	-moz-box-sizing sizing
+	-ms-box-sizing sizing
+
+// Style builders
 
 coloured-pencil($colour)
 	$tinted = darken($colour, 15)
@@ -148,6 +155,9 @@ header
 		.sketchpad-tools-left
 			.box
 				right 0
+			.pencil-config
+				.thumbnail
+					display none !important
 
 		.sketchpad-tools
 			height 100%
@@ -156,6 +166,39 @@ header
 			background transparent url('../img/magical-pencil-shadow.png') no-repeat scroll
 			background-size 240px 20px
 			background-position -13px 448px
+
+			.pencil-config
+				width 100%
+				height 130px
+				margin auto auto
+				padding-top 25px
+				box-sizing(border-box)
+
+				.thumbnail
+					display table-cell
+					border-radius 0
+					width 40px
+					height 40px
+					vertical-align middle
+					text-align center
+					cursor pointer
+					&:first-child
+						border-top-left-radius 4px
+						border-bottom-left-radius 4px
+					&:last-child
+						border-top-right-radius 4px
+						border-bottom-right-radius 4px
+					&:hover
+						.colour-blob
+							opacity 1
+
+				.colour-blob
+					width 10px
+					height 10px
+					margin auto auto
+					background black
+					border-radius 50%
+					opacity 0.6
 
 			.pencil-case
 				height 325px

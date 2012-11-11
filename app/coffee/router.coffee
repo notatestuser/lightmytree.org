@@ -1,11 +1,12 @@
 define [
-	"app",
-	"modules/tree",
-	"modules/charity",
+	"app"
+	"modules/tree"
+	"modules/charity"
+	"modules/sketch"
 	"modules/modal"
 ],
 
-(app, Tree, Charity, Modal) ->
+(app, Tree, Charity, Sketch, Modal) ->
 
 	# Defining the application router, you can attach sub routers here.
 	Router = Backbone.Router.extend
@@ -34,14 +35,14 @@ define [
 
 		sketch: ->
 			app.useLayout('sketch_page').setViews
-				".sketchpad": new Tree.Views.SketchWorkspace
+				".sketchpad": new Sketch.Views.Workspace
 					model: @newTree
 					views:
-						".sketchpad-editor": new Tree.Views.Sketchpad
+						".sketchpad-editor": new Sketch.Views.Sketchpad
 							model: @newTree
-						".sketchpad-tools-left": new Tree.Views.SketchToolkit
+						".sketchpad-tools-left": new Sketch.Views.Toolkit
 							pencilFloat: 'right'
-						".sketchpad-tools-right": new Tree.Views.SketchToolkit
+						".sketchpad-tools-right": new Sketch.Views.Toolkit
 							pencilFloat: 'left'
 				".charity_picker": new Charity.Views.Picker
 					collection: @recentCharities
