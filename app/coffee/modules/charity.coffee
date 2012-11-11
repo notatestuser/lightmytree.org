@@ -67,14 +67,14 @@ define [
 		tagName: "li"
 
 		events:
-			"click input": "toggleSelected"
+			"click": "toggleSelected"
 
 		serialize: ->
 			@model.toJSON()
 
 		renderSelected: ->
 			@selected = yes
-			@$el.css('background-color', 'lightgreen')
+			@$el.css('background-color', 'rgba(0, 255, 0, 0.2)')
 			@$("input").prop('checked', true)
 
 		renderUnselected: ->
@@ -83,7 +83,7 @@ define [
 			@$("input").prop('checked', false)
 
 		toggleSelected: ->
-			if @$("input").is(":checked")
+			if not @selected
 				@trigger('selected')
 				@renderSelected()
 			else
