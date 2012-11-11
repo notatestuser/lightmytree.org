@@ -1,6 +1,7 @@
 @import '../vendor/bootstrap/css/bootstrap.min.css'
 @import url('https://fonts.googleapis.com/css?family=Lobster');
 
+// Mixins
 
 box-shadow(x, y, z, colour)
 	-webkit-box-shadow x y z colour
@@ -14,9 +15,21 @@ transform-rotate(degs)
 	-ms-transform: rotate(degs)
 	transform: rotate(degs)
 
+transform-rotateY(degs)
+	-webkit-transform: rotateY(degs)
+	-moz-transform: rotateY(degs)
+	-o-transform: rotateY(degs)
+	-ms-transform: rotateY(degs)
+	transform: rotateY(degs)
+
+transition(a, b, c)
+	transition a b c
+	-webkit-transition a b c
+	-moz-transition a b c
+
 coloured-pencil($colour)
-	$original = darken($colour, 15)
-	$darker = darken($original, 10)
+	$tinted = darken($colour, 15)
+	$darker = darken($tinted, 10)
 	$darkest = darken($darker, 10)
 	.darkest-bb
 		border-bottom-color $darkest !important
@@ -25,13 +38,22 @@ coloured-pencil($colour)
 	.darker-mb
 		border-left-color $darkest !important
 		border-bottom-color $darker !important
-		border-right-color $original !important
+		border-right-color $tinted !important
 	.darker-bg
 		background-color $darker
 	.original-bb
-		border-bottom-color $original !important
+		border-bottom-color $tinted !important
 	.original-bg
-		background-color $original
+		background-color $tinted
+	&:hover
+		.darkest-bg
+			background-color $darker !important
+		.darker-bg
+			background-color $tinted !important
+		.original-bg
+			background-color $colour !important
+
+// Page styles
 
 html
 	overflow-x hidden
@@ -129,7 +151,7 @@ header
 
 		.sketchpad-tools
 			height 100%
-			padding 0 20px
+			padding 0 17px 0 16px
 
 			background transparent url('../img/magical-pencil-shadow.png') no-repeat scroll
 			background-size 240px 20px
@@ -145,7 +167,7 @@ header
 					position absolute
 					bottom 0
 					height 4px
-					width 89%
+					width 85.6%
 					z-index 200
 
 					background -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(82,69,64,0.8) 100%)
@@ -164,7 +186,7 @@ header
 			.pencil-purple
 				coloured-pencil(#FA64FB)
 			.pencil-pink
-				coloured-pencil(#FC4A98)
+				coloured-pencil(#F819F9)
 			.pencil-orange
 				coloured-pencil(#EE6401)
 
@@ -294,13 +316,18 @@ header
 			box-shadow(0, 0, 0, transparent)
 			background transparent url('../img/stocking-rotated-tag.png') no-repeat scroll 50% 2.3%
 			background-size 130px
-			padding-top 200px
+			padding 200px 15px 0 15px
 			cursor pointer
 
 			&:first-child
 				background-position 50% 1.5%
 				.floating-logo
 					top 97px !important
+				.pin
+					height 20px
+					top 10px
+					left -8px
+					transform-rotateY(180deg)
 			&:nth-child(3)
 				background-position 50% 1.8%
 				.floating-logo
@@ -309,10 +336,32 @@ header
 				background-position 50% -1px
 				.floating-logo
 					top 91px !important
+				.pin
+					height 20px
+					top 0px
+					right -8px
+			&.selected
+				background-color rgba(0, 255, 0, 0.2)
+				h4
+					text-shadow #eeffee 1px 1px 0px
+				p
+					text-shadow none !important
 
 			h4,p
 				font-size 13px
 				text-shadow white 1px 1px 0px
+			h4
+				overflow hidden
+				max-height 20px
+			p
+				margin-right 0 !important
+				text-align justify
+
+			.pin
+				position absolute
+				width 20px
+				background transparent url('../img/green-pin.svg') no-repeat scroll
+				background-size cover
 
 			.floating-logo
 				position absolute

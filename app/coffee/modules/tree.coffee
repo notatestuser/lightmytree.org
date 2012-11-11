@@ -77,7 +77,7 @@ define [
 			@fetch()
 
 		parse: (docs) ->
-			(_.extend(doc, id: doc._id) for doc in docs)
+			_.extend(doc, id: doc._id) for doc in docs
 			# example handling of an error response from the server
 			#if obj.data.message isnt 'Error' then obj.data else @models
 
@@ -89,7 +89,7 @@ define [
 		className: "workspace-view"
 
 		initialize: ->
-			@model.on 'change', => @showSavedAlert()
+			# @model.on 'change', => @showSavedAlert()
 
 		showSavedAlert: ->
 			if not @shownSavedAlert
@@ -129,11 +129,14 @@ define [
 		initialize: (options) ->
 			@position = options.position or 0
 			@pencilFloat = options.pencilFloat or 'left'
+			@ourClass = SketchPencil.PencilColours.pop() or "pencil-blue"
 
 		beforeRender: ->
-			@$el.addClass(SketchPencil.PencilColours.pop() or "pencil-blue")
+			@$el.addClass @ourClass
 
 		afterRender: ->
+			@ourColour = @$('.original-bg').css 'background-color'
+
 			wouldBeOffset = (@position * 35)
 			@$el.css
 				top: (@$el.parent().outerHeight() - 60)

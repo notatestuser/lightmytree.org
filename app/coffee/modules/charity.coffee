@@ -74,12 +74,12 @@ define [
 
 		renderSelected: ->
 			@selected = yes
-			@$el.css('background-color', 'rgba(0, 255, 0, 0.2)')
+			@$el.addClass 'selected'
 			@$("input").prop('checked', true)
 
 		renderUnselected: ->
 			@selected = no
-			@$el.css('background-color', 'transparent')
+			@$el.removeClass 'selected'
 			@$("input").prop('checked', false)
 
 		toggleSelected: ->
