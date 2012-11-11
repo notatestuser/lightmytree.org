@@ -1,4 +1,6 @@
-@import "../vendor/bootstrap/css/bootstrap.min.css"
+@import '../vendor/bootstrap/css/bootstrap.min.css'
+@import url('https://fonts.googleapis.com/css?family=Lobster');
+
 
 box-shadow(x, y, z, colour)
 	-webkit-box-shadow x y z colour
@@ -12,10 +14,29 @@ transform-rotate(degs)
 	-ms-transform: rotate(degs)
 	transform: rotate(degs)
 
+coloured-pencil($colour)
+	$original = darken($colour, 15)
+	$darker = darken($original, 10)
+	$darkest = darken($darker, 10)
+	.darkest-bb
+		border-bottom-color $darkest !important
+	.darkest-bg
+		background-color $darkest
+	.darker-mb
+		border-left-color $darkest !important
+		border-bottom-color $darker !important
+		border-right-color $original !important
+	.darker-bg
+		background-color $darker
+	.original-bb
+		border-bottom-color $original !important
+	.original-bg
+		background-color $original
+
 
 body
-	background: #EEECDF
-	// padding-top 40px
+	background #EEECDF
+	overflow-x hidden
 
 header
 	text-align center
@@ -34,6 +55,7 @@ header
 	margin 0 auto 0 auto
 
 	h2
+		font-family 'Lobster',cursive
 		font-size 1.3rem
 
 	.sketchpad
@@ -41,7 +63,13 @@ header
 		.alert-saved
 			margin-top 10px
 
+		.workspace-view
+			display inline-block
+			width 100%
+			height 100%
+
 		.sketchpad-editor
+			z-index 30
 			-moz-user-select text
 			cursor crosshair
 			border 1px solid black
@@ -53,8 +81,14 @@ header
 			border 1px solid rgba(0, 0, 0, 0.150)
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.18))
 
+			> div
+				z-index 40
+				height 100%
+				*
+					z-index 50
+
 		.sketchpad-editor:before
-			z-index: -1
+			z-index 20
 			position: absolute
 			top: -2px
 			left: 0
@@ -63,13 +97,11 @@ header
 			height: 100%
 			background-color: whiteSmoke
 			border: 1px solid rgba(0, 0, 0, 0.150)
-
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.19))
-
 			transform-rotate(2deg)
 
 		.sketchpad-editor:after
-			z-index -2
+			z-index 10
 			position absolute
 			top 1px
 			left -2px
@@ -78,17 +110,172 @@ header
 			height 100%
 			background-color whiteSmoke
 			border 1px solid rgba(0, 0, 0, 0.150)
-
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.2))
-
 			transform-rotate(358deg)
 
-	ul.charity-picker-view
-		list-style-type none
-		margin 0
+		.sketchpad-tools-right
+			.box
+				left 0
+		.sketchpad-tools-left
+			.box
+				right 0
 
-		> li
-			border 1px solid black
+		.sketchpad-tools
+			height 100%
+			padding 0 20px
+
+			background transparent url('../img/magical-pencil-shadow.png') no-repeat scroll
+			background-size 240px 20px
+			background-position -13px 448px
+
+			.pencil-case
+				height 325px
+				overflow hidden
+				position relative
+				margin 0 8px
+
+				.box
+					position absolute
+					bottom 0
+					height 4px
+					width 89%
+					z-index 200
+
+					background -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(82,69,64,0.8) 100%)
+					background -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(82,69,64,0.8)))
+					background -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
+					background -o-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
+					background -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
+					background linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
+
+			.pencil-blue
+				coloured-pencil(#3FC1FF)
+			.pencil-green
+				coloured-pencil(#C7E20A)
+			.pencil-yellow
+				coloured-pencil(#FFCC00)
+			.pencil-purple
+				coloured-pencil(#FA64FB)
+			.pencil-pink
+				coloured-pencil(#FC4A98)
+			.pencil-orange
+				coloured-pencil(#EE6401)
+
+			.pencil
+				height 270px
+				width 30px
+				position absolute
+				cursor pointer
+
+				div
+					outline 1px solid transparent
+
+				> div
+					clear both
+
+				// nib section
+				> div:first-child
+					> div
+						height 15px
+						width 33.6%
+						margin auto auto
+						> div
+							float left
+							border-bottom 15px solid
+						> div:first-child
+							border-left 3px solid transparent
+							margin-left 1px
+						> div:nth-child(2)
+							border-left 1px solid
+							border-right 1px solid
+						> div:last-child
+							border-right 3px solid transparent
+
+				// sharpened section
+				> div:nth-child(2)
+					> div
+						float left
+						width 0px
+						height 0px
+					> div:first-child
+						border-left 10px solid transparent
+						border-bottom 40px solid rgb(204, 182, 135)
+					> div:nth-child(2)
+						width 4px !important
+						border-bottom 40px solid rgb(229, 202, 173)
+						border-left 3px solid rgb(204, 182, 135)
+						border-right 3px solid rgb(255, 231, 191)
+					> div:last-child
+						border-bottom 40px solid rgb(255, 231, 191)
+						border-right 10px solid transparent
+
+				// long section
+				> div:last-child
+					height 100%
+					width 30px
+					> div
+						float left
+						width 33.3%
+						height 100%
+						margin-top -4px
+						padding-bottom 5px
+						border-top-left-radius 5px
+						border-top-right-radius 5px
+
+
+	.sketch_page
+		.row-sketchpad
+			margin-bottom -50px
+
+		.row-picker
+			padding-top 100px
+			position relative
+
+			background #eeecdf
+			background -moz-linear-gradient(left,  #eeecdf 0%, #edead7 24%, #eae6cc 50%, #edead7 79%, #eeecdf 100%)
+			background -webkit-gradient(linear, left top, right top, color-stop(0%,#eeecdf), color-stop(24%,#edead7), color-stop(50%,#eae6cc), color-stop(79%,#edead7), color-stop(100%,#eeecdf))
+			background -webkit-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
+			background -o-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
+			background -ms-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
+			background linear-gradient(to right,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
+
+			.hr
+				position absolute
+				top 0
+				left -5000px
+				width 9999px
+				height 1px
+				background transparent
+				border-top 1px solid #ccc
+				box-shadow(-1px, -1px, 8px, #ccc)
+			h2
+				display block
+				font-size 2.1em
+				text-align center
+				padding-left 18px
+				text-shadow 1px 1px #ffeeee
+			h2:before
+				content ""
+				display inline-block
+				width 64px
+				height 32px
+				background transparent url("../img/xmas-header-decor.png") no-repeat scroll 0px 0px
+			h2:after
+				content ""
+				display inline-block
+				width 94px
+				height 32px
+				background transparent url("../img/xmas-header-decor.png") no-repeat scroll -54px 2px
+			form
+				margin-top 15px
+
+		.row-share-button
+			margin-top 30px
+			margin-bottom 60px
+
+	ul.charities
+		list-style-type none
+		margin-top 25px
 
 	.tree-share-view
 		.share_preview

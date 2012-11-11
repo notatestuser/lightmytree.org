@@ -46,7 +46,7 @@ define [
 			path += ".html"
 			console.log 'Using template: ' + path
 
-			return app.templates[path] if app.templates[path]?
+			return app.templates[path] if app.templates[path]
 			console.log 'Template cache MISS, fetching'
 
 			done = @async()

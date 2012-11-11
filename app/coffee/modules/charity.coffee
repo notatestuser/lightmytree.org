@@ -57,7 +57,7 @@ define [
 
 		afterRender: ->
 			@typeaheadCharities.on 'reset', =>
-				@$('.search-query').typeahead
+				@$('.search-charities-typeahead').typeahead
 					source: @typeaheadCharities.getSource()
 			.fetch()
 

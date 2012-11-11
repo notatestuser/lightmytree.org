@@ -84,14 +84,12 @@ define [
 		comparator: (tree) ->
 			-new Date(tree.get 'updated_at')
 
-	class Tree.Views.Sketch extends Backbone.View
+	class Tree.Views.SketchWorkspace extends Backbone.View
 		template: "tree/sketch"
-		className: "sketchpad-view"
+		className: "workspace-view"
 
-		resizeCanvas: ->
-			if @$container
-				console.log "New canvas dimensions: #{@$container.width()} #{@$container.height()}"
-				@sketchpad.paper().setSize @$container.width(), @$container.height()
+		initialize: ->
+			@model.on 'change', => @showSavedAlert()
 
 		showSavedAlert: ->
 			if not @shownSavedAlert
@@ -100,21 +98,73 @@ define [
 					.fadeIn('slow')
 					.slideDown('slow')
 
+	class Tree.Views.SketchToolkit extends Backbone.View
+		template: "tree/sketch/tools"
+		className: "sketchpad-tools span12"
+
+		initialize: (options) ->
+			@pencilFloat = options.pencilFloat or 'left'
+			console.log @pencilFloat
+
+		afterRender: ->
+			for i in [0..4]
+				@insertView '.pencil-case', new Tree.Views.SketchPencil
+					position: i
+					pencilFloat: @pencilFloat
+				.render()
+
+	class Tree.Views.SketchPencil extends Backbone.View
+		@PencilColours = _.shuffle [
+			"pencil-blue"
+			"pencil-green"
+			"pencil-yellow"
+			"pencil-purple"
+			"pencil-pink"
+			"pencil-orange"
+		]
+
+		template: "tree/sketch/pencil"
+		className: "pencil"
+
+		initialize: (options) ->
+			@position = options.position or 0
+			@pencilFloat = options.pencilFloat or 'left'
+
+		beforeRender: ->
+			@$el.addClass(SketchPencil.PencilColours.pop() or "pencil-blue")
+
+		afterRender: ->
+			wouldBeOffset = (@position * 35)
+			@$el.css
+				top: (@$el.parent().outerHeight() - 60)
+				zIndex: 100 - (@position * 10)
+			@$el.css @pencilFloat, (@position * (@$el.outerWidth() - 1))
+
+			# animate box slide out
+			setTimeout =>
+				@$el.animate top: wouldBeOffset, 1500
+			, 200
+
+	class Tree.Views.Sketchpad extends Backbone.View
 		afterRender: ->
 			self = @
-			$container = @$container = @$('.sketchpad-editor')
+			$container = @$container = @$el
 			new Raphael $container[0], $container.width(), $container.height(), ->
 				sketchpad = self.sketchpad = Raphael.sketchpad @,
 					strokes: self.model.get('strokes')
 				sketchpad.change ->
-					self.model.set
+					self.model.save
 						strokes: strokes = sketchpad.strokes()
 						viewBoxWidth: $container.width()
 						viewBoxHeight: $container.height()
-					self.showSavedAlert()
 
 				# bind resize handler here in lieu of watching the element itself
 				$(window).resize self.resizeCanvas.bind(self)
+
+		resizeCanvas: ->
+			if @$container
+				console.log "New canvas dimensions: #{@$container.width()} #{@$container.height()}"
+				@sketchpad.paper().setSize @$container.width(), @$container.height()
 
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"

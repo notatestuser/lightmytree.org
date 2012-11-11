@@ -34,8 +34,15 @@ define [
 
 		sketch: ->
 			app.useLayout('sketch_page').setViews
-				".sketchpad": new Tree.Views.Sketch
+				".sketchpad": new Tree.Views.SketchWorkspace
 					model: @newTree
+					views:
+						".sketchpad-editor": new Tree.Views.Sketchpad
+							model: @newTree
+						".sketchpad-tools-left": new Tree.Views.SketchToolkit
+							pencilFloat: 'right'
+						".sketchpad-tools-right": new Tree.Views.SketchToolkit
+							pencilFloat: 'left'
 				".charity_picker": new Charity.Views.Picker
 					collection: @recentCharities
 					treeModel: @newTree
