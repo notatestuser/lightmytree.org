@@ -39,7 +39,9 @@ define [
 		className: "eraser-panel-view"
 
 		events:
-			"click": "_toggleErasing"
+			"click .eraser": "_toggleErasing"
+			"click .btn-undo": "_attemptUndo"
+			"click .btn-redo": "_attemptRedo"
 
 		initialize: ->
 			@model.on 'change:erasing', @_changeErasing
@@ -67,6 +69,12 @@ define [
 				@$eraser.addClass 'selected'
 			else
 				@$eraser.removeClass 'selected'
+
+		_attemptUndo: ->
+			@model.trigger 'undo'
+
+		_attemptRedo: ->
+			@model.trigger 'redo'
 
 	class Sketch.Views.Toolkit extends Backbone.View
 		template: "sketch/tools"
@@ -189,6 +197,8 @@ define [
 				.on('change:pencilColour', @_changePencilColour)
 				.on('change:pencilWidth', @_changePencilWidth)
 				.on('change:erasing', @_changeErasing)
+				.on('undo', @_attemptUndo)
+				.on('redo', @_attemptRedo)
 
 		afterRender: ->
 			self = @
@@ -221,5 +231,11 @@ define [
 
 		_changeErasing: (model, newErasing) =>
 			@sketchpad.editing if newErasing then 'erase' else yes
+
+		_attemptUndo: =>
+			@sketchpad.undo() if @sketchpad and @sketchpad.undoable()
+
+		_attemptRedo: =>
+			@sketchpad.redo() if @sketchpad and @sketchpad.redoable()
 
 	Sketch
