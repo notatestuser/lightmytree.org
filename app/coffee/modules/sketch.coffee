@@ -44,6 +44,9 @@ define [
 			@$('.btn-redo').tooltip
 				title: 'Repeat stroke'
 				placement: 'bottom'
+			@$('.eraser').tooltip
+				title: 'Erase lines'
+				placement: 'top'
 
 	class Sketch.Views.Toolkit extends Backbone.View
 		template: "sketch/tools"
@@ -84,11 +87,11 @@ define [
 				.width(@width)
 				.height(@width)
 				.appendTo(@$el)
-			@$el.tooltip
-				title: 'Change pencil thickness'
-				placement: 'bottom'
 			@_changePencilColour null, @model.get('pencilColour')
 			@_changePencilWidth null, @model.get('pencilWidth')
+			@$el.tooltip
+				title: 'Change pencil thickness'
+				placement: 'top'
 
 		_setThisWidth: ->
 			if @width
