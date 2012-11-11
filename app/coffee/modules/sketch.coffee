@@ -33,6 +33,10 @@ define [
 					.fadeIn('slow')
 					.slideDown('slow')
 
+	class Sketch.Views.EraserPanel extends Backbone.View
+		template: "sketch/eraser-panel"
+		className: "eraser-panel-view"
+
 	class Sketch.Views.Toolkit extends Backbone.View
 		template: "sketch/tools"
 		className: "sketchpad-tools span12"
