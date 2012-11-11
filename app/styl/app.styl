@@ -33,10 +33,10 @@ coloured-pencil($colour)
 	.original-bg
 		background-color $original
 
-
-body
+html
 	overflow-x hidden
 
+body
 	background #eeecdf
 	background -moz-linear-gradient(left,  #eeecdf 0%, #edead7 24%, #eae6cc 50%, #edead7 79%, #eeecdf 100%)
 	background -webkit-gradient(linear, left top, right top, color-stop(0%,#eeecdf), color-stop(24%,#edead7), color-stop(50%,#eae6cc), color-stop(79%,#edead7), color-stop(100%,#eeecdf))
@@ -258,6 +258,7 @@ header
 			h2
 				display block
 				font-size 2.1em
+				line-height 1.9em
 				text-align center
 				padding-left 18px
 				text-shadow 1px 1px #ffeeee
@@ -283,6 +284,45 @@ header
 	ul.charities
 		list-style-type none
 		margin-top 25px
+
+		background transparent url('../img/stocking-wire.svg') no-repeat scroll -6px 4px
+		background-size: 107%;
+
+		> li
+			position relative
+			border none
+			background transparent url('../img/stocking-rotated-tag.png') no-repeat scroll 50% 2.3%
+			background-size 130px
+			padding-top 200px
+
+			&:first-child
+				background-position 50% 1.5%
+				.floating-logo
+					top 97px !important
+			&:nth-child(3)
+				background-position 50% 1.8%
+				.floating-logo
+					top 99px !important
+			&:last-child
+				background-position 50% -1px
+				.floating-logo
+					top 91px !important
+
+			h4
+				font-size 13px
+				text-shadow white 1px 1px 0px
+
+			.floating-logo
+				position absolute
+				width 55px
+				height 35px
+				top 102px
+				left 61px
+				transform-rotate(26deg)
+				background-color transparent
+				background-position right center
+				background-repeat no-repeat
+				background-size contain
 
 	.tree-share-view
 		.share_preview
