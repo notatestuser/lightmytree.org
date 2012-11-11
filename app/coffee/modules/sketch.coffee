@@ -55,24 +55,38 @@ define [
 					pencilFloat: @pencilFloat
 				.render()
 
-		selectPencil: (pencil) ->
-			console.log arguments
-
 	class Sketch.Views.PencilWidth extends Backbone.View
 		className: "thumbnail"
 
+		events:
+			"click": "_setThisWidth"
+
 		initialize: (options) ->
 			@width = options.width or 10
-			@model.on 'change:pencilColour', @_changePencilColour
+			@model
+				.on('change:pencilColour', @_changePencilColour)
+				.on('change:pencilWidth', @_changePencilWidth)
 
 		afterRender: ->
 			$('<div class="colour-blob"></div>')
 				.width(@width)
 				.height(@width)
 				.appendTo(@$el)
+			@_changePencilColour null, @model.get('pencilColour')
+			@_changePencilWidth null, @model.get('pencilWidth')
+
+		_setThisWidth: ->
+			if @width
+				@model.set 'pencilWidth', @width
 
 		_changePencilColour: (model, newColour) =>
 			@$('.colour-blob').css backgroundColor: newColour
+
+		_changePencilWidth: (model, newWidth) =>
+			if newWidth is @width
+				@$el.addClass 'selected'
+			else
+				@$el.removeClass 'selected'
 
 	class Sketch.Views.Pencil extends Backbone.View
 		template: "sketch/pencil"
@@ -89,7 +103,7 @@ define [
 		]
 
 		events:
-			"click": "_selected"
+			"click": "_setThisColour"
 
 		initialize: (options) ->
 			@position = options.position or 0
@@ -114,7 +128,7 @@ define [
 				@$el.animate top: wouldBeOffset, 1500
 			, 200
 
-		_selected: ->
+		_setThisColour: ->
 			if @ourColour
 				@model.set 'pencilColour', @ourColour
 
@@ -124,7 +138,9 @@ define [
 
 	class Sketch.Views.Sketchpad extends Backbone.View
 		initialize: ->
-			@model.on 'change:pencilColour', @_changePencilColour
+			@model
+				.on('change:pencilColour', @_changePencilColour)
+				.on('change:pencilWidth', @_changePencilWidth)
 
 		afterRender: ->
 			self = @
@@ -137,6 +153,9 @@ define [
 						strokes: strokes = sketchpad.strokes()
 						viewBoxWidth: $container.width()
 						viewBoxHeight: $container.height()
+				pen = sketchpad.pen()
+				pen.color self.model.get('pencilColour')
+				pen.width self.model.get('pencilWidth')
 
 				# bind resize handler here in lieu of watching the element itself
 				$(window).resize self.resizeCanvas.bind(self)
@@ -148,5 +167,8 @@ define [
 
 		_changePencilColour: (model, newColour) =>
 			@sketchpad.pen().color newColour
+
+		_changePencilWidth: (model, newWidth) =>
+			@sketchpad.pen().width newWidth
 
 	Sketch
