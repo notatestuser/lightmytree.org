@@ -19,10 +19,12 @@ define [
 		initialize: ->
 			models =
 				user: null # get authed user model here
-				newTree: new Tree.MyModel()
-				myTrees: new Tree.Collection null, '' # will return our stuff if authed
-				recentCharities: new Charity.RecentCharitiesCollection()
-				typeaheadCharities: new Charity.TypeaheadCollection()
+				_newTree: newTree = new Tree.MyModel()
+				_myTrees: new Tree.Collection null, '' # will return our stuff if authed
+				_recentCharities: new Charity.RecentCharitiesCollection()
+				_typeaheadCharities: new Charity.TypeaheadCollection()
+				_sketch: new Sketch.Model
+					tree: newTree
 
 			_.extend @, models
 
@@ -36,20 +38,20 @@ define [
 		sketch: ->
 			app.useLayout('sketch_page').setViews
 				".sketchpad": new Sketch.Views.Workspace
-					model: @newTree
+					model: @_sketch
 					views:
 						".sketchpad-editor": new Sketch.Views.Sketchpad
-							model: @newTree
+							model: @_sketch
 						".sketchpad-tools-left": new Sketch.Views.Toolkit
 							pencilFloat: 'right'
 						".sketchpad-tools-right": new Sketch.Views.Toolkit
 							pencilFloat: 'left'
 				".charity_picker": new Charity.Views.Picker
-					collection: @recentCharities
-					treeModel: @newTree
-					typeaheadCharities: @typeaheadCharities
+					collection: @_recentCharities
+					treeModel: @_newTree
+					typeaheadCharities: @_typeaheadCharities
 				".save": new Tree.Views.Save
-					model: @newTree
+					model: @_newTree
 				".authenticate_modal": new Modal.Views.Authenticate
 			.render()
 
@@ -61,12 +63,12 @@ define [
 		myTrees: ->
 			app.useLayout('my_trees_page').setViews
 				".share_my_tree": new Tree.Views.Share
-					model: @newTree
+					model: @_newTree
 					views:
 						".share_preview": new Tree.Views.Item
-							model: @newTree
+							model: @_newTree
 				".my_trees": new Tree.Views.List
-					collection: @myTrees
+					collection: @_myTrees
 				".authenticate_modal": new Modal.Views.Authenticate
 			.render()
 

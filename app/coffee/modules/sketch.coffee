@@ -8,6 +8,17 @@ define [
 
 	Sketch = app.module()
 
+	class Sketch.Model extends Backbone.Model
+		defaults:
+			pencilWidth: 5
+			pencilColour: '#000000'
+
+		initialize: (options) ->
+			@set('tree', options.tree) if options.tree
+
+		tree: ->
+			@get('tree')
+
 	class Sketch.Views.Workspace extends Backbone.View
 		template: "sketch/workspace"
 		className: "workspace-view"
@@ -105,9 +116,9 @@ define [
 			$container = @$container = @$el
 			new Raphael $container[0], $container.width(), $container.height(), ->
 				sketchpad = self.sketchpad = Raphael.sketchpad @,
-					strokes: self.model.get('strokes')
+					strokes: self.model.tree().get('strokes')
 				sketchpad.change ->
-					self.model.save
+					self.model.tree().save
 						strokes: strokes = sketchpad.strokes()
 						viewBoxWidth: $container.width()
 						viewBoxHeight: $container.height()
