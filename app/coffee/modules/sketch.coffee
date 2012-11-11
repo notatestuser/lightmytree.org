@@ -45,13 +45,14 @@ define [
 		afterRender: ->
 			for width in Toolkit.PencilWidths
 				@insertView '.pencil-config', new Sketch.Views.PencilWidth
+					model: @model
 					width: width
 				.render()
 			for i in [0..4]
 				@insertView '.pencil-case', new Sketch.Views.Pencil
+					model: @model
 					position: i
 					pencilFloat: @pencilFloat
-				.on('select', @selectPencil)
 				.render()
 
 		selectPencil: (pencil) ->
@@ -62,12 +63,16 @@ define [
 
 		initialize: (options) ->
 			@width = options.width or 10
+			@model.on 'change:pencilColour', @_changePencilColour
 
 		afterRender: ->
 			$('<div class="colour-blob"></div>')
 				.width(@width)
 				.height(@width)
 				.appendTo(@$el)
+
+		_changePencilColour: (model, newColour) =>
+			@$('.colour-blob').css backgroundColor: newColour
 
 	class Sketch.Views.Pencil extends Backbone.View
 		template: "sketch/pencil"
@@ -76,6 +81,7 @@ define [
 		@PencilColours = _.shuffle [
 			"pencil-blue"
 			"pencil-green"
+			"pencil-darkgreen"
 			"pencil-yellow"
 			"pencil-purple"
 			"pencil-pink"
@@ -88,7 +94,8 @@ define [
 		initialize: (options) ->
 			@position = options.position or 0
 			@pencilFloat = options.pencilFloat or 'left'
-			@ourClass = Pencil.PencilColours.pop() or "pencil-blue"
+			@ourClass = Pencil.PencilColours.pop() or 'pencil-blue'
+			@model.on 'change:pencilColour', @_changePencilColour
 
 		beforeRender: ->
 			@$el.addClass @ourClass
@@ -102,15 +109,23 @@ define [
 				zIndex: 100 - (@position * 10)
 			@$el.css @pencilFloat, (@position * (@$el.outerWidth() - 1))
 
-			# animate box slide out
+			# animate slide out in a little bit
 			setTimeout =>
 				@$el.animate top: wouldBeOffset, 1500
 			, 200
 
 		_selected: ->
-			@trigger 'select', @
+			if @ourColour
+				@model.set 'pencilColour', @ourColour
+
+		_changePencilColour: (model, newColour) =>
+			newTop = if newColour is @ourColour then 0 else 200
+			@$el.animate top: newTop, 'fast'
 
 	class Sketch.Views.Sketchpad extends Backbone.View
+		initialize: ->
+			@model.on 'change:pencilColour', @_changePencilColour
+
 		afterRender: ->
 			self = @
 			$container = @$container = @$el
@@ -130,5 +145,8 @@ define [
 			if @$container
 				console.log "New canvas dimensions: #{@$container.width()} #{@$container.height()}"
 				@sketchpad.paper().setSize @$container.width(), @$container.height()
+
+		_changePencilColour: (model, newColour) =>
+			@sketchpad.pen().color newColour
 
 	Sketch

@@ -43,8 +43,10 @@ define [
 						".sketchpad-editor": new Sketch.Views.Sketchpad
 							model: @_sketch
 						".sketchpad-tools-left": new Sketch.Views.Toolkit
+							model: @_sketch
 							pencilFloat: 'right'
 						".sketchpad-tools-right": new Sketch.Views.Toolkit
+							model: @_sketch
 							pencilFloat: 'left'
 				".charity_picker": new Charity.Views.Picker
 					collection: @_recentCharities
