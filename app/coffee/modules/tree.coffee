@@ -102,18 +102,39 @@ define [
 		template: "tree/sketch/tools"
 		className: "sketchpad-tools span12"
 
+		@PencilWidths = [ 1, 5, 10, 15 ]
+
 		initialize: (options) ->
 			@pencilFloat = options.pencilFloat or 'left'
 			console.log @pencilFloat
 
 		afterRender: ->
+			for width in SketchToolkit.PencilWidths
+				@insertView '.pencil-config', new Tree.Views.SketchPencilWidth
+					width: width
+				.render()
 			for i in [0..4]
 				@insertView '.pencil-case', new Tree.Views.SketchPencil
 					position: i
 					pencilFloat: @pencilFloat
 				.render()
 
+	class Tree.Views.SketchPencilWidth extends Backbone.View
+		className: "thumbnail"
+
+		initialize: (options) ->
+			@width = options.width or 10
+
+		afterRender: ->
+			$('<div class="colour-blob"></div>')
+				.width(@width)
+				.height(@width)
+				.appendTo(@$el)
+
 	class Tree.Views.SketchPencil extends Backbone.View
+		template: "tree/sketch/pencil"
+		className: "pencil"
+
 		@PencilColours = _.shuffle [
 			"pencil-blue"
 			"pencil-green"
@@ -122,9 +143,6 @@ define [
 			"pencil-pink"
 			"pencil-orange"
 		]
-
-		template: "tree/sketch/pencil"
-		className: "pencil"
 
 		initialize: (options) ->
 			@position = options.position or 0
