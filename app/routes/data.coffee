@@ -22,8 +22,7 @@ module.exports = (app, config) ->
 				callback req, res, req.user._id
 
 	sendDatabaseError = (err, res) ->
-		console.error "ERROR: sendDatabaseError()"
-		console.error inspect(err)
+		console.error "ERROR: sendDatabaseError()\n" + inspect(err)
 		console.trace 'sendDatabaseError'
 		res.send "Database error", 500
 
