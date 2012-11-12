@@ -31,8 +31,7 @@
       };
     };
     sendDatabaseError = function(err, res) {
-      console.error("ERROR: sendDatabaseError()");
-      console.error(inspect(err));
+      console.error("ERROR: sendDatabaseError()\n" + inspect(err));
       console.trace('sendDatabaseError');
       return res.send("Database error", 500);
     };
