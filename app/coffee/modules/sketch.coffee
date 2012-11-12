@@ -12,6 +12,7 @@ define [
 		defaults:
 			pencilWidth: 5
 			pencilColour: '#000000'
+			pencilOpacity: 1
 			erasing: no
 
 		initialize: (options) ->
@@ -81,15 +82,21 @@ define [
 		className: "sketchpad-tools span12"
 
 		@PencilWidths = [ 1, 5, 10, 15 ]
+		@PencilOpacities = [ 0.25, 0.5, 0.75, 1 ]
 
 		initialize: (options) ->
 			@pencilFloat = options.pencilFloat or 'left'
 
 		afterRender: ->
 			for width in Toolkit.PencilWidths
-				@insertView '.pencil-config', new Sketch.Views.PencilWidth
+				@insertView '.thickness-buttons', new Sketch.Views.PencilWidth
 					model: @model
 					width: width
+				.render()
+			for opacity in Toolkit.PencilOpacities
+				@insertView '.opacity-buttons', new Sketch.Views.PencilOpacity
+					model: @model
+					opacity: opacity
 				.render()
 			for i in [0..4]
 				@insertView '.pencil-case', new Sketch.Views.Pencil
@@ -109,6 +116,7 @@ define [
 			@model
 				.on('change:pencilColour', @_changePencilColour)
 				.on('change:pencilWidth', @_changePencilWidth)
+				.on('change:pencilOpacity', @_changePencilOpacity)
 				.on('change:erasing', @_changeErasing)
 
 		afterRender: ->
@@ -135,11 +143,50 @@ define [
 			else
 				@$el.removeClass 'selected'
 
+		_changePencilOpacity: (model, newOpacity) =>
+			@$('.colour-blob').css opacity: newOpacity
+
 		_changeErasing: (model, newErasing) =>
 			if newErasing
 				@$el.addClass 'disabled'
 			else if not newErasing
 				@$el.removeClass 'disabled'
+
+	class Sketch.Views.PencilOpacity extends Sketch.Views.PencilWidth
+		events:
+			"click": "_setThisOpacity"
+
+		initialize: (options) ->
+			super options
+			@opacity = options.opacity or 1
+
+		afterRender: ->
+			$('<div class="colour-blob"></div>')
+				.width(width = @model.get('pencilWidth'))
+				.height(width)
+				.css('opacity', @opacity)
+				.appendTo(@$el)
+			@_changePencilColour null, @model.get('pencilColour')
+			@_changePencilWidth null, @model.get('pencilWidth')
+			@_changePencilOpacity null, @model.get('pencilOpacity')
+			@$el.tooltip
+				title: 'Change pencil transparency'
+				placement: 'bottom'
+
+		_setThisOpacity: ->
+			if @opacity
+				@model.set 'pencilOpacity', @opacity
+
+		_changePencilWidth: (model, newWidth) =>
+			@$('.colour-blob')
+				.width(newWidth)
+				.height(newWidth)
+
+		_changePencilOpacity: (model, newOpacity) =>
+			if newOpacity is @opacity
+				@$el.addClass 'selected'
+			else
+				@$el.removeClass 'selected'
 
 	class Sketch.Views.Pencil extends Backbone.View
 		template: "sketch/pencil"
@@ -196,6 +243,7 @@ define [
 			@model
 				.on('change:pencilColour', @_changePencilColour)
 				.on('change:pencilWidth', @_changePencilWidth)
+				.on('change:pencilOpacity', @_changePencilOpacity)
 				.on('change:erasing', @_changeErasing)
 				.on('undo', @_attemptUndo)
 				.on('redo', @_attemptRedo)
@@ -228,6 +276,9 @@ define [
 
 		_changePencilWidth: (model, newWidth) =>
 			@sketchpad.pen().width newWidth
+
+		_changePencilOpacity: (model, newOpacity) =>
+			@sketchpad.pen().opacity newOpacity
 
 		_changeErasing: (model, newErasing) =>
 			@sketchpad.editing if newErasing then 'erase' else yes
