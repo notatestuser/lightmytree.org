@@ -81,7 +81,7 @@ define [
 		template: "sketch/tools"
 		className: "sketchpad-tools span12"
 
-		@PencilWidths = [ 1, 5, 10, 15 ]
+		@PencilWidths = [ 2, 5, 10, 15 ]
 		@PencilOpacities = [ 0.25, 0.5, 0.75, 1 ]
 
 		initialize: (options) ->
@@ -127,7 +127,7 @@ define [
 			@_changePencilColour null, @model.get('pencilColour')
 			@_changePencilWidth null, @model.get('pencilWidth')
 			@$el.tooltip
-				title: 'Change pencil thickness'
+				title: 'Thickness'
 				placement: 'top'
 
 		_setThisWidth: ->
@@ -170,7 +170,7 @@ define [
 			@_changePencilWidth null, @model.get('pencilWidth')
 			@_changePencilOpacity null, @model.get('pencilOpacity')
 			@$el.tooltip
-				title: 'Change pencil transparency'
+				title: 'Transparency'
 				placement: 'bottom'
 
 		_setThisOpacity: ->
