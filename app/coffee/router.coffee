@@ -1,26 +1,27 @@
 define [
 	"app"
+	"modules/user"
 	"modules/tree"
 	"modules/charity"
 	"modules/sketch"
 	"modules/modal"
 ],
 
-(app, Tree, Charity, Sketch, Modal) ->
+(app, User, Tree, Charity, Sketch, Modal) ->
 
 	# Defining the application router, you can attach sub routers here.
 	Router = Backbone.Router.extend
 		routes:
 			"":               "index"
 			"sketch":         "sketch"
-			"tree/:treeName": "tree"
+			"tree/:treeName": "tree" # pending change to /trees/%s/1
 			"my_trees":       "myTrees"
 
 		initialize: ->
 			models =
-				user: null # get authed user model here
+				_user: me = new User.Model() # will fetch authed user from server
 				_newTree: newTree = new Tree.MyModel()
-				_myTrees: new Tree.Collection null, '' # will return our stuff if authed
+				_myTrees: me.trees # will return our stuff if authed
 				_recentCharities: new Charity.RecentCharitiesCollection()
 				_typeaheadCharities: new Charity.TypeaheadCollection()
 				_sketch: new Sketch.Model
