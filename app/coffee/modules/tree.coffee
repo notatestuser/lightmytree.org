@@ -23,23 +23,23 @@ define [
 			viewBoxHeight: 500
 
 		initialize: ->
-			@fetch()
-			@loadCharities()
+			@charities = new Charity.Collection()
+			@fetch
+				success: => @loadCharities()
 			@on 'change:strokes change:charityIds', (model) ->
 				console.log "#{(model.get('strokes')).length} stroke(s)"
 				model.save()
 
 		loadCharities: ->
-			ids = @get('charityIds')
+			ids = @get 'charityIds'
 			@charities = new Charity.Collection ids
+			@charities.reset (id: id for id in ids)
 
 		addCharity: (model) ->
-			console.log "added charity to Tree.Model"
 			@set 'charityIds', _.union(@get('charityIds'), [model.id])
 			@charities.push model
 
 		removeCharity: (model) ->
-			console.log "removing charity from Tree.Model"
 			@set 'charityIds', _.without(@get('charityIds'), model.id)
 			@charities.remove model
 
@@ -57,26 +57,32 @@ define [
 			# intercept sync() attempt with localStorage persistence
 			switch method
 				when "create", "update"
-					$.jStorage.set Tree.Model.LocalStorageKey, @toJSON()
-					defaultSyncFn() if @remotePersist
+					res = $.jStorage.set Tree.Model.LocalStorageKey, @toJSON()
+					if @remotePersist
+						defaultSyncFn()
+					else
+						options.success model, res, options
 				when "read"
 					try
 						model.set $.jStorage.get(Tree.Model.LocalStorageKey, {})
 					catch ex
 						console.error "Gracefully handling Tree.Model.sync() exception"
-					defaultSyncFn() if app.authed
+					if app.authed
+						defaultSyncFn()
+					else
+						options.success model, true, options
 				when "delete"
 					$.jStorage.deleteKey Tree.Model.LocalStorageKey
 
 	class Tree.Collection extends Backbone.Collection
-		url: "/json/trees/"
+		# url: "/json/trees/"
 		cache: yes
 
-		initialize: (models, options) ->
-			@userId = options.userId if options and options.userId?
-			@url += @userId if @userId
-			super models, options
-			@fetch()
+		# initialize: (models, options) ->
+		# 	@userId = options.userId if options and options.userId?
+		# 	@url += @userId if @userId
+		# 	super models, options
+		# 	@fetch()
 
 		parse: (docs) ->
 			_.extend(doc, id: doc._id) for doc in docs
