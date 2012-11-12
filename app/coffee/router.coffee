@@ -61,8 +61,10 @@ define [
 			.render()
 
 		tree: (treeName) ->
-			app.useLayout('tree_page').setViews({})
-				#".trees": new Tree.Views.List(@)
+			treeModel = new Tree.Model( id: treeName ).fetch()
+			app.useLayout('tree_page').setViews
+				".sketchpad-editor": new Tree.Views.Solo
+					model: treeModel
 			.render()
 
 		myTrees: ->

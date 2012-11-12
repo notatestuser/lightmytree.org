@@ -99,30 +99,6 @@ header
 		.alert-saved
 			margin-top 10px
 
-		.workspace-view
-			display inline-block
-			width 100%
-			height 100%
-
-		.sketchpad-editor
-			z-index 30
-			-moz-user-select text
-			cursor crosshair
-			border 1px solid black
-			height 500px
-
-			position relative
-			background whiteSmoke
-			padding 10px
-			border 1px solid rgba(0, 0, 0, 0.150)
-			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.18))
-
-			> div
-				z-index 40
-				height 100%
-				*
-					z-index 50
-
 		.sketchpad-editor:before
 			z-index 20
 			position: absolute
@@ -149,271 +125,293 @@ header
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.2))
 			transform-rotate(358deg)
 
-		.sketchpad-tools-right
-			.box
-				left 0
-		.sketchpad-tools-left
-			.box
-				right 0
-			.pencil-config
-				.thumbnail
-					display none !important
-			.thickness-buttons,.opacity-buttons
-				display none
+	.workspace-view
+		display inline-block
+		width 100%
+		height 100%
 
-		.sketchpad-tools
+	.sketchpad-editor
+		z-index 30
+		-moz-user-select text
+		cursor crosshair
+		border 1px solid black
+		height 500px
+
+		position relative
+		background whiteSmoke
+		padding 10px
+		border 1px solid rgba(0, 0, 0, 0.150)
+		box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.18))
+
+		> div
+			z-index 40
 			height 100%
-			padding 0 17px 0 16px
+			*
+				z-index 50
 
-			background transparent url('../img/magical-pencil-shadow.png') no-repeat scroll
-			background-size 240px 20px
-			background-position -13px 448px
+	.sketchpad-tools-right
+		.box
+			left 0
+	.sketchpad-tools-left
+		.box
+			right 0
+		.pencil-config
+			.thumbnail
+				display none !important
+		.thickness-buttons,.opacity-buttons
+			display none
 
-			.pencil-config
-				width 100%
-				height 130px
-				margin auto auto
-				padding-top 10px
-				overflow hidden
-				border-radius 3px
-				box-sizing(border-box)
+	.sketchpad-tools
+		height 100%
+		padding 0 17px 0 16px
 
-				.thumbnail
-					display table-cell
-					border-radius 0
-					width 40px
-					height 35px
-					vertical-align middle
-					text-align center
-					cursor pointer
-					border 0
-					&:hover
-						.colour-blob
-							opacity 1
-					&.selected
-						background-color #e1dcc2
-					&.disabled
-						background transparent url('../img/plain-cross.svg') no-repeat scroll center center
-						background-size cover
+		background transparent url('../img/magical-pencil-shadow.png') no-repeat scroll
+		background-size 240px 20px
+		background-position -13px 448px
 
-				.thickness-buttons,.opacity-buttons
-					border-left 1px solid #ddd
-					border-right 1px solid #ddd
-					border-radius 3px
-				.thickness-buttons
-					border-top 1px solid #ddd
-					.thumbnail
-						&:first-child
-							border-top-left-radius 4px
-						&:last-child
-							border-top-right-radius 4px
-				.opacity-buttons
-					border-bottom 1px solid #ddd
-					.thumbnail
-						&:first-child
-							border-bottom-left-radius 4px
-						&:last-child
-							border-bottom-right-radius 4px
+		.pencil-config
+			width 100%
+			height 130px
+			margin auto auto
+			padding-top 10px
+			overflow hidden
+			border-radius 3px
+			box-sizing(border-box)
 
-				.colour-blob
-					width 10px
-					height 10px
-					margin auto auto
-					background black
-					border-radius 50%
-					opacity 0.6
-
-			.pencil-case
-				height 325px
-				overflow hidden
-				position relative
-				margin 0 8px
-
-				.box
-					position absolute
-					bottom 0
-					height 4px
-					width 85.6%
-					z-index 200
-
-					background -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(82,69,64,0.8) 100%)
-					background -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(82,69,64,0.8)))
-					background -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
-					background -o-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
-					background -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
-					background linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
-
-			.eraser-panel-view
-				width 100%
-				height 50px
-				margin-top 20px
-				position relative
-
-				.eraser
-					width 144px
-					height 100%
-					float left
-					background transparent url('../img/rubber.png') no-repeat scroll
-					background-size 90%
-					opacity .7
-					cursor pointer
-					transform-rotate(-20deg)
-					&:hover,&.selected
-						opacity 1
-
-				.btn-group-history
-					width 37px
-					height 100%
-					float right
-					margin-right 6px
-					box-sizing(border-box)
-					.btn
-						width auto !important
-						height 50%
-						opacity .6
-						box-sizing(border-box)
-						&:hover
-							opacity 1
-						.icon-repeat
-							margin-top -1px
-					.btn-undo
-						.icon-repeat
-							transform-rotateY(180deg)
-
-				.undo
-					width 37px
-					float left
-					height 100%
-					box-sizing(border-box)
-
-			.pencil-blue
-				coloured-pencil(#3FC1FF)
-			.pencil-green
-				coloured-pencil(#C7E20A)
-			.pencil-darkgreen
-				coloured-pencil(#4C7C4C)
-			.pencil-yellow
-				coloured-pencil(#FFCC00)
-			.pencil-purple
-				coloured-pencil(#FA64FB)
-			.pencil-pink
-				coloured-pencil(#F819F9)
-			.pencil-orange
-				coloured-pencil(#EE6401)
-
-			.pencil
-				height 270px
-				width 30px
-				position absolute
+			.thumbnail
+				display table-cell
+				border-radius 0
+				width 40px
+				height 35px
+				vertical-align middle
+				text-align center
 				cursor pointer
+				border 0
+				&:hover
+					.colour-blob
+						opacity 1
+				&.selected
+					background-color #e1dcc2
+				&.disabled
+					background transparent url('../img/plain-cross.svg') no-repeat scroll center center
+					background-size cover
 
-				div
-					outline 1px solid transparent
+			.thickness-buttons,.opacity-buttons
+				border-left 1px solid #ddd
+				border-right 1px solid #ddd
+				border-radius 3px
+			.thickness-buttons
+				border-top 1px solid #ddd
+				.thumbnail
+					&:first-child
+						border-top-left-radius 4px
+					&:last-child
+						border-top-right-radius 4px
+			.opacity-buttons
+				border-bottom 1px solid #ddd
+				.thumbnail
+					&:first-child
+						border-bottom-left-radius 4px
+					&:last-child
+						border-bottom-right-radius 4px
 
-				> div
-					clear both
+			.colour-blob
+				width 10px
+				height 10px
+				margin auto auto
+				background black
+				border-radius 50%
+				opacity 0.6
 
-				// nib section
-				> div:first-child
-					> div
-						height 15px
-						width 33.6%
-						margin auto auto
-						> div
-							float left
-							border-bottom 15px solid
-						> div:first-child
-							border-left 3px solid transparent
-							margin-left 1px
-						> div:nth-child(2)
-							border-left 1px solid
-							border-right 1px solid
-						> div:last-child
-							border-right 3px solid transparent
+		.pencil-case
+			height 325px
+			overflow hidden
+			position relative
+			margin 0 8px
 
-				// sharpened section
-				> div:nth-child(2)
-					> div
-						float left
-						width 0px
-						height 0px
-					> div:first-child
-						border-left 10px solid transparent
-						border-bottom 40px solid rgb(204, 182, 135)
-					> div:nth-child(2)
-						width 4px !important
-						border-bottom 40px solid rgb(229, 202, 173)
-						border-left 3px solid rgb(204, 182, 135)
-						border-right 3px solid rgb(255, 231, 191)
-					> div:last-child
-						border-bottom 40px solid rgb(255, 231, 191)
-						border-right 10px solid transparent
+			.box
+				position absolute
+				bottom 0
+				height 4px
+				width 85.6%
+				z-index 200
 
-				// long section
-				> div:last-child
-					height 100%
-					width 30px
-					> div
-						float left
-						width 33.3%
-						height 100%
-						margin-top -4px
-						padding-bottom 5px
-						border-top-left-radius 5px
-						border-top-right-radius 5px
+				background -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(82,69,64,0.8) 100%)
+				background -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(82,69,64,0.8)))
+				background -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
+				background -o-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
+				background -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
+				background linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
 
-
-	.sketch_page
-		.row-sketchpad
-			margin-bottom -50px
-
-		.row-picker,.row-share-button
-			background -moz-linear-gradient(left,  rgba(238,236,223,0.4) 0%, rgba(237,235,222,0.85) 22%, rgba(236,234,222,1) 31%, rgba(234,232,222,1) 50%, rgba(236,234,222,1) 73%, rgba(237,235,222,0.85) 81%, rgba(238,236,223,0.4) 100%)
-			background -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(238,236,223,0.4)), color-stop(22%,rgba(237,235,222,0.85)), color-stop(31%,rgba(236,234,222,1)), color-stop(50%,rgba(234,232,222,1)), color-stop(73%,rgba(236,234,222,1)), color-stop(81%,rgba(237,235,222,0.85)), color-stop(100%,rgba(238,236,223,0.4)))
-			background -webkit-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
-			background -o-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
-			background -ms-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
-			background linear-gradient(to right,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
-
-		.row-picker
-			padding-top 100px
+		.eraser-panel-view
+			width 100%
+			height 50px
+			margin-top 20px
 			position relative
 
-			.hr
-				position absolute
-				top 0
-				left -5000px
-				width 9999px
-				height 1px
-				background transparent
-				border-top 1px solid #ccc
-				box-shadow(-1px, -1px, 8px, #ccc)
-			h2
-				display block
-				font-size 2.1em
-				line-height 1.9em
-				text-align center
-				padding-left 18px
-				text-shadow 1px 1px #ffeeee
-				font-weight normal
-			h2:before
-				content ""
-				display inline-block
-				width 64px
-				height 32px
-				background transparent url("../img/xmas-header-decor.png") no-repeat scroll 0px 0px
-			h2:after
-				content ""
-				display inline-block
-				width 94px
-				height 32px
-				background transparent url("../img/xmas-header-decor.png") no-repeat scroll -56px 4px
-			form
-				margin-top 15px
+			.eraser
+				width 144px
+				height 100%
+				float left
+				background transparent url('../img/rubber.png') no-repeat scroll
+				background-size 90%
+				opacity .7
+				cursor pointer
+				transform-rotate(-20deg)
+				&:hover,&.selected
+					opacity 1
 
-		.row-share-button
-			padding-top 30px
-			padding-bottom 60px
+			.btn-group-history
+				width 37px
+				height 100%
+				float right
+				margin-right 6px
+				box-sizing(border-box)
+				.btn
+					width auto !important
+					height 50%
+					opacity .6
+					box-sizing(border-box)
+					&:hover
+						opacity 1
+					.icon-repeat
+						margin-top -1px
+				.btn-undo
+					.icon-repeat
+						transform-rotateY(180deg)
+
+			.undo
+				width 37px
+				float left
+				height 100%
+				box-sizing(border-box)
+
+		.pencil-blue
+			coloured-pencil(#3FC1FF)
+		.pencil-green
+			coloured-pencil(#C7E20A)
+		.pencil-darkgreen
+			coloured-pencil(#4C7C4C)
+		.pencil-yellow
+			coloured-pencil(#FFCC00)
+		.pencil-purple
+			coloured-pencil(#FA64FB)
+		.pencil-pink
+			coloured-pencil(#F819F9)
+		.pencil-orange
+			coloured-pencil(#EE6401)
+
+		.pencil
+			height 270px
+			width 30px
+			position absolute
+			cursor pointer
+
+			div
+				outline 1px solid transparent
+
+			> div
+				clear both
+
+			// nib section
+			> div:first-child
+				> div
+					height 15px
+					width 33.6%
+					margin auto auto
+					> div
+						float left
+						border-bottom 15px solid
+					> div:first-child
+						border-left 3px solid transparent
+						margin-left 1px
+					> div:nth-child(2)
+						border-left 1px solid
+						border-right 1px solid
+					> div:last-child
+						border-right 3px solid transparent
+
+			// sharpened section
+			> div:nth-child(2)
+				> div
+					float left
+					width 0px
+					height 0px
+				> div:first-child
+					border-left 10px solid transparent
+					border-bottom 40px solid rgb(204, 182, 135)
+				> div:nth-child(2)
+					width 4px !important
+					border-bottom 40px solid rgb(229, 202, 173)
+					border-left 3px solid rgb(204, 182, 135)
+					border-right 3px solid rgb(255, 231, 191)
+				> div:last-child
+					border-bottom 40px solid rgb(255, 231, 191)
+					border-right 10px solid transparent
+
+			// long section
+			> div:last-child
+				height 100%
+				width 30px
+				> div
+					float left
+					width 33.3%
+					height 100%
+					margin-top -4px
+					padding-bottom 5px
+					border-top-left-radius 5px
+					border-top-right-radius 5px
+
+	.row-sketchpad
+		margin-bottom -50px
+
+	.row-picker,.row-share-button
+		background -moz-linear-gradient(left,  rgba(238,236,223,0.4) 0%, rgba(237,235,222,0.85) 22%, rgba(236,234,222,1) 31%, rgba(234,232,222,1) 50%, rgba(236,234,222,1) 73%, rgba(237,235,222,0.85) 81%, rgba(238,236,223,0.4) 100%)
+		background -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(238,236,223,0.4)), color-stop(22%,rgba(237,235,222,0.85)), color-stop(31%,rgba(236,234,222,1)), color-stop(50%,rgba(234,232,222,1)), color-stop(73%,rgba(236,234,222,1)), color-stop(81%,rgba(237,235,222,0.85)), color-stop(100%,rgba(238,236,223,0.4)))
+		background -webkit-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
+		background -o-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
+		background -ms-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
+		background linear-gradient(to right,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
+
+	.row-picker
+		padding-top 100px
+		position relative
+
+		.hr
+			position absolute
+			top 0
+			left -5000px
+			width 9999px
+			height 1px
+			background transparent
+			border-top 1px solid #ccc
+			box-shadow(-1px, -1px, 8px, #ccc)
+		h2
+			display block
+			font-size 2.1em
+			line-height 1.9em
+			text-align center
+			padding-left 18px
+			text-shadow 1px 1px #ffeeee
+			font-weight normal
+		h2:before
+			content ""
+			display inline-block
+			width 64px
+			height 32px
+			background transparent url("../img/xmas-header-decor.png") no-repeat scroll 0px 0px
+		h2:after
+			content ""
+			display inline-block
+			width 94px
+			height 32px
+			background transparent url("../img/xmas-header-decor.png") no-repeat scroll -56px 4px
+		form
+			margin-top 15px
+
+	.row-share-button
+		padding-top 30px
+		padding-bottom 60px
 
 	ul.charities
 		list-style-type none

@@ -127,8 +127,16 @@ define [
 			@$('.alert-not-logged-in').addClass 'in'
 
 	class Tree.Views.Solo extends Backbone.View
-		template: "tree/view"
+		# template: "tree/view"
 		className: "tree-view"
+
+		afterRender: ->
+			self = @
+			$container = @$el
+			new Raphael $container[0], $container.width(), $container.height(), ->
+				@setViewBox 0, 0,
+					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
+				@add self.model.get('strokes')
 
 	class Tree.Views.List extends Backbone.View
 		tagName: "ul"
