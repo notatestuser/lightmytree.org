@@ -32,10 +32,23 @@ Data URL Schemes
 These will have fixtures made up for them (as above):
 
 ```
+Action                       | Feed
+-----------------------------------------------------------------
+log in                       | get user object (server-side),
+                                make available over http
+post to /my_tree             | add tree object, get user object,
+                                add id to user object, save
+/user/:user_id               | all trees by user id
+                                ({user} -> {trees},
+                                 load strokes async)
+/user/:screen_name/tree/:id  | search user collection for tree
+                                with given ID
+
 Live feeds:
 	/json/recent_charities
 	/json/recent_trees
-	/json/tree/<id>
+	/json/trees/<user_id> (all trees authored by user)
+	/json/tree/id (first tree that matches given slug)
 
 Mocked APIs (fixture mode):
 	/api/donation/direct/charity/{charityId}/donate
