@@ -38,10 +38,10 @@ log in                       | get user object (server-side),
                                 make available over http
 post to /my_tree             | add tree object, get user object,
                                 add id to user object, save
-/user/:user_id               | all trees by user id
+/users/:user_id              | all trees by user id
                                 ({user} -> {trees},
                                  load strokes async)
-/user/:screen_name/tree/:id  | search user collection for tree
+/users/:screen_name/tree/:id | search user collection for tree
                                 with given ID
 
 Live feeds:

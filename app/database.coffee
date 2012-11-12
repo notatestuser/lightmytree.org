@@ -13,12 +13,14 @@ class BaseDatabase
 			callback err, null
 
 class UserDatabase extends BaseDatabase
+	@PrivateFields = [ 'location', 'twitter', 'facebook' ]
+
 	constructor: (config) ->
 		super config, 'users'
 
 	createDocument = (provider, providerData, screenName, fullName, imageUrl, location) ->
 		doc = {}
-		[doc.screenName, doc.fullName, doc.imageUrl, doc.location] = [screenName, fullName, imageUrl, location]
+		[doc.screenName, doc.fullName, doc.imageUrl, doc.location, doc.trees] = [screenName, fullName, imageUrl, location, []]
 		doc[provider] = if providerData then providerData else {}
 		doc
 

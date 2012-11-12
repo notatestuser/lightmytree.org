@@ -1,11 +1,18 @@
-{inspect}      = require 'util'
-{TreeDatabase} = require '../database'
+{_}       = require 'underscore'
+{inspect} = require 'util'
+{TreeDatabase, UserDatabase} = require '../database'
 
 module.exports = (app, config) ->
 
 	console.log "Defining DATA routes"
 
+	userDb = new UserDatabase config
 	treeDb = new TreeDatabase config
+
+	withAuth = (callback) ->
+		(req, res) ->
+			return callback(req, res, req.user._id) if req.user? and req.user._id?
+			callback req, res
 
 	ensureAuth = (callback) ->
 		(req, res) ->
@@ -14,19 +21,20 @@ module.exports = (app, config) ->
 			else
 				callback req, res, req.user._id
 
+	sendDatabaseError = (err, res) ->
+		console.error "ERROR: sendDatabaseError()"
+		console.error inspect(err)
+		console.trace 'sendDatabaseError'
+		res.send "Database error", 500
+
 	# /json/my_tree
 	myTreeFn = ensureAuth (req, res, userId) ->
 		data = req.body
 
 		createOrUpdateFn = ->
 			treeDb.createOrUpdate userId, data, (err, dbRes) ->
-				if err
-					console.error "ERROR: in createOrUpdateFn"
-					console.error inspect(err)
-					res.send "Database error", 500
-				else
-					res.json
-						id: dbRes.id
+				sendDatabaseError err, res if err
+				res.json id: dbRes.id if dbRes
 
 		# if an ID is being provided, ensure the target tree belongs to this user
 		if data.id? and data.id.length?
@@ -42,15 +50,22 @@ module.exports = (app, config) ->
 					createOrUpdateFn()
 		else
 			createOrUpdateFn()
+
 	app.post "/json/my_tree", myTreeFn
 	app.put "/json/my_tree", myTreeFn
 
 	# /json/trees/:userId
 	app.get /^\/json\/trees\/([a-z0-9]+)?$/, ensureAuth (req, res, userId) ->
 		treeDb.findByUserId req.params[0] or userId, (err, docs) ->
-			if err
-				console.error "ERROR: in callback passed to treeDb.findByUserId"
-				console.error inspect(err)
-				res.send "Database error", 500
-			else
-				res.json docs
+			sendDatabaseError(err, res) if err
+			res.json(docs) if docs
+
+	# /json/users/:userId
+	app.get /^\/json\/users\/([a-z0-9]+)?$/, withAuth (req, res, userId) ->
+		id = req.params[0] or userId
+		if id
+			userDb.findById req.params[0] or userId, (err, doc) ->
+				sendDatabaseError(err, res) if err
+				res.json _.omit(doc, UserDatabase.PrivateFields) if doc
+		else
+			res.send "Please authenticate or supply a user ID", 401
