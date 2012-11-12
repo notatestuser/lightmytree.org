@@ -53,12 +53,6 @@ module.exports = (app, config) ->
 	app.post "/json/my_tree", myTreeFn
 	app.put "/json/my_tree", myTreeFn
 
-	# /json/trees/:userId
-	app.get /^\/json\/trees\/([a-z0-9]+)?$/, ensureAuth (req, res, userId) ->
-		treeDb.findByUserId req.params[0] or userId, (err, docs) ->
-			sendDatabaseError(err, res) if err
-			res.json(docs) if docs
-
 	# /json/users/:userId
 	app.get /^\/json\/users\/([a-z0-9]+)?$/, withAuth (req, res, userId) ->
 		id = req.params[0] or userId
@@ -66,5 +60,17 @@ module.exports = (app, config) ->
 			userDb.findById req.params[0] or userId, (err, doc) ->
 				sendDatabaseError(err, res) if err
 				res.json _.omit(doc, UserDatabase.PrivateFields) if doc
+				res.send "Not found", 404 if not doc
 		else
 			res.send "Please authenticate or supply a user ID", 401
+
+	# /json/trees/:id
+	app.get /^\/json\/trees\/([a-z0-9]+)?$/, (req, res) ->
+		if req.params[0]
+			treeDb.findById req.params[0], (err, doc) ->
+				sendDatabaseError(err, res) if err
+				res.json(doc) if doc
+				res.send "Not found", 404 if not doc
+		else
+			res.send "Not found", 404
+

@@ -29,6 +29,5 @@ define [
 		loadTrees: ->
 			ids = @get 'treeIds'
 			@trees.reset (id: id for id in ids)
-			# @trees.fetch()
 
 	User

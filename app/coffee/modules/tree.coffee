@@ -75,7 +75,7 @@ define [
 					$.jStorage.deleteKey Tree.Model.LocalStorageKey
 
 	class Tree.Collection extends Backbone.Collection
-		# url: "/json/trees/"
+		url: "/json/trees"
 		cache: yes
 
 		# initialize: (models, options) ->
@@ -154,9 +154,11 @@ define [
 
 			# TODO: dynamically create rows to prevent padding issues?
 			@collection.forEach (treeModel) ->
-				view = new Tree.Views.Item
-					model: treeModel
-				@insertView view
+				treeModel.fetch
+					success: (model) =>
+						@insertView new Tree.Views.Item
+							model: treeModel
+						.render()
 			, @
 
 	class Tree.Views.Item extends Backbone.View
@@ -169,7 +171,7 @@ define [
 			$container = @$el
 			new Raphael $container[0], 256, 256, ->
 				@setViewBox 0, 0,
-					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
+					self.model.get('viewBoxWidth') or 0, self.model.get('viewBoxHeight') or 0, true
 				@add self.model.get('strokes')
 
 
