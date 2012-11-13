@@ -68,7 +68,7 @@ module.exports = (app, config) ->
 	app.put "/json/my_tree", myTreeFn
 
 	# /json/users/:userId
-	app.get /^\/json\/users\/([a-z0-9]+)?$/, withAuth (req, res, userId) ->
+	app.get /^\/json\/users\/([a-zA-Z0-9_.-]+)?$/, withAuth (req, res, userId) ->
 		id = req.params[0] or userId
 		if id
 			userDb.findById req.params[0] or userId, (err, doc) ->
