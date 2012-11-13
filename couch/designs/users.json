@@ -1,6 +1,10 @@
 {
 	"_id": "_design/users",
+	"_rev": "6-fd68b8160ec18cddea19c0875c319894",
 	"views": {
+		"byId": {
+			"map": "function (doc) { if (doc._id) { emit(doc._id, doc) }; if (doc.treeIds) { for (var idx in doc.treeIds) { emit(doc.treeIds[idx], doc) } } }"
+		},
 		"byTwitter": {
 			"map": "function (doc) { if (doc.twitter && doc.twitter.id) { emit(doc.twitter.id, doc) } }"
 		},
