@@ -24,6 +24,7 @@ define [
 				_newTree: newTree = new Tree.MyModel()
 				_myTrees: me.trees # will return our stuff if authed
 				_otherTrees: new Tree.Collection()
+				# _otherUsers: new User.Collection()
 				_recentCharities: new Charity.RecentCharitiesCollection()
 				_typeaheadCharities: new Charity.TypeaheadCollection()
 				_sketch: new Sketch.Model( tree: newTree )
