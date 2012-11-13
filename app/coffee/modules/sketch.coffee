@@ -16,7 +16,9 @@ define [
 			erasing: no
 
 		initialize: (options) ->
-			@set('tree', options.tree) if options.tree
+			if options.tree
+				options.tree.fetch()
+				@set('tree', options.tree)
 
 		tree: ->
 			@get('tree')

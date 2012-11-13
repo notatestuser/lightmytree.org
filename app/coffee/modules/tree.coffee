@@ -24,11 +24,16 @@ define [
 
 		initialize: ->
 			@charities = new Charity.Collection()
-			@fetch
-				success: => @loadCharities()
 			@on 'change:strokes change:charityIds', (model) ->
 				console.log "#{(model.get('strokes')).length} stroke(s)"
 				model.save()
+
+		fetch: (options = {}) ->
+			oldCallback = options.success
+			options.success = (model, response, options) =>
+				@loadCharities()
+				oldCallback? model, response, options
+			super options
 
 		loadCharities: ->
 			ids = @get 'charityIds'
@@ -173,6 +178,5 @@ define [
 				@setViewBox 0, 0,
 					self.model.get('viewBoxWidth') or 0, self.model.get('viewBoxHeight') or 0, true
 				@add self.model.get('strokes')
-
 
 	Tree
