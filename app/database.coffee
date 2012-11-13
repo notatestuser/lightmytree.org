@@ -12,6 +12,11 @@ class BaseDatabase
 			return callback err, res[0].value if res and res.length
 			callback err, null
 
+	saveDocument: (doc, callback) ->
+		@db.save doc, (err, res) ->
+			console.trace 'saveDocument' if err
+			callback err, res
+
 class UserDatabase extends BaseDatabase
 	@PrivateFields = [ 'location', 'twitter', 'facebook' ]
 

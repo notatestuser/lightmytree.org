@@ -31,9 +31,23 @@ module.exports = (app, config) ->
 		data = req.body
 
 		createOrUpdateFn = ->
-			treeDb.createOrUpdate userId, data, (err, dbRes) ->
-				sendDatabaseError err, res if err
-				res.json id: dbRes.id if dbRes
+			# get the current user's document
+			userDb.findById userId, (err, userDoc) ->
+				if err
+					sendDatabaseError err, res
+				else
+					treeDb.createOrUpdate userId, data, (err, treeRes) ->
+						sendDatabaseError err, res if err
+
+						# add tree ID to user object and save it
+						if treeRes and not err
+							treeIds = userDoc.treeIds or userDoc.treeIds = []
+							treeIds.push treeRes.id
+							userDb.saveDocument userDoc, (err, userRes) ->
+								sendDatabaseError err, res if err
+								res.json id: treeRes.id if treeRes
+
+						else res.send "Unknown error", 500
 
 		# if an ID is being provided, ensure the target tree belongs to this user
 		if data.id? and data.id.length?

@@ -39,13 +39,31 @@
       var createOrUpdateFn, data;
       data = req.body;
       createOrUpdateFn = function() {
-        return treeDb.createOrUpdate(userId, data, function(err, dbRes) {
+        return userDb.findById(userId, function(err, userDoc) {
           if (err) {
-            sendDatabaseError(err, res);
-          }
-          if (dbRes) {
-            return res.json({
-              id: dbRes.id
+            return sendDatabaseError(err, res);
+          } else {
+            return treeDb.createOrUpdate(userId, data, function(err, treeRes) {
+              var treeIds;
+              if (err) {
+                sendDatabaseError(err, res);
+              }
+              if (treeRes && !err) {
+                treeIds = userDoc.treeIds || (userDoc.treeIds = []);
+                treeIds.push(treeRes.id);
+                return userDb.saveDocument(userDoc, function(err, userRes) {
+                  if (err) {
+                    sendDatabaseError(err, res);
+                  }
+                  if (treeRes) {
+                    return res.json({
+                      id: treeRes.id
+                    });
+                  }
+                });
+              } else {
+                return res.send("Unknown error", 500);
+              }
             });
           }
         });
