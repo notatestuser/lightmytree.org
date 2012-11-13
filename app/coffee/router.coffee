@@ -27,7 +27,6 @@ define [
 				_recentCharities: new Charity.RecentCharitiesCollection()
 				_typeaheadCharities: new Charity.TypeaheadCollection()
 				_sketch: new Sketch.Model( tree: newTree )
-
 			_.extend @, models
 
 		index: ->
