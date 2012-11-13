@@ -137,6 +137,15 @@ define [
 		afterRender: ->
 			@$('.alert-not-logged-in').addClass 'in'
 
+	class Tree.Views.Intro extends Backbone.View
+		template: "tree/view/intro"
+
+		initialize: ->
+			# yes, we're chaining renders because the prior one supposedly hasn't finished
+			@model.on 'change', => @render => @render()
+
+		serialize: -> @model.toJSON()
+
 	class Tree.Views.Solo extends Backbone.View
 		# template: "tree/view"
 		className: "tree-view"
@@ -150,12 +159,6 @@ define [
 				@setViewBox 0, 0,
 					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
 				@add self.model.get('strokes')
-
-	class Tree.Partials.SoloIntro extends Backbone.View
-		template: "tree/view/intro"
-
-		serialize: ->
-			fullName: @model.get 'fullName'
 
 	class Tree.Views.List extends Backbone.View
 		tagName: "ul"

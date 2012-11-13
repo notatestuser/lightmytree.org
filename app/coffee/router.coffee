@@ -20,11 +20,11 @@ define [
 
 		initialize: ->
 			models =
-				_user: me = new User.Model() # will fetch authed user from server
+				_user: me = (new User.Model()).fetch() # will fetch authed user from server
 				_newTree: newTree = new Tree.MyModel()
 				_myTrees: me.trees # will return our stuff if authed
 				_otherTrees: new Tree.Collection()
-				# _otherUsers: new User.Collection()
+				_otherUsers: new User.Collection()
 				_recentCharities: new Charity.RecentCharitiesCollection()
 				_typeaheadCharities: new Charity.TypeaheadCollection()
 				_sketch: new Sketch.Model( tree: newTree )
@@ -71,7 +71,21 @@ define [
 				treeModel.fetch
 					error: => @show404()
 
+			userModel = @_otherUsers.get treeId
+			unless userModel
+				# this should resolve with the tree's ID as our Couch byId view takes them into account...
+				@_otherUsers.add userModel = new User.Model(_id: treeId) # how consistent...
+				userModel.fetch
+					error: => @show404()
+					success: (model) =>
+						console.log 'SUCCESS!'
+						console.log model
+						console.log model.get('fullName')
+						model
+
 			app.useLayout('tree_page').setViews
+				".row-intro": new Tree.Views.Intro
+					model: userModel
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
 			.render()

@@ -19,15 +19,21 @@ define [
 			imageUrl: ''
 			treeIds: []
 
-		initialize: ->
+		initialize: (attributes) ->
 			@trees = new Tree.Collection()
-			@fetch
-				success: =>
-					console.log "User.Model authenticated as #{@get('screenName')}"
-					@loadTrees()
+			super attributes
+
+		fetch: (options = {}) ->
+			options.success = => @loadTrees()
+			super options
+			@
 
 		loadTrees: ->
 			ids = @get 'treeIds'
 			@trees.reset (id: id for id in ids)
+
+	class User.Collection extends Backbone.Collection
+		url: "/json/users"
+		cache: yes
 
 	User
