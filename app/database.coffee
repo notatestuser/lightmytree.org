@@ -55,17 +55,21 @@ class TreeDatabase extends BaseDatabase
 	constructor: (config) ->
 		super config, 'trees'
 
-	createDocument = (userId, data) ->
+	makeSlugId = (user) ->
+		user.screenName
+
+	createDocument = (userDoc, data) ->
 		if not data.strokes?.length? or not data.charityIds?.length?
 			throw "`strokes` and `charityIds` must have some entries"
 		doc = _.pick data, 'strokes', 'charityIds', 'viewBoxWidth', 'viewBoxHeight'
-		doc.user = id: userId
+		doc.user = id: userDoc._id
+		doc._id = makeSlugId userDoc
 		doc
 
-	createOrUpdate: (userId, data, callback) ->
+	createOrUpdate: (userDoc, data, callback) ->
 		args = if data.id? and data.id.length? then [data.id] else []
 		try
-			args.push createDocument(userId, data)
+			args.push createDocument(userDoc, data)
 		catch err
 			callback err, null
 		args.push callback

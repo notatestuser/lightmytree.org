@@ -26,7 +26,7 @@
         if (!(req.user != null) || !(req.user._id != null)) {
           return res.send("Please authenticate", 401);
         } else {
-          return callback(req, res, req.user._id);
+          return callback(req, res, req.user._id, req.user);
         }
       };
     };
@@ -40,10 +40,8 @@
       data = req.body;
       createOrUpdateFn = function() {
         return userDb.findById(userId, function(err, userDoc) {
-          if (err) {
-            return sendDatabaseError(err, res);
-          } else {
-            return treeDb.createOrUpdate(userId, data, function(err, treeRes) {
+          if (!err) {
+            return treeDb.createOrUpdate(userDoc, data, function(err, treeRes) {
               var treeIds;
               if (err) {
                 sendDatabaseError(err, res);
@@ -65,6 +63,8 @@
                 return res.send("Unknown error", 500);
               }
             });
+          } else {
+            return sendDatabaseError(err, res);
           }
         });
       };
@@ -107,7 +107,7 @@
         return res.send("Please authenticate or supply a user ID", 401);
       }
     }));
-    return app.get(/^\/json\/trees\/([a-zA-Z0-9_]+)?$/, function(req, res) {
+    return app.get(/^\/json\/trees\/([a-zA-Z0-9_.]+)?$/, function(req, res) {
       if (req.params[0]) {
         return treeDb.findById(req.params[0], function(err, doc) {
           if (err) {

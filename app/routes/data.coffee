@@ -19,7 +19,7 @@ module.exports = (app, config) ->
 			if not req.user? or not req.user._id?
 				res.send "Please authenticate", 401
 			else
-				callback req, res, req.user._id
+				callback req, res, req.user._id, req.user
 
 	sendDatabaseError = (err, res) ->
 		console.error "ERROR: sendDatabaseError()\n" + inspect(err)
@@ -33,10 +33,8 @@ module.exports = (app, config) ->
 		createOrUpdateFn = ->
 			# get the current user's document
 			userDb.findById userId, (err, userDoc) ->
-				if err
-					sendDatabaseError err, res
-				else
-					treeDb.createOrUpdate userId, data, (err, treeRes) ->
+				if not err
+					treeDb.createOrUpdate userDoc, data, (err, treeRes) ->
 						sendDatabaseError err, res if err
 
 						# add tree ID to user object and save it
@@ -48,6 +46,8 @@ module.exports = (app, config) ->
 								res.json id: treeRes.id if treeRes
 
 						else res.send "Unknown error", 500
+				else
+					sendDatabaseError err, res
 
 		# if an ID is being provided, ensure the target tree belongs to this user
 		if data.id? and data.id.length?
@@ -79,7 +79,7 @@ module.exports = (app, config) ->
 			res.send "Please authenticate or supply a user ID", 401
 
 	# /json/trees/:id
-	app.get /^\/json\/trees\/([a-zA-Z0-9_]+)?$/, (req, res) ->
+	app.get /^\/json\/trees\/([a-zA-Z0-9_.]+)?$/, (req, res) ->
 		if req.params[0]
 			treeDb.findById req.params[0], (err, doc) ->
 				sendDatabaseError(err, res) if err
