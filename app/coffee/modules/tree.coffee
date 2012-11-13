@@ -151,6 +151,12 @@ define [
 					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
 				@add self.model.get('strokes')
 
+	class Tree.Partials.SoloIntro extends Backbone.View
+		template: "tree/view/intro"
+
+		serialize: ->
+			fullName: @model.get 'fullName'
+
 	class Tree.Views.List extends Backbone.View
 		tagName: "ul"
 		className: "tree-list-view row-fluid"

@@ -63,11 +63,13 @@ define [
 			.render()
 
 		tree: (treeId) ->
+			# grab the cached tree or fetch one
 			treeModel = @_otherTrees.get treeId
 			unless treeModel
 				@_otherTrees.add treeModel = new Tree.Model(id: treeId)
 				treeModel.fetch
 					error: => @show404()
+
 			app.useLayout('tree_page').setViews
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
