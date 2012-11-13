@@ -14,18 +14,19 @@ define [
 		routes:
 			"":               "index"
 			"sketch":         "sketch"
-			"tree/:treeName": "tree" # pending change to /trees/%s/1
 			"my_trees":       "myTrees"
+			":treeName":      "tree" # pending change to /trees/%s/1 ?
+			"*other":         "show404"
 
 		initialize: ->
 			models =
 				_user: me = new User.Model() # will fetch authed user from server
 				_newTree: newTree = new Tree.MyModel()
 				_myTrees: me.trees # will return our stuff if authed
+				_otherTrees: new Tree.Collection()
 				_recentCharities: new Charity.RecentCharitiesCollection()
 				_typeaheadCharities: new Charity.TypeaheadCollection()
-				_sketch: new Sketch.Model
-					tree: newTree
+				_sketch: new Sketch.Model( tree: newTree )
 
 			_.extend @, models
 
@@ -61,8 +62,12 @@ define [
 				".authenticate_modal": new Modal.Views.Authenticate
 			.render()
 
-		tree: (treeName) ->
-			treeModel = new Tree.Model( id: treeName ).fetch()
+		tree: (treeId) ->
+			treeModel = @_otherTrees.get treeId
+			unless treeModel
+				@_otherTrees.add treeModel = new Tree.Model(id: treeId)
+				treeModel.fetch
+					error: => @show404()
 			app.useLayout('tree_page').setViews
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
@@ -79,6 +84,10 @@ define [
 					collection: @_myTrees
 				".authenticate_modal": new Modal.Views.Authenticate
 			.render()
+
+		show404: ->
+			@go()
+			$('#modal-404').modal()
 
 		# Shortcut for building a URL
 		go: ->

@@ -11,4 +11,18 @@ html
 		link(rel='stylesheet', href='/css/app.css')
 	body
 		!= body
+
+		//- 404 modal content
+		#modal-404.modal.hide.fade(tabindex='-1', role='dialog', aria-labelledby='myModalLabel', aria-hidden='true')
+			.modal-header
+				button.close(type='button', data-dismiss='modal', aria-hidden='true') ×
+				h3 Nothing to see here...
+			.modal-body
+				p
+					| You have requested a page that doesn't seem to exist within the site,
+					| so we've taken you back to the home page. Apologies!
+			.modal-footer
+				button.btn.btn-primary(data-dismiss='modal', aria-hidden='true') Okay, let's go home
+
+		//- all systems go
 		script(data-main='/js/config', src='/js/libs/require.js')

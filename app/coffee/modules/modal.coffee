@@ -29,5 +29,9 @@ define [
 		template: "modals/authenticate"
 		uniqueName: "modal-views-authenticate"
 
+	class Modal.Views.FourOhFour extends Modal.Views.Base
+		template: "modals/404"
+		uniqueName: "modal-views-404"
+
 
 	Modal
