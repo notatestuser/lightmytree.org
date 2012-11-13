@@ -47,7 +47,6 @@ class UserDatabase extends BaseDatabase
 						throw err
 					else
 						console.log "Twitter user created: #{userData.screen_name}"
-						console.log res
 						newDoc._id = newDoc.id = res.id # defensive programming!
 						promise.fulfill newDoc
 
@@ -55,25 +54,44 @@ class TreeDatabase extends BaseDatabase
 	constructor: (config) ->
 		super config, 'trees'
 
-	makeSlugId = (user) ->
-		user.screenName
+	checkIdTaken = (treeId, callback) ->
+		@db.view "#{@dbKey}/checkId", key: treeId, (err, res) ->
+			console.error err if err
+			callback res and res.length, treeId
 
-	createDocument = (userDoc, data) ->
+	# screenName, screenName-1, screenName-2, etc...
+	makeSlugId = (user, callback) ->
+		screenName = user.screenName.replace '-', '_'
+		tries = 0
+		idCheckCallbackFn = ((taken, triedId) ->
+			console.log "tried username #{triedId}, is taken: #{taken}"
+			if taken
+				checkIdTaken.call @, "#{screenName}-#{++tries}", idCheckCallbackFn
+			else
+				callback triedId
+		).bind @
+		checkIdTaken.call @, screenName, idCheckCallbackFn
+
+	createDocument = (userDoc, data, makeId, callback) ->
 		if not data.strokes?.length? or not data.charityIds?.length?
 			throw "`strokes` and `charityIds` must have some entries"
 		doc = _.pick data, 'strokes', 'charityIds', 'viewBoxWidth', 'viewBoxHeight'
 		doc.user = id: userDoc._id
-		doc._id = makeSlugId userDoc
-		doc
+		if makeId
+			makeSlugId.call @, userDoc, (slugId) ->
+				doc._id = slugId
+				callback doc
+		else callback doc
 
 	createOrUpdate: (userDoc, data, callback) ->
 		args = if data.id? and data.id.length? then [data.id] else []
 		try
-			args.push createDocument(userDoc, data)
+			createDocument.call @, userDoc, data, !args.length, (doc) =>
+				args.push doc
+				args.push callback
+				@db.save.apply @db, args
 		catch err
 			callback err, null
-		args.push callback
-		@db.save.apply @db, args
 
 	findByUserId: (userId, callback) ->
 		@db.view "#{@dbKey}/byUserId", key: userId, (err, res) ->

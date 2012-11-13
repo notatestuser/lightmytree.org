@@ -1,11 +1,18 @@
 {
 	"_id": "_design/trees",
+	"_rev": "3-883c92c292e0f890d962e08566d04dc3",
 	"views": {
 		"byId": {
-			"map": "function (doc) { if (doc._id) { emit(doc._id, doc) } }"
+			"map":
+				"function (doc) { if (doc._id) { emit(doc._id, doc) } }"
+		},
+		"checkId": {
+			"map":
+				"function (doc) { if (doc._id) { emit(doc._id, true) } }"
 		},
 		"byUserId": {
-			"map": "function (doc) { if (doc.user && doc.user.id) { emit(doc.user.id, doc) } }"
+			"map":
+				"function (doc) { if (doc.user && doc.user.id) { emit(doc.user.id, doc) } }"
 		}
 	}
 }

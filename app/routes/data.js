@@ -109,7 +109,7 @@
         return res.send("Please authenticate or supply a user ID", 401);
       }
     }));
-    return app.get(/^\/json\/trees\/([a-zA-Z0-9_.]+)?$/, function(req, res) {
+    return app.get(/^\/json\/trees\/([a-zA-Z0-9_.-]+)?$/, function(req, res) {
       if (req.params[0]) {
         return treeDb.findById(req.params[0], function(err, doc) {
           if (err) {
