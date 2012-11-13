@@ -173,6 +173,8 @@ define [
 		tagName: "li"
 		className: "mini-tree-view span4"
 
+		serialize: -> id: @model.id
+
 		afterRender: ->
 			self = @
 			$container = @$el
