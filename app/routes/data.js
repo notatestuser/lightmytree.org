@@ -90,7 +90,7 @@
     });
     app.post("/json/my_tree", myTreeFn);
     app.put("/json/my_tree", myTreeFn);
-    app.get(/^\/json\/users\/([a-z0-9]+)?$/, withAuth(function(req, res, userId) {
+    app.get(/^\/json\/users\/?([a-zA-Z0-9_.-]+)?$/, withAuth(function(req, res, userId) {
       var id;
       id = req.params[0] || userId;
       if (id) {
@@ -109,7 +109,7 @@
         return res.send("Please authenticate or supply a user ID", 401);
       }
     }));
-    return app.get(/^\/json\/trees\/([a-zA-Z0-9_.-]+)?$/, function(req, res) {
+    return app.get(/^\/json\/trees\/?([a-zA-Z0-9_.-]+)?$/, function(req, res) {
       if (req.params[0]) {
         return treeDb.findById(req.params[0], function(err, doc) {
           if (err) {
