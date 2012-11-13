@@ -48,7 +48,9 @@
               }
               if (treeRes && !err) {
                 treeIds = userDoc.treeIds || (userDoc.treeIds = []);
-                treeIds.push(treeRes.id);
+                if (treeIds.indexOf(treeRes.id) === -1) {
+                  treeIds.push(treeRes.id);
+                }
                 return userDb.saveDocument(userDoc, function(err, userRes) {
                   if (err) {
                     sendDatabaseError(err, res);

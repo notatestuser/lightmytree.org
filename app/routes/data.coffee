@@ -40,7 +40,7 @@ module.exports = (app, config) ->
 						# add tree ID to user object and save it
 						if treeRes and not err
 							treeIds = userDoc.treeIds or userDoc.treeIds = []
-							treeIds.push treeRes.id
+							treeIds.push treeRes.id if treeIds.indexOf(treeRes.id) is -1
 							userDb.saveDocument userDoc, (err, userRes) ->
 								sendDatabaseError err, res if err
 								res.json id: treeRes.id if treeRes
