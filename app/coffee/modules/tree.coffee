@@ -142,8 +142,10 @@ define [
 		className: "tree-view"
 
 		afterRender: ->
+			@model.on 'change', => @render()
 			self = @
 			$container = @$el
+			# TODO store reference to Raphael canvas to prevent duplicate render bug
 			new Raphael $container[0], $container.width(), $container.height(), ->
 				@setViewBox 0, 0,
 					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
