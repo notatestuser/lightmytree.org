@@ -11,7 +11,7 @@ define [
 
 	class User.Model extends Backbone.Model
 		idAttribute: '_id'
-		url: -> "/json/users/" + (@get('_id') or '')
+		urlRoot: "/json/users"
 
 		defaults:
 			screenName: 'Unknown'
