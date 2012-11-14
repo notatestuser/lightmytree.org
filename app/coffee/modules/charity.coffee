@@ -46,8 +46,8 @@ define [
 		template: "charity/picker"
 		tagName: "div"
 
-		events:
-			"keypress .search-charities-typeahead": "startSearch"
+		# events:
+		# 	"keypress .search-charities-typeahead": "startSearch"
 
 		initialize: (options) ->
 			@treeModel = options.treeModel if options.treeModel
@@ -72,13 +72,14 @@ define [
 			@typeaheadCharities.on 'reset', =>
 				@$('.search-charities-typeahead').typeahead
 					source: @typeaheadCharities.getSource()
+					updater: (item) =>
+						@startSearch item
+						item
 			.fetch()
 
-		startSearch: ->
-			console.log "Starting search"
-			q = @$('.search-charities-typeahead').val()
+		startSearch: (query) ->
 			@collection = new Charity.SearchCollection
-				query: q
+				query: query
 			@collection.fetch
 				success: => @render()
 
