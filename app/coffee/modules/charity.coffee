@@ -71,10 +71,17 @@ define [
 		beforeRender: ->
 			treeModel = @treeModel
 			# listen for changes to remainingSelections; disable selection if 0
-			# @collection.on 'change:remainingSelections', (model, remainingSelections) =>
-			# 	if remainingSelections is 0
-			# 		_.invoke @collection.where(selected: no), 'set',
-			# 			allowSelection: no
+			@collection.on 'change:remainingSelections', (model, remainingSelections) =>
+				if remainingSelections is 0 and not @weDisabled
+					@weDisabled = yes
+					_.invoke @collection.where(selected: no), 'set',
+						allowSelection: no
+						remainingSelections: remainingSelections
+				else if remainingSelections > 0 and @weDisabled
+					@weDisabled = no
+					_.invoke @collection.where(allowSelection: no), 'set',
+						allowSelection: yes
+						remainingSelections: remainingSelections
 
 			# iterate over the list of models and create & render our views
 			@collection.forEach (charityModel) ->
