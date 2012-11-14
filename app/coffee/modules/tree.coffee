@@ -188,6 +188,9 @@ define [
 		serialize: -> id: @model.id
 
 		afterRender: ->
+			if @options and @options.hideButtons
+				@$('.buttons').hide()
+
 			self = @
 			$container = @$el
 			new Raphael $container[0], 256, 256, ->

@@ -90,6 +90,7 @@ define [
 					views:
 						".share_preview": new Tree.Views.Item
 							model: @_newTree
+							hideButtons: yes
 				".my_trees": new Tree.Views.List
 					collection: @_myTrees
 				".authenticate_modal": new Modal.Views.Authenticate
