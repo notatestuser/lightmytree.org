@@ -32,7 +32,6 @@ define [
 			_.extend @, models
 
 		index: ->
-			app.active = false
 			app.useLayout('home_page').setViews
 				#".create_tree": new Tree.Views.Sketch @
 				".existing_tree": new Tree.Views.List @
@@ -77,11 +76,6 @@ define [
 				@_otherUsers.add userModel = new User.Model(_id: treeId) # how consistent...
 				userModel.fetch
 					error: => @show404()
-					success: (model) =>
-						console.log 'SUCCESS!'
-						console.log model
-						console.log model.get('fullName')
-						model
 
 			app.useLayout('tree_page').setViews
 				".row-intro": new Tree.Views.Intro
