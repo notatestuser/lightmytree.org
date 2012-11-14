@@ -453,7 +453,6 @@ header
 				background transparent url('../img/stocking-rotated-tag.png') no-repeat scroll 50% 2.3%
 				background-size 130px
 				padding 200px 15px 0 15px
-				cursor pointer
 
 				&:first-child
 					background-position 50% 1.5%
@@ -480,7 +479,8 @@ header
 					background-color rgba(0, 255, 0, 0.2)
 					h4
 						text-shadow #eeffee 1px 1px 0px
-					p
+					.description *,
+					.reg-number
 						text-shadow none !important
 
 				h4,p
@@ -492,6 +492,36 @@ header
 				p
 					margin-right 0 !important
 					text-align justify
+					&.reg-number
+						margin-top 3px
+					&.revealer
+						padding-left 5%
+						border-top 1px dotted black
+						border-bottom 1px dotted black
+						font-size 80%
+						margin-bottom 5px
+						cursor pointer
+					&.select-checkbox
+						font-size 112%
+						cursor pointer
+						input
+							width 22px
+							height 20px
+					&.limit-warning
+						text-align center
+						font-size 7pt
+						border-radius 3px
+						background rgba(0, 255, 0, 0.2)
+						letter-spacing 1px
+				.description
+					-webkit-transition height .5s ease
+					-moz-transition height .5s ease
+					transition height .5s ease
+					&.contracted
+						max-height 142px
+						margin-bottom 5px
+						overflow-y hidden
+
 
 				.pin
 					position absolute

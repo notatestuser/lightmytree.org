@@ -31,17 +31,9 @@ define [
 			ids = @get('charityIds')
 			@charities = new Charity.Collection ids
 
-		addCharity: (model) ->
-			console.log "added charity to Tree.Model"
-			@set 'charityIds', _.union(@get('charityIds'), [model.id])
-			@charities.push model
-
-		removeCharity: (model) ->
-			console.log "removing charity from Tree.Model"
-			@set 'charityIds', _.without(@get('charityIds'), model.id)
-			@charities.remove model
-
 	class Tree.MyModel extends Tree.Model
+		@MaxCharities: 4
+
 		url: -> "/json/my_tree"
 
 		initialize: ->
@@ -65,6 +57,31 @@ define [
 					defaultSyncFn() if app.authed
 				when "delete"
 					$.jStorage.deleteKey Tree.Model.LocalStorageKey
+
+		addCharity: (model) ->
+			if @get('charityIds').length < MyModel.MaxCharities
+				@set 'charityIds', ids = _.union(@get('charityIds'), [model.id])
+				@charities.push model
+				# set the remaining count on the model
+				model.set
+					selected: yes
+					remainingSelections: (MyModel.MaxCharities - ids.length)
+			else no
+
+		removeCharity: (model) ->
+			@set 'charityIds', ids = _.without(@get('charityIds'), model.id)
+			@charities.remove model
+			model.set
+				selected: no
+				remainingSelections: (MyModel.MaxCharities - ids.length)
+
+		setInitialCharityState: (model) ->
+			selected = no
+			if @get('charityIds').indexOf(model.id) isnt -1
+				selected = yes
+			model.set
+				selected: selected
+			, silent: yes
 
 	class Tree.Collection extends Backbone.Collection
 		url: "/json/trees/"

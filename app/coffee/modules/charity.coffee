@@ -14,6 +14,9 @@ define [
 			logoFileName: ''
 			name: 'Default Charity'
 			registrationNumber: 0
+			allowSelection: yes
+			selected: no
+			remainingSelections: -1
 
 	class Charity.Collection extends Backbone.Collection
 		model: Charity.Model
@@ -67,16 +70,23 @@ define [
 
 		beforeRender: ->
 			treeModel = @treeModel
+			# listen for changes to remainingSelections; disable selection if 0
+			# @collection.on 'change:remainingSelections', (model, remainingSelections) =>
+			# 	if remainingSelections is 0
+			# 		_.invoke @collection.where(selected: no), 'set',
+			# 			allowSelection: no
+
+			# iterate over the list of models and create & render our views
 			@collection.forEach (charityModel) ->
 				@hasViews = yes
 				view = new Charity.Views.Item
 					model: charityModel
 				view.on 'selected', ->
+					# calling this method will deal with setting 'selected' for us
 					treeModel.addCharity view.model
 				view.on 'unselected', ->
 					treeModel.removeCharity view.model
-				if _(@treeModel.get('charityIds')).contains view.model.id
-					view.renderSelected()
+				treeModel.setInitialCharityState view.model
 				@insertView '.charities', view
 			, @
 
@@ -161,31 +171,46 @@ define [
 		tagName: "li"
 
 		events:
-			"click": "toggleSelected"
+			"click .select-checkbox": "toggleSelected"
+			"click .revealer": "revealDescription"
+
+		initialize: ->
+			@model.on 'change:selected change:allowSelection', @render, @
 
 		serialize: ->
 			@model.toJSON()
 
-		renderSelected: ->
-			@selected = yes
-			@$el.addClass 'selected'
-			@$("input").prop('checked', true)
-
-		renderUnselected: ->
-			@selected = no
-			@$el.removeClass 'selected'
-			@$("input").prop('checked', false)
-
-		toggleSelected: ->
-			if not @selected
-				@trigger('selected')
+		afterRender: ->
+			if @model.get 'selected'
 				@renderSelected()
 			else
-				@trigger('unselected')
 				@renderUnselected()
+			if not @model.get 'allowSelection'
+				@renderDisabled()
 
-		afterRender: ->
-			if @selected then @renderSelected() else @renderUnselected()
+		renderSelected: ->
+			@$el.addClass 'selected'
+			@$('input').prop('checked', true)
+			@$('.limit-warning').addClass 'show' if @model.get('remainingSelections') >= 0
+
+		renderUnselected: ->
+			@$el.removeClass 'selected'
+			@$('input').prop('checked', false)
+			@$('.limit-warning').removeClass 'show'
+
+		renderDisabled: ->
+			@$('.select-checkbox').html 'Your wish list is full!'
+
+		toggleSelected: ->
+			# have the Picker handle this for us - it involves moving things around in the Tree
+			if not @model.get 'selected'
+				@trigger('selected')
+			else
+				@trigger('unselected')
+
+		revealDescription: ->
+			@$('.revealer').fadeOut 'fast', =>
+				@$('.description').removeClass 'contracted'
 
 
 	Charity

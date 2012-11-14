@@ -1,13 +1,24 @@
-<div class="floating-logo" style="background-image: url( http://justgiving.com<%= logoFileName %> )">
-	<img src="http://justgiving.com<%= logoFileName %>"/>
+<div class="floating-logo" style="background-image: url( http://www.justgiving.com<%= logoFileName %> )">
+	<img src="http://www.justgiving.com<%= logoFileName %>"/>
 </div>
 
-<p style="display: none">
-	<input type="checkbox" name="charity" value="<%= charityId %>"/>
-	<%= charityId %>
-</p>
 <h4><%= name %></h4>
-<p><%= description %></p>
-<p>Registered charity no. <%= registrationNumber %></p>
+
+<div class="description contracted">
+	<p><%= description %></p>
+</div>
+
+<p class="revealer">&raquo; Click for more...</p>
+
+<p class="reg-number">Registered charity no. <%= registrationNumber %></p>
+
+<p class="select-checkbox">
+	<input type="checkbox" name="charity" value="<%= charityId %>"/>
+	Add to wish list
+</p>
+
+<p class="limit-warning hide fade in">
+	You may select <%= remainingSelections %> more charities.
+</p>
 
 <div class="pin visible-desktop"></div>
