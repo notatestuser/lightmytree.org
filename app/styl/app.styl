@@ -32,6 +32,19 @@ box-sizing(sizing)
 	-moz-box-sizing sizing
 	-ms-box-sizing sizing
 
+background-prefixed-radial-gradient(start, type, stop1, stop2, stop3)
+	background -moz-radial-gradient(start, type, stop1, stop2, stop3)
+	background -o-radial-gradient(start, type, stop1, stop2, stop3)
+	background -ms-radial-gradient(start, type, stop1, stop2, stop3)
+	background -webkit-radial-gradient(start, type, stop1, stop2, stop3)
+
+background-prefixed-linear-gradient(start, stop1, stop2, stop3, stop4, stop5)
+	background -moz-linear-gradient(start, stop1, stop2, stop3, stop4, stop5)
+	background -webkit-linear-gradient(start, stop1, stop2, stop3, stop4, stop5)
+	background -o-linear-gradient(start, stop1, stop2, stop3, stop4, stop5)
+	background -ms-linear-gradient(start, stop1, stop2, stop3, stop4, stop5)
+
+
 // Style builders
 
 coloured-pencil($colour)
@@ -60,6 +73,7 @@ coloured-pencil($colour)
 		.original-bg
 			background-color $colour !important
 
+
 // Page styles
 
 html
@@ -68,11 +82,8 @@ html
 body
 	overflow-x hidden
 	background #eeecdf
-	background -moz-linear-gradient(left,  #eeecdf 0%, #edead7 24%, #eae6cc 50%, #edead7 79%, #eeecdf 100%)
+	background-prefixed-linear-gradient(left, #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
 	background -webkit-gradient(linear, left top, right top, color-stop(0%,#eeecdf), color-stop(24%,#edead7), color-stop(50%,#eae6cc), color-stop(79%,#edead7), color-stop(100%,#eeecdf))
-	background -webkit-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
-	background -o-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
-	background -ms-linear-gradient(left,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
 	background linear-gradient(to right,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
 
 header
@@ -83,11 +94,30 @@ header
 		height 50px
 
 	.container
-		background transparent url("../img/header-bg.png") no-repeat scroll 50% 80%
-		min-height 200px
+		background transparent url('../img/header-bg.png') no-repeat scroll 50% 94%
+		min-height 250px
+		.banner
+			width 130px
+			height 223px
+			position relative
+			top -50px
+			background transparent url('../img/dangler-tree.png') no-repeat scroll center top
+			&:after
+				content ''
+				display block
+				width 90%
+				height 12px
+				position absolute
+				bottom -19px
+				left 4px
+				background-prefixed-radial-gradient(center, ellipse cover,  rgba(224,218,186,1) 0%, rgba(224,218,187,1) 16%, rgba(225,220,194,0) 100%)
+				background -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(224,218,186,1)), color-stop(16%,rgba(224,218,187,1)), color-stop(100%,rgba(225,220,194,0)))
+				background radial-gradient(ellipse at center,  rgba(224,218,186,1) 0%,rgba(224,218,187,1) 16%,rgba(225,220,194,0) 100%)
 
-	> h1
+
+	h1
 		font-size 2rem
+		display none
 
 #main
 	margin 0 auto 0 auto
