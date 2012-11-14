@@ -19,6 +19,9 @@ define [
 		model: Charity.Model
 		cache: yes
 
+		initialize: (options = {}) ->
+			@query = options.query or ''
+
 	class Charity.RecentCharitiesCollection extends Charity.Collection
 		url: "/json/recent_charities"
 
@@ -32,9 +35,19 @@ define [
 		getSource: ->
 			@map (charity) -> charity.get 'name'
 
+	class Charity.SearchCollection extends Charity.Collection
+		url: -> # TODO: get from the URL gathering function in app
+			"https://api-sandbox.justgiving.com/e90e23e0/v1/charity/search?q=" + @query
+
+		parse: (docs) ->
+			docs.charitySearchResults or []
+
 	class Charity.Views.Picker extends Backbone.View
 		template: "charity/picker"
 		tagName: "div"
+
+		events:
+			"keypress .search-charities-typeahead": "startSearch"
 
 		initialize: (options) ->
 			@treeModel = options.treeModel if options.treeModel
@@ -60,6 +73,14 @@ define [
 				@$('.search-charities-typeahead').typeahead
 					source: @typeaheadCharities.getSource()
 			.fetch()
+
+		startSearch: ->
+			console.log "Starting search"
+			q = @$('.search-charities-typeahead').val()
+			@collection = new Charity.SearchCollection
+				query: q
+			@collection.fetch
+				success: => @render()
 
 	class Charity.Views.Item extends Backbone.View
 		template: "charity/list_item"
