@@ -13,8 +13,13 @@ Flow
 The Never Ending 'To Do'
 ------------------------
 
-* Sandbox/prod routing configuration
-* Convert Bootstrap to use individual AMD modules to reduce initial payload size
+* Sandbox/prod routing configuration (DONE)
+* Artificial latency with the contrived fixtures
+* Convert Bootstrap to use individual AMD modules to reduce initial payload size (don't send over all of Bootstrap...)
+* Re-initialise sketchpad on resize (Chrome bug)
+* Limit stroke submissions in UI & data layer
+* Limit charity selections in data layer
+* Clear local storage on final share (to prevent edits and clean up)
 
 Testing Strategy
 ----------------
