@@ -108,7 +108,10 @@ define [
 			# @$('.btn-save').button 'loading'
 			@model.remotePersist = yes if app.authed
 			@model.save()
-			(new Modal.Views.Authenticate()).show() if not app.authed
+			if not app.authed
+				(new Modal.Views.Authenticate()).show()
+			else
+				app.router.go 'my_trees'
 
 	class Tree.Views.Share extends Backbone.View
 		template: "tree/share"
