@@ -32,17 +32,17 @@ Data URL Schemes
 These will have fixtures made up for them (as above):
 
 ```
-Action                       | Feed
+Data interface action         | Feed
 -----------------------------------------------------------------
-log in                       | get user object (server-side),
-                                make available over http
-post to /my_tree             | add tree object, get user object,
-                                add id to user object, save
-/users/:user_id              | all trees by user id
-                                ({user} -> {trees},
-                                 load strokes async)
-/users/:screen_name/tree/:id | search user collection for tree
-                                with given ID
+log in                        | get user object (server-side),
+                                 make available over http (or not)
+post to /my_tree              | add tree object, get user object,
+                                 add id to user object, save
+/users/:user_id               | all trees by user id
+                                 ({user} -> {trees},
+                                  load strokes async)
+/trees/:slug                  | search user collection for tree
+                                 with given ID
 
 Live feeds:
 	/json/recent_charities
