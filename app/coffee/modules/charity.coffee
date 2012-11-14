@@ -198,7 +198,11 @@ define [
 		renderSelected: ->
 			@$el.addClass 'selected'
 			@$('input').prop('checked', true)
-			@$('.limit-warning').addClass 'show' if @model.get('remainingSelections') >= 0
+			if @model.get('remainingSelections') >= 0
+				@$('.limit-warning')
+					.addClass('show')
+					.delay(1500)
+					.slideUp(1000)
 
 		renderUnselected: ->
 			@$el.removeClass 'selected'
