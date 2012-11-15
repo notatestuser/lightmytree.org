@@ -9,18 +9,56 @@ box-shadow(x, y, z, colour)
 	box-shadow x y z colour
 
 transform-rotate(degs)
-	-webkit-transform: rotate(degs)
-	-moz-transform: rotate(degs)
-	-o-transform: rotate(degs)
-	-ms-transform: rotate(degs)
-	transform: rotate(degs)
+	-webkit-transform rotate(degs)
+	-moz-transform rotate(degs)
+	-o-transform rotate(degs)
+	-ms-transform rotate(degs)
+	transform rotate(degs)
+
+transform-rotateX(degs)
+	-webkit-transform rotateX(degs)
+	-moz-transform rotateX(degs)
+	-o-transform rotateX(degs)
+	-ms-transform rotateX(degs)
+	transform rotateX(degs)
 
 transform-rotateY(degs)
-	-webkit-transform: rotateY(degs)
-	-moz-transform: rotateY(degs)
-	-o-transform: rotateY(degs)
-	-ms-transform: rotateY(degs)
-	transform: rotateY(degs)
+	-webkit-transform rotateY(degs)
+	-moz-transform rotateY(degs)
+	-o-transform rotateY(degs)
+	-ms-transform rotateY(degs)
+	transform rotateY(degs)
+
+transform-rotateXY(xdegs, ydegs)
+	-webkit-transform rotateX(xdegs) rotateY(ydegs)
+	-moz-transform rotateX(xdegs) rotateY(ydegs)
+	-o-transform rotateX(xdegs) rotateY(ydegs)
+	-ms-transform rotateX(xdegs) rotateY(ydegs)
+	transform rotateX(xdegs) rotateY(ydegs)
+
+transform-flipH()
+	-moz-transform scaleX(-1) scaleY(1)
+	-o-transform scaleX(-1) scaleY(1)
+	-webkit-transform scaleX(-1) scaleY(1)
+	transform scaleX(-1) scaleY(1)
+	filter FlipH
+	-ms-filter "FlipH"
+
+transform-flipV()
+	-moz-transform scaleX(1) scaleY(-1)
+	-o-transform scaleX(1) scaleY(-1)
+	-webkit-transform scaleX(1) scaleY(-1)
+	transform scaleX(1) scaleY(-1)
+	filter FlipV
+	-ms-filter "FlipV"
+
+transform-flipHV()
+	-moz-transform scaleX(-1) scaleY(-1)
+	-o-transform scaleX(-1) scaleY(-1)
+	-webkit-transform scaleX(-1) scaleY(-1)
+	transform scaleX(-1) scaleY(-1)
+	filter FlipH FlipV
+	-ms-filter "FlipH, FlipV"
 
 transition(a, b, c)
 	transition a b c
@@ -397,6 +435,46 @@ header
 	.row-sketchpad
 		margin-bottom -50px
 
+	.row-holly
+		.holly-holder-left,.holly-holder-right
+			.holly
+				margin-bottom 15px
+		.holly-holder-top
+			height 53px
+			.holly
+				float left
+				margin-right 15px
+				width 105px
+				transform-rotate(90deg)
+				&.two
+					height
+		.holly-holder-left
+			.holly
+				clear both
+				float right
+				right -21px
+				&.flip
+					transform-flipV()
+		.holly-holder-right
+			.holly
+				left -21px
+				top -59px
+				transform-flipH()
+				&.flip
+					transform-flipHV()
+				&.corner
+					left -44px
+					width 77px
+					transform-rotate(130deg)
+		.holly
+			background transparent url('../img/frame-holly.png') no-repeat scroll top left
+			position relative
+			width 64px
+			height 100px
+			&.two
+				background-position 0% 99%
+				height 86px
+
 	.row-picker,.row-share-button
 		background -moz-linear-gradient(left,  rgba(238,236,223,0.4) 0%, rgba(237,235,222,0.85) 22%, rgba(236,234,222,1) 31%, rgba(234,232,222,1) 50%, rgba(236,234,222,1) 73%, rgba(237,235,222,0.85) 81%, rgba(238,236,223,0.4) 100%)
 		background -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(238,236,223,0.4)), color-stop(22%,rgba(237,235,222,0.85)), color-stop(31%,rgba(236,234,222,1)), color-stop(50%,rgba(234,232,222,1)), color-stop(73%,rgba(236,234,222,1)), color-stop(81%,rgba(237,235,222,0.85)), color-stop(100%,rgba(238,236,223,0.4)))
@@ -408,7 +486,6 @@ header
 	.row-picker
 		padding-top 100px
 		position relative
-
 		.hr
 			position absolute
 			top 0
