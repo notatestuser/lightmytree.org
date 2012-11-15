@@ -60,6 +60,15 @@ transform-flipHV()
 	filter FlipH FlipV
 	-ms-filter "FlipH, FlipV"
 
+transform-flipH-rotate(degs)
+	-webkit-transform scaleX(-1) scaleY(1) rotate(degs)
+	-moz-transform scaleX(-1) scaleY(1) rotate(degs)
+	-o-transform scaleX(-1) scaleY(1) rotate(degs)
+	-ms-transform rotate(degs)
+	transform scaleX(-1) scaleY(1) rotate(degs)
+	filter FlipH
+	-ms-filter "FlipH"
+
 transition(a, b, c)
 	transition a b c
 	-webkit-transition a b c
@@ -177,7 +186,7 @@ header
 			content: ''
 			width: 100%
 			height: 100%
-			background-color: whiteSmoke
+			background-color whiteSmoke
 			border: 1px solid rgba(0, 0, 0, 0.150)
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.19))
 			transform-rotate(2deg)
@@ -443,21 +452,47 @@ header
 			height 53px
 			.holly
 				float left
-				margin-right 15px
-				width 105px
+				margin-right -14px
+				width 118px
 				transform-rotate(90deg)
-				&.two
-					height
+				&:first-child
+					background-image none
+				&.flip
+					transform-flipH-rotate(90deg)
+		.holly-holder-bottom
+			height 53px
+			.holly
+				position relative
+				margin-left 15px
+				margin-right 15px
+				top -85px
+				left 10px
+				float left
+				transform rotate(-90deg)
+				&.flip
+					transform-flipH-rotate(-90deg)
 		.holly-holder-left
+			position relative
 			.holly
 				clear both
 				float right
-				right -21px
+				top 105px
+				right -27px
 				&.flip
 					transform-flipV()
+				&:last-child
+					z-index 20
+			.rosette
+				width 292px
+				height 245px
+				background transparent url('../img/rosette-top.png') no-repeat scroll center center
+				position absolute
+				top -125px
+				right -200px
+				z-index 60
 		.holly-holder-right
 			.holly
-				left -21px
+				left -27px
 				top -59px
 				transform-flipH()
 				&.flip
@@ -466,10 +501,19 @@ header
 					left -44px
 					width 77px
 					transform-rotate(130deg)
+			.rosette
+				width 200px
+				height 179px
+				background transparent url('../img/rosette-bottom-new.png') no-repeat scroll center center
+				position relative
+				left -168px
+				top -57px
+				z-index 60
+				margin-bottom -100px
 		.holly
 			background transparent url('../img/frame-holly.png') no-repeat scroll top left
 			position relative
-			width 64px
+			width 70px
 			height 100px
 			&.two
 				background-position 0% 99%
