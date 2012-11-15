@@ -1,5 +1,7 @@
 @import '../vendor/bootstrap/css/bootstrap.min.css'
+
 @import url('https://fonts.googleapis.com/css?family=Lobster');
+@import url('http://fonts.googleapis.com/css?family=Lora');
 
 // Prefixer mixins
 
@@ -557,6 +559,27 @@ header
 
 	.row-intro
 		text-align center
+		&.first
+			margin-bottom 20px
+		.profile-id
+			padding 0 10px
+		.profile-image
+			max-height 48px
+			min-height 48px
+			user-select none
+			-webkit-user-select none
+			-moz-user-select none
+		.inner
+			padding-top 30px
+		.decor
+			background transparent url('../img/charities-decor.png') no-repeat scroll center center
+			background-size 100%
+			min-height 158px
+			position relative
+			left 44px
+			&.right
+				transform-flipH()
+				left -44px !important
 
 	.row-intro,
 	.row-picker
@@ -584,9 +607,10 @@ header
 			display block
 			font-size 1.1em
 			line-height 1.2em
-			padding-left 18px
 			text-shadow 1px 1px #ffeeee
 			font-weight normal
+			text-transform uppercase
+			font-family 'Lora', serif
 		h3:before
 			content ""
 			display inline-block
@@ -753,15 +777,3 @@ header
 		.alert-not-logged-in
 			margin-bottom 0
 			margin-top 20px
-
-	.row-intro
-		.profile-id
-			padding 0 10px
-
-		.profile-image
-			max-height 48px
-			min-height 48px
-			user-select none
-			-webkit-user-select none
-			-moz-user-select none
-

@@ -77,7 +77,7 @@ define [
 					error: => @show404()
 
 			app.useLayout('tree_page').setViews
-				".row-intro": new Tree.Views.Intro
+				".intro": new Tree.Views.Intro
 					model: userModel
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
