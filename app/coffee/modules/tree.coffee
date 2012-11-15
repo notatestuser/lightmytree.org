@@ -37,7 +37,7 @@ define [
 
 		loadCharities: ->
 			ids = @get 'charityIds'
-			@charities = new Charity.Collection ids
+			# @charities = new Charity.Collection ids
 			@charities.reset (id: id for id in ids)
 
 	class Tree.MyModel extends Tree.Model
