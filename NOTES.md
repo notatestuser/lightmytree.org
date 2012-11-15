@@ -16,6 +16,7 @@ The Never Ending 'To Do'
 * Sandbox/prod routing configuration (DONE)
 * Artificial latency with the contrived fixtures
 * Convert Bootstrap to use individual AMD modules to reduce initial payload size (don't send over all of Bootstrap...)
+* Gzipped requests & responses for static assets & API
 * Re-initialise sketchpad on resize (Chrome bug)
 * Limit stroke submissions in UI & data layer
 * Limit charity selections in data layer
@@ -23,6 +24,7 @@ The Never Ending 'To Do'
 * :before :after IE polyfill
 * SVG generation
 * Strip down size of header-bg.png
+* Stop using API key in Backbone model URLs; instead use the URL mechanism already in place
 
 Testing Strategy
 ----------------
