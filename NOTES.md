@@ -20,6 +20,8 @@ The Never Ending 'To Do'
 * Limit stroke submissions in UI & data layer
 * Limit charity selections in data layer
 * Clear local storage on final share (to prevent edits and clean up)
+* :before :after IE polyfill
+* SVG generation
 
 Testing Strategy
 ----------------
