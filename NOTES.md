@@ -22,6 +22,7 @@ The Never Ending 'To Do'
 * Clear local storage on final share (to prevent edits and clean up)
 * :before :after IE polyfill
 * SVG generation
+* Strip down size of header-bg.png
 
 Testing Strategy
 ----------------
