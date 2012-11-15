@@ -555,6 +555,9 @@ header
 			border-top 1px solid #ccc
 			box-shadow(-1px, -1px, 8px, #ccc)
 
+	.row-intro
+		text-align center
+
 	.row-intro,
 	.row-picker
 		position relative
@@ -562,7 +565,6 @@ header
 			display block
 			font-size 2.1em
 			line-height 1.9em
-			text-align center
 			padding-left 18px
 			text-shadow 1px 1px #ffeeee
 			font-weight normal
@@ -578,6 +580,29 @@ header
 			width 94px
 			height 32px
 			background transparent url("../img/xmas-header-decor.png") no-repeat scroll -56px 4px
+		h3
+			display block
+			font-size 1.1em
+			line-height 1.2em
+			padding-left 18px
+			text-shadow 1px 1px #ffeeee
+			font-weight normal
+		h3:before
+			content ""
+			display inline-block
+			width 100px
+			height 12px
+			margin-right 6px
+			background transparent url("../img/smaller-header-decor.png") no-repeat scroll right center
+			background-size 100%
+		h3:after
+			content ""
+			display inline-block
+			width 100px
+			height 12px
+			margin-left 6px
+			background transparent url("../img/smaller-header-decor.png") no-repeat scroll left center
+			background-size 100%
 		form
 			margin-top 15px
 
@@ -735,6 +760,7 @@ header
 
 		.profile-image
 			max-height 48px
+			min-height 48px
 			user-select none
 			-webkit-user-select none
 			-moz-user-select none
