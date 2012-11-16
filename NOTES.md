@@ -27,8 +27,7 @@ The Never Ending 'To Do'
 * Strip down size of header-bg.png
 * Stop using API key in Backbone model URLs; instead use the URL mechanism already in place
 * Double image loading on tree view page (charities list
-* EVERY PENCIL IS BLUE
-   ARGH!
+* Enough(tm) pencil colours
 
 Testing Strategy
 ----------------
