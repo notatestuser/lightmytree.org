@@ -194,7 +194,7 @@ define [
 		template: "sketch/pencil"
 		className: "pencil"
 
-		@PencilColours = _.shuffle [
+		@Classes = [
 			"pencil-blue"
 			"pencil-green"
 			"pencil-darkgreen"
@@ -203,6 +203,7 @@ define [
 			"pencil-pink"
 			"pencil-orange"
 		]
+		@AvailableClasses = [] # we'll build this up in initialize()
 
 		events:
 			"click": "_setThisColour"
@@ -210,7 +211,10 @@ define [
 		initialize: (options) ->
 			@position = options.position or 0
 			@pencilFloat = options.pencilFloat or 'left'
-			@ourClass = Pencil.PencilColours.pop() or 'pencil-blue'
+
+			Pencil.AvailableClasses = _.shuffle(Pencil.Classes) if not Pencil.AvailableClasses.length
+			@ourClass = Pencil.AvailableClasses.pop() or 'pencil-blue'
+
 			@model.on 'change:pencilColour', @_changePencilColour
 
 		beforeRender: ->
