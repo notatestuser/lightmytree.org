@@ -236,4 +236,21 @@ define [
 		template: "charity/list_item_mini"
 		className: "thumbnail mini"
 
+		events:
+			"mouseover img": "showPopover"
+			"mouseout img": "hidePopover"
+
+		afterRender: ->
+			@$el.popover
+				title: @model.get('name')
+				content: @$('.description').html()
+				placement: 'bottom'
+				html: yes
+
+		showPopover: ->
+			@$el.popover 'show'
+
+		hidePopover: ->
+			@$el.popover 'hide'
+
 	Charity
