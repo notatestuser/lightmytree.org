@@ -20,11 +20,15 @@ The Never Ending 'To Do'
 * Re-initialise sketchpad on resize (Chrome bug)
 * Limit stroke submissions in UI & data layer
 * Limit charity selections in data layer
+* Limit drawing submissions in UI & data layer
 * Clear local storage on final share (to prevent edits and clean up)
 * :before :after IE polyfill
 * SVG generation
 * Strip down size of header-bg.png
 * Stop using API key in Backbone model URLs; instead use the URL mechanism already in place
+* Double image loading on tree view page (charities list
+* EVERY PENCIL IS BLUE
+   ARGH!
 
 Testing Strategy
 ----------------
