@@ -148,9 +148,9 @@ header
 				position absolute
 				bottom -19px
 				left 4px
-				background radial-gradient(center, ellipse cover,  rgba(224,218,186,1) 0%, rgba(224,218,187,1) 16%, rgba(225,220,194,0) 100%)
-				// background -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(224,218,186,1)), color-stop(16%,rgba(224,218,187,1)), color-stop(100%,rgba(225,220,194,0)))
-				// background radial-gradient(ellipse at center,  rgba(224,218,186,1) 0%,rgba(224,218,187,1) 16%,rgba(225,220,194,0) 100%)
+				background-prefixed-radial-gradient(center, ellipse cover,  rgba(224,218,186,1) 0%, rgba(224,218,187,1) 16%, rgba(225,220,194,0) 100%)
+				background -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(224,218,186,1)), color-stop(16%,rgba(224,218,187,1)), color-stop(100%,rgba(225,220,194,0)))
+				background radial-gradient(ellipse at center, rgba(224,218,186,1) 0%,rgba(224,218,187,1) 16%,rgba(225,220,194,0) 100%)
 
 
 	h1
@@ -215,7 +215,8 @@ header
 		box-sizing(border-box)
 
 		background whiteSmoke
-		background radial-gradient(center, ellipse cover, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
+		background radial-gradient(ellipse at center, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
+		background-prefixed-radial-gradient(center, ellipse cover, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
 
 		> div
 			z-index 40
@@ -468,7 +469,7 @@ header
 		.holly-holder-left
 			position relative
 			.holly
-				clearfix()
+				clear both
 				float right
 				top 105px
 				right -27px
@@ -514,6 +515,7 @@ header
 			position relative
 			width 52px
 			height 100px
+			opacity(0.8)
 			&.two
 				background-position 0% 99%
 				height 86px
