@@ -22,6 +22,11 @@ define [
 		model: Charity.Model
 		cache: yes
 
+		# TODO: get from the URL gathering function in app
+		url: "https://api-sandbox.justgiving.com/" +
+			"e90e23e0" +
+			"/v1/charity"
+
 	class Charity.RecentCharitiesCollection extends Charity.Collection
 		url: "/json/recent_charities"
 
@@ -173,6 +178,8 @@ define [
 			@delegateEvents()
 
 	class Charity.Views.Item extends Backbone.View
+		@JGImagePath: '/Utils/imaging.ashx?width=80&height=80&square=80&imageType=charitybrandinglogo&img='
+
 		template: "charity/list_item"
 		className: "span3 thumbnail"
 		tagName: "li"
@@ -185,7 +192,9 @@ define [
 			@model.on 'change:selected change:allowSelection', @render, @
 
 		serialize: ->
-			@model.toJSON()
+			obj = @model.toJSON()
+			_.extend obj, logoFileName: Item.JGImagePath + url if url = @model.get 'logoUrl'
+			obj
 
 		afterRender: ->
 			if @model.get 'selected'
@@ -223,5 +232,8 @@ define [
 			@$('.revealer').fadeOut 'fast', =>
 				@$('.description').removeClass 'contracted'
 
+	class Charity.Views.MiniItem extends Charity.Views.Item
+		template: "charity/list_item_mini"
+		className: "thumbnail mini"
 
 	Charity

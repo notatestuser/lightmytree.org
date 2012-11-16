@@ -79,6 +79,7 @@ define [
 			app.useLayout('tree_page').setViews
 				".intro": new Tree.Views.Intro
 					model: userModel
+					collection: treeModel.charities
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
 			.render()

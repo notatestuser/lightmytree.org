@@ -38,7 +38,7 @@ define [
 		loadCharities: ->
 			ids = @get 'charityIds'
 			# @charities = new Charity.Collection ids
-			@charities.reset (id: id for id in ids)
+			@charities.reset (charityId: id for id in ids)
 
 	class Tree.MyModel extends Tree.Model
 		@MaxCharities: 4
@@ -165,8 +165,18 @@ define [
 		initialize: ->
 			# yes, we're chaining renders because the prior one supposedly hasn't finished
 			@model.on 'change', => @render => @render()
+			@collection.on 'reset', @render, @
 
 		serialize: -> @model.toJSON()
+
+		beforeRender: ->
+			@collection.forEach (charityModel) ->
+				charityModel.fetch
+					success: (model) =>
+						@insertView '.charities', new Charity.Views.MiniItem
+							model: charityModel
+						.render()
+			, @
 
 	class Tree.Views.Solo extends Backbone.View
 		# template: "tree/view"
