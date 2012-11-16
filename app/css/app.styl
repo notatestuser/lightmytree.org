@@ -295,7 +295,7 @@ header
 				margin auto auto
 				background black
 				border-radius 50%
-				opacity 0.6
+				opacity(0.6)
 
 		.pencil-case
 			height 325px
@@ -509,7 +509,7 @@ header
 			position relative
 			width 52px
 			height 100px
-			opacity(0.8)
+			opacity(0.75)
 			&.two
 				background-position 0% 99%
 				height 86px
@@ -587,6 +587,9 @@ header
 			width 94px
 			height 32px
 			background transparent url("../img/xmas-header-decor.png") no-repeat scroll -56px 4px
+	.row-intro,
+	.row-picker,
+	.row-donation
 		h3,h4
 			display block
 			font-size 1.1em
@@ -634,13 +637,17 @@ header
 		.left
 			h2
 				text-align left
+				margin-bottom 40px
 			padding-left 25px
 		.right
 			border-left 1px dashed #ccc
 			height 100%
+		.column
+			position relative
 		.warning
 			padding-left 90px
 			padding-top 12px
+			margin-top 30px
 			border-top 1px dashed #ccc
 			.label-warning
 				margin-left -85px
@@ -650,11 +657,16 @@ header
 			border-radius 16px
 			height auto
 			border-bottom 1px solid #ccc
-			clearfix()
+			min-height 90px
+			margin-left 0
+			// clearfix()
 			li
+				z-index 20
 				height 100%
 				width 33.3%
+				padding-bottom 130px
 				float left
+				border-radius 16px
 				&:before
 					content ""
 					display block
@@ -690,7 +702,25 @@ header
 						position relative
 						top -14px
 						width 110px
-
+				&.gift,&.ball
+					&:hover:before
+						position relative
+						top -5px
+				&.gift.two:hover:before
+					top -56px !important
+				&.gift.three:hover:before
+					top: -19px !important
+		.copy
+			z-index 10
+			position absolute
+			top 90px
+			h4
+				padding-top 12px
+				font-size 1.4em
+			p
+				text-align justify
+			h4,p
+				z-index 10
 
 	.charity_picker
 		.pagination
@@ -810,9 +840,7 @@ header
 					background rgba(0, 255, 0, 0.2)
 					letter-spacing 1px
 			.description
-				-webkit-transition height .5s ease
-				-moz-transition height .5s ease
-				transition height .5s ease
+				transition(height .5s ease)
 				&.contracted
 					max-height 142px
 					margin-bottom 5px
