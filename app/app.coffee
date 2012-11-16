@@ -50,7 +50,6 @@ app.configure ->
 		src: __dirname
 		dest: __dirname + '/../assets'
 		compile: compile
-		debug: true
 
 ### watch coffeescript sources ###
 coffee = espresso.core.exec 'coffee -o ../assets/js -w -c coffee'
