@@ -3,12 +3,9 @@
 @import url('https://fonts.googleapis.com/css?family=Lobster');
 @import url('http://fonts.googleapis.com/css?family=Lora');
 
-// Prefixer mixins
+@import 'nib'
 
-box-shadow(x, y, z, colour)
-	-webkit-box-shadow x y z colour
-	-moz-box-shadow x y z colour
-	box-shadow x y z colour
+// Prefixer mixins
 
 transform-rotate(degs)
 	-webkit-transform rotate(degs)
@@ -71,16 +68,6 @@ transform-flipH-rotate(degs)
 	filter FlipH
 	-ms-filter "FlipH"
 
-transition(a, b, c)
-	transition a b c
-	-webkit-transition a b c
-	-moz-transition a b c
-
-box-sizing(sizing)
-	-webkit-box-sizing sizing
-	-moz-box-sizing sizing
-	-ms-box-sizing sizing
-
 background-prefixed-radial-gradient(start, type, stop1, stop2, stop3)
 	background -moz-radial-gradient(start, type, stop1, stop2, stop3)
 	background -o-radial-gradient(start, type, stop1, stop2, stop3)
@@ -131,9 +118,9 @@ html
 body
 	overflow-x hidden
 	background #eeecdf
-	background-prefixed-linear-gradient(left, #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
-	background -webkit-gradient(linear, left top, right top, color-stop(0%,#eeecdf), color-stop(24%,#edead7), color-stop(50%,#eae6cc), color-stop(79%,#edead7), color-stop(100%,#eeecdf))
-	background linear-gradient(to right,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
+	background linear-gradient(left, #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
+	// background -webkit-gradient(linear, left top, right top, color-stop(0%,#eeecdf), color-stop(24%,#edead7), color-stop(50%,#eae6cc), color-stop(79%,#edead7), color-stop(100%,#eeecdf))
+	// background linear-gradient(to right,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
 
 header
 	text-align center
@@ -161,9 +148,9 @@ header
 				position absolute
 				bottom -19px
 				left 4px
-				background-prefixed-radial-gradient(center, ellipse cover,  rgba(224,218,186,1) 0%, rgba(224,218,187,1) 16%, rgba(225,220,194,0) 100%)
-				background -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(224,218,186,1)), color-stop(16%,rgba(224,218,187,1)), color-stop(100%,rgba(225,220,194,0)))
-				background radial-gradient(ellipse at center,  rgba(224,218,186,1) 0%,rgba(224,218,187,1) 16%,rgba(225,220,194,0) 100%)
+				background radial-gradient(center, ellipse cover,  rgba(224,218,186,1) 0%, rgba(224,218,187,1) 16%, rgba(225,220,194,0) 100%)
+				// background -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(224,218,186,1)), color-stop(16%,rgba(224,218,187,1)), color-stop(100%,rgba(225,220,194,0)))
+				// background radial-gradient(ellipse at center,  rgba(224,218,186,1) 0%,rgba(224,218,187,1) 16%,rgba(225,220,194,0) 100%)
 
 
 	h1
@@ -200,7 +187,7 @@ header
 			background #faf9e4
 			border 1px solid rgba(0, 0, 0, 0.150)
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.19))
-			transform-rotate(2deg)
+			transform rotate(2deg)
 
 		.sketchpad-editor:after
 			z-index -2
@@ -213,7 +200,7 @@ header
 			background #faf9e4
 			border 1px solid rgba(0, 0, 0, 0.150)
 			box-shadow(1px, 1px, 2px, rgba(0, 0, 0, 0.2))
-			transform-rotate(358deg)
+			transform rotate(358deg)
 
 	.sketchpad-editor
 		position relative
@@ -228,7 +215,7 @@ header
 		box-sizing(border-box)
 
 		background whiteSmoke
-		background-prefixed-radial-gradient(center, ellipse cover, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
+		background radial-gradient(center, ellipse cover, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
 
 		> div
 			z-index 40
@@ -281,7 +268,7 @@ header
 				border 0
 				&:hover
 					.colour-blob
-						opacity 1
+						opacity(1)
 				&.selected
 					background-color #e1dcc2
 				&.disabled
@@ -327,13 +314,7 @@ header
 				height 4px
 				width 85.6%
 				z-index 200
-
-				background -moz-linear-gradient(top, rgba(0,0,0,0) 0%, rgba(82,69,64,0.8) 100%)
-				background -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(0,0,0,0)), color-stop(100%,rgba(82,69,64,0.8)))
-				background -webkit-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
-				background -o-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
-				background -ms-linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
-				background linear-gradient(to bottom, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
+				background linear-gradient(top, rgba(0,0,0,0) 0%,rgba(82,69,64,0.8) 100%)
 
 		.eraser-panel-view
 			width 100%
@@ -403,7 +384,7 @@ header
 				outline 1px solid transparent
 
 			> div
-				clear both
+				clearfix()
 
 			// nib section
 			> div:first-child
@@ -487,7 +468,7 @@ header
 		.holly-holder-left
 			position relative
 			.holly
-				clear both
+				clearfix()
 				float right
 				top 105px
 				right -27px
@@ -540,12 +521,7 @@ header
 	.row-spacer,
 	.row-picker,
 	.row-share-button
-		background -moz-linear-gradient(left,  rgba(238,236,223,0.4) 0%, rgba(237,235,222,0.85) 22%, rgba(236,234,222,1) 31%, rgba(234,232,222,1) 50%, rgba(236,234,222,1) 73%, rgba(237,235,222,0.85) 81%, rgba(238,236,223,0.4) 100%)
-		background -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(238,236,223,0.4)), color-stop(22%,rgba(237,235,222,0.85)), color-stop(31%,rgba(236,234,222,1)), color-stop(50%,rgba(234,232,222,1)), color-stop(73%,rgba(236,234,222,1)), color-stop(81%,rgba(237,235,222,0.85)), color-stop(100%,rgba(238,236,223,0.4)))
-		background -webkit-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
-		background -o-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
-		background -ms-linear-gradient(left,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
-		background linear-gradient(to right,  rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
+		background linear-gradient(left, rgba(238,236,223,0.4) 0%,rgba(237,235,222,0.85) 22%,rgba(236,234,222,1) 31%,rgba(234,232,222,1) 50%,rgba(236,234,222,1) 73%,rgba(237,235,222,0.85) 81%,rgba(238,236,223,0.4) 100%)
 
 	.row-spacer
 		z-index -3
