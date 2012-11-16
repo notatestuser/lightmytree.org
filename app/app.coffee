@@ -41,15 +41,15 @@ app.configure ->
 	app.set 'views', __dirname + '/views'
 	app.set 'view engine', 'jade'
 	app.use express.bodyParser()
+	app.use stylus.middleware
+		src: __dirname
+		dest: __dirname + '/../assets'
+		compile: compile
 	app.use express.static __dirname + '/../assets'
 	app.use express.cookieParser()
 	app.use express.session secret: envConfig.sessionSecret
 	app.use everyauth.middleware()
 	app.use express.errorHandler()
-	app.use stylus.middleware
-		src: __dirname
-		dest: __dirname + '/../assets'
-		compile: compile
 
 ### watch coffeescript sources ###
 coffee = espresso.core.exec 'coffee -o ../assets/js -w -c coffee'
