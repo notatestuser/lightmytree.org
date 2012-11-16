@@ -170,13 +170,16 @@ define [
 		serialize: -> @model.toJSON()
 
 		beforeRender: ->
-			@collection.forEach (charityModel) ->
-				charityModel.fetch
-					success: (model) =>
-						@insertView '.charities', new Charity.Views.MiniItem
-							model: charityModel
-						.render()
-			, @
+			# this is here because we're not using an indepdendent view to represent the stuff in the collection - oh well
+			if not @fetchingCharities
+				@collection.forEach (charityModel) ->
+					@fetchingCharities = yes
+					charityModel.fetch
+						success: (model) =>
+							@insertView '.charities', new Charity.Views.MiniItem
+								model: charityModel
+							.render()
+				, @
 
 	class Tree.Views.Solo extends Backbone.View
 		# template: "tree/view"
