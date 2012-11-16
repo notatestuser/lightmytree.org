@@ -675,7 +675,6 @@ header
 				margin-right 7px
 		ul.gifts
 			list-style-type none
-			border 1px solid #ccc
 			border-radius 6px
 			height 200px
 			li
@@ -689,10 +688,26 @@ header
 					&:before
 						width 70px
 						background-position -278px -50px
+					&.one:before
+						float right
+					&.two:before
+						margin auto
+						background-position -355px -50px
+					&.three:before
+						float left
+						background-position -430px -50px
 				&.gift
 					&:before
 						width 80px
 						background-position 0px -52px
+					&.one:before
+						float right
+					&.two:before
+						margin auto
+						background-position -83px -52px
+					&.three:before
+						float left
+						background-position -166px -52px
 
 
 	.charity_picker
