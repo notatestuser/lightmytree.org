@@ -9,6 +9,7 @@
     "express": "2.5.11",
     "coffee-script": "1.3.3",
     "stylus": "*",
+    "nib": "0.8.x",
     "jade": "*",
     "uglify-js": "*",
     "everyauth": "0.3.x",

@@ -1,6 +1,8 @@
 ### require modules ###
 express = require 'express'
 espresso = require './espresso'
+stylus = require 'stylus'
+nib = require 'nib'
 
 ### create express server ###
 app = express.createServer()
@@ -24,6 +26,13 @@ else
 	apiRoutes = './routes/api'
 	envConfig = require './configs/production'
 
+### stylus compilation func ###
+compile = (str, path) ->
+	stylus(str)
+	.set('filename', path)
+	.set('compress', true)
+	.use(nib())
+
 ### init authentication ###
 everyauth = require('./authentication')(envConfig)
 
@@ -32,6 +41,10 @@ app.configure ->
 	app.set 'views', __dirname + '/views'
 	app.set 'view engine', 'jade'
 	app.use express.bodyParser()
+	app.use stylus.middleware
+		src: __dirname + '/styl'
+		dest: __dirname + '../assets/css'
+		compile: compile
 	app.use express.static __dirname + '/../assets'
 	app.use express.cookieParser()
 	app.use express.session secret: envConfig.sessionSecret
@@ -44,7 +57,7 @@ coffee.stdout.on 'data', (data) ->
 	espresso.core.minify() if app.env == 'production'
 
 ### watch stylus sources ###
-espresso.core.exec 'stylus -w -c styl -o ../assets/css'
+# espresso.core.exec 'stylus -w -c styl -o ../assets/css'
 
 ### app routes ###
 require('./routes/data') app, envConfig
