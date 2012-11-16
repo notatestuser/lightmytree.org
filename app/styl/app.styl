@@ -656,11 +656,44 @@ header
 		padding-top 60px
 
 	.row-donation
+		&.well
+			// background #EDEAD7 - darker
+			background #EDE8DE // lighter
 		.left
 			h2
 				text-align left
 			padding-left 25px
-			border-right 1px dashed #ccc
+		.right
+			border-left 1px dashed #ccc
+			height 100%
+		.warning
+			padding-left 90px
+			padding-top 12px
+			border-top 1px dashed #ccc
+			.label-warning
+				margin-left -85px
+				margin-right 7px
+		ul.gifts
+			list-style-type none
+			border 1px solid #ccc
+			border-radius 6px
+			height 200px
+			li
+				height 100%
+				&:before
+					content ""
+					display block
+					height 130px
+					background transparent url('../img/gift-sprites.png') no-repeat scroll
+				&.ball
+					&:before
+						width 70px
+						background-position -278px -50px
+				&.gift
+					&:before
+						width 80px
+						background-position 0px -52px
+
 
 	.charity_picker
 		.pagination
