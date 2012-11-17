@@ -26,11 +26,13 @@ define [
 
 		initialize: ->
 			@charities = new Charity.Collection()
+			@donations = new Donation.Collection()
 
 		fetch: (options = {}) ->
 			oldCallback = options.success
 			options.success = (model, response, options) =>
 				@loadCharities()
+				@loadDonations()
 				oldCallback? model, response, options
 			super options
 
@@ -38,6 +40,9 @@ define [
 			ids = @get 'charityIds'
 			# @charities = new Charity.Collection ids
 			@charities.reset (charityId: id for id in ids)
+
+		loadDonations: ->
+			@donations.reset @get('donations')
 
 	class Tree.MyModel extends Tree.Model
 		@MaxCharities: 4

@@ -12,6 +12,7 @@ define [
 	class Donation.Model extends Backbone.Model
 		defaults:
 			charityId: -1
+			treeId: -1
 			name: 'Anonymous'
 			message: 'n/a'
 			gift: 'gift-1'
@@ -19,6 +20,11 @@ define [
 			giftDropX: 0
 			giftDropY: 0
 			giftVisible: no
+
+		url: -> "/json/trees/#{@get 'treeId'}/donations"
+
+	class Donation.Collection extends Backbone.Collection
+		model: Donation.Model
 
 	class Donation.Views.GiftPicker extends Backbone.View
 		template: 'tree/view/donation_gifts'

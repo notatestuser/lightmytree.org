@@ -83,7 +83,8 @@ define [
 					model: userModel
 					collection: treeModel.charities
 				".row-donation": new Donation.Views.GiftPicker
-					model: donation = new Donation.Model()
+					model: donation = new Donation.Model
+						treeId: treeId
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
 					myDonationModel: donation
