@@ -85,6 +85,7 @@ define [
 				".row-donation": new Donation.Views.GiftPicker
 					model: donation = new Donation.Model
 						treeId: treeId
+						giftVisible: yes
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
 					myDonationModel: donation
