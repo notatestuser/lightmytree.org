@@ -232,7 +232,7 @@ define [
 				# 	return if diffX > 150 or diffY > 150
 
 				# prevents a strange bug where the offset will suddenly become very low or negative
-				if offsetX > 40 and offsetY > 40
+				if offsetX > 40 or offsetY > 40
 					@myDonationView.setDrawOffset offsetX, offsetY
 
 				[ @mouseOffsetX, @mouseOffsetY ] = [ offsetX, offsetY ]
