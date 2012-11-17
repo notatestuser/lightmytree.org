@@ -1,11 +1,17 @@
 @import '../vendor/bootstrap/css/bootstrap.min.css'
 
-@import url('https://fonts.googleapis.com/css?family=Lobster');
-@import url('http://fonts.googleapis.com/css?family=Lora');
+@import url('http://fonts.googleapis.com/css?family=Lobster|Lora');
 
 @import 'nib'
 
 // Prefixer mixins
+
+transform-scale(x, y)
+	-webkit-transform scale(x, y)
+	-moz-transform scale(x, y)
+	-o-transform scale(x, y)
+	-ms-transform scale(x, y)
+	transform scale(x, y)
 
 transform-rotate(degs)
 	-webkit-transform rotate(degs)
@@ -232,10 +238,11 @@ header
 			z-index 100
 			width 32px
 			height 32px
-			background red
 			position absolute
 			top 0
 			left 0
+			transform-scale(0.6, 0.6)
+
 
 	.sketchpad-tools-right
 		.box
@@ -672,6 +679,18 @@ header
 						margin auto
 						&:before
 							position static
+						// radial gradient drop shadow effect
+						// &:after
+						// 	content ''
+						// 	display block
+						// 	width 90%
+						// 	height 12px
+						// 	position absolute
+						// 	bottom -19px
+						// 	left 4px
+						// 	background-prefixed-radial-gradient(center, ellipse cover,  rgba(224,218,186,1) 0%, rgba(224,218,187,1) 16%, rgba(225,220,194,0) 100%)
+						// 	background -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(224,218,186,1)), color-stop(16%,rgba(224,218,187,1)), color-stop(100%,rgba(225,220,194,0)))
+						// 	background radial-gradient(ellipse at center, rgba(224,218,186,1) 0%,rgba(224,218,187,1) 16%,rgba(225,220,194,0) 100%)
 				.click-to-place
 					background transparent url("../img/cursor-hand.svg") no-repeat scroll
 					background-position -8px -10px
