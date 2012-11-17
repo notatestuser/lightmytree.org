@@ -202,13 +202,20 @@ define [
 				@myDonationModel.on 'change:giftSelected', @showDropLocation, @
 
 		beforeRender: ->
+			# @$('.gifts').remove()
+			@$el.empty()
 			$('<div class="gifts"></div>').appendTo @$el
-			@model.get('donations').forEach ()
+			@model.donations.forEach (donationModel) ->
+				if donationModel.get 'giftVisible'
+					@insertView '.gifts', new Donation.Views.Gift
+						model: donationModel
+					.render()
+			, @
 
 		afterRender: ->
 			self = @
 			@model.on 'change', @render, @
-			$container = @$el
+			$container = @$el # this should be empty due to actions taken by beforeRender()
 			# TODO store reference to Raphael canvas to prevent duplicate render bug
 			new Raphael $container[0], $container.width(), $container.height(), ->
 				@setViewBox 0, 0,
@@ -217,11 +224,13 @@ define [
 
 		handleClick: =>
 			if @myDonationModel.get 'giftSelected'
+				# add the donation model and re-render this view
 				dropOffset = @myDonationView.getDropOffset()
 				@myDonationModel.set
 					giftDropX: dropOffset.x
 					giftDropY: dropOffset.y
-				@model.get('donations').push @myDonationModel
+				@model.donations.add @myDonationModel
+				@render()
 
 		handleMouseover: (ev) =>
 			if @myDonationModel and @myDonationModel.get 'giftSelected'
