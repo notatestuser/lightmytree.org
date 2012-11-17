@@ -257,6 +257,7 @@ define [
 		afterRender: ->
 			self = @
 			$container = @$container = @$el
+			# TODO: empty container in beforeRender() and trigger a render() on resizeCanvas event
 			new Raphael $container[0], $container.width(), $container.height(), ->
 				sketchpad = self.sketchpad = Raphael.sketchpad @,
 					strokes: self.model.tree().get('strokes')
