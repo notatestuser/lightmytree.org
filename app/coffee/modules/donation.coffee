@@ -37,39 +37,47 @@ define [
 				opacity: 0.5
 			, 500
 
-		setupSelectedGift = (newClass, $gift, $selected, $target, doneFn) ->
+		setupSelectedGift = (newClass, $gift, $selected, $targets, doneFn) ->
 			$gift.addClass 'selected'
-			$target.addClass (newClass = $gift.data('gift'))
-			$target.removeClass oldClass if oldClass = $target.data('gift')
-			$target.data 'gift', newClass
+			$targets.addClass (newClass = $gift.data('gift'))
+			$targets.removeClass oldClass if oldClass = $targets.data('gift')
+			$targets.data 'gift', newClass
 			$selected.fadeIn('fast', doneFn) if not $selected.is(':visible')
 
 		selectGift: (e) ->
 			$gift = $(e.target)
 			$selectedGift = @$('.selected-gift')
+			$selectedGiftEls = $selectedGift.find('.gifts *')
+			# $selectedGiftEls = @$('.selected-gift .gifts .decoration').first
 			$sketchTeaser = $('.sketch-teaser')
 			newClass = $gift.data('gift')
 			@$el.addClass 'gift-chosen'
 			fadePaneContents $('.left')
 			showFn = =>
-				setupSelectedGift newClass, $gift, $selectedGift, $selectedGift.find('li'), =>
+				setupSelectedGift newClass, $gift, $selectedGift, $selectedGiftEls, =>
 					setTimeout =>
 						# TODO fix this - works in FF
 						$('html').animate
 							scrollTop: $('.row-holly.row-first').offset().top
 					, 1000
 
-			if $sketchTeaser.is ':visible'
-				$sketchTeaser.fadeOut 'fast', showFn
-			else showFn()
+			# if $sketchTeaser.is ':visible'
+			# 	$sketchTeaser.fadeOut 'fast', showFn
+			# else showFn()
+			showFn()
 
 			# set the model's gift
 			@model.set
 				gift: newClass
 				giftSelected: yes
 
-			# fire event or add to Tree
-			# re-render Tree view (which is probably why we'd favour an event)
+			@$('.follow')
+				.fadeIn('slow')
+				.css
+					position: 'fixed'
+					bottom: 0
+					left: 0
+					backgroundColor: '#fff'
 
 	class Donation.Views.Gift extends Backbone.View
 		className: 'decoration placing'
@@ -79,7 +87,12 @@ define [
 
 		beforeRender: ->
 			@$el.removeClass @giftClass if @giftClass
-			@$el.addClass @giftClass = @model.get('gift')
+			@$el
+				.addClass(@giftClass = @model.get('gift'))
+				.css
+					top: @model.get('giftDropY')
+					left: @model.get('giftDropX')
+			# emulate some gravity or something after rendering?
 
 		setDrawOffset: (x, y) ->
 			@$el.css
