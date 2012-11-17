@@ -641,9 +641,31 @@ header
 			padding-left 25px
 		.right
 			border-left 1px dashed #ccc
-			border-bottom 1px dashed #ccc
 			height 100%
-			min-height 181px
+			.sketch-teaser
+				min-height 169px
+				border-bottom 1px dashed #ccc
+			.donate-anyway
+				padding-top 18px
+				text-align center
+			.selected-gift
+				position relative
+				.gifts
+					border-bottom none
+					clearfix()
+					li
+						float none
+						margin auto
+						&:before
+							position static
+				.click-to-place
+					background transparent url("../img/cursor-hand.svg") no-repeat scroll
+					background-position -8px -10px
+					padding 13px 10px 10px 46px
+					// position absolute
+					// top 180px
+					// left 10px
+					font-size 13px
 		.column
 			position relative
 		.gift-chosen
@@ -652,13 +674,13 @@ header
 					content "⇒"
 					display block
 					position absolute
-					right -27px
+					right -33px
 					top 110px
 					font-size 140%
 		.readme
 			padding-left 90px
 			padding-top 12px
-			margin-top 30px
+			margin-top 40px
 			border-top 1px dashed #ccc
 			color #666
 			.label-warning
@@ -676,56 +698,60 @@ header
 				z-index 20
 				height 100%
 				width 33.3%
-				padding-bottom 130px
 				float left
 				border-radius 16px
 				&:before
 					content ""
 					display block
 					height 93px
-					background transparent url('../img/gift-sprites.png') no-repeat scroll
-				&.ball
-					&:before
-						width 70px
-						background-position -278px -50px
-					&.ball-one:before
-						float right
-					&.ball-two:before
-						margin auto
-						background-position -355px -50px
-					&.ball-three:before
-						float left
-						background-position -430px -50px
-				&.gift
-					&:before
-						width 80px
-						background-position 0px -52px
-					&.gift-one:before
-						float right
-					&.gift-two:before
-						margin auto auto -40px auto
-						background-position -83px -1px
-						position relative
-						top -51px
-						height 130px
-					&.gift-three:before
-						float left
-						background-position -166px -38px
-						position relative
-						top -14px
-						width 110px
-				&.gift,&.ball
-					&:hover:before
-						position relative
-						top -5px
-				&.gift.gift-two:hover:before
+					background transparent url('../img/gift-sprites.png') no-repeat scroll 9999px 9999px
+
+				// Balls
+				&.ball-1:before,
+				&.ball-2:before,
+				&.ball-3:before
+					width 70px
+				&.ball-1:before
+					float right
+					background-position -278px -50px
+				&.ball-2:before
+					margin auto
+					background-position -355px -50px
+				&.ball-3:before
+					float left
+					background-position -430px -50px
+
+				// Gifts
+				&.gift-1:before,
+				&.gift-2:before,
+				&.gift-3:before
+					width 80px
+				&.gift-1:before
+					float right
+					background-position 0px -52px
+				&.gift-2:before
+					margin auto auto -40px auto
+					background-position -83px -1px
+					position relative
+					top -51px
+					height 130px
+				&.gift-3:before
+					float left
+					background-position -166px -38px
+					position relative
+					top -14px
+					width 110px
+
+				// On hover "jumping" effect
+				&:hover:before
+					position relative
+					top -5px
+				&.gift-2:hover:before
 					top -56px !important
-				&.gift.gift-three:hover:before
+				&.gift-3:hover:before
 					top: -19px !important
 		.copy
 			z-index 10
-			position absolute
-			top 90px
 			h4
 				padding-top 12px
 				font-size 1.4em
