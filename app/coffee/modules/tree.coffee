@@ -19,7 +19,7 @@ define [
 		defaults:
 			user: null
 			charityIds: []
-			donations: []
+			donationData: []
 			strokes: []
 			viewBoxWidth: 600
 			viewBoxHeight: 500
@@ -42,7 +42,7 @@ define [
 			@charities.reset (charityId: id for id in ids)
 
 		loadDonations: ->
-			@donations.reset @get('donations')
+			@donations.reset @get('donationData')
 
 	class Tree.MyModel extends Tree.Model
 		@MaxCharities: 4
@@ -203,6 +203,7 @@ define [
 
 		beforeRender: ->
 			$('<div class="gifts"></div>').appendTo @$el
+			@model.get('donations').forEach ()
 
 		afterRender: ->
 			self = @
@@ -220,9 +221,7 @@ define [
 				@myDonationModel.set
 					giftDropX: dropOffset.x
 					giftDropY: dropOffset.y
-				console.log 'gift dropped, offset '
-				console.log dropOffset
-				# add to tree's collection of donations
+				@model.get('donations').push @myDonationModel
 
 		handleMouseover: (ev) =>
 			if @myDonationModel and @myDonationModel.get 'giftSelected'
