@@ -31,6 +31,7 @@ define [
 
 		events:
 			"click .selectable": "selectGift"
+			"click .btn-proceed": "beginDonation"
 
 		fadePaneContents = ($pane) ->
 			$pane.children().animate
@@ -52,7 +53,7 @@ define [
 			$sketchTeaser = $('.sketch-teaser')
 			newClass = $gift.data('gift')
 			@$el.addClass 'gift-chosen'
-			fadePaneContents $('.left')
+			fadePaneContents @$el.children(':not(.follow)')
 			showFn = =>
 				setupSelectedGift newClass, $gift, $selectedGift, $selectedGiftEls, =>
 					setTimeout =>
@@ -78,6 +79,9 @@ define [
 					bottom: 0
 					left: 0
 					backgroundColor: '#fff'
+
+		beginDonation: ->
+			@model.save()
 
 	class Donation.Views.Gift extends Backbone.View
 		className: 'decoration placing'
