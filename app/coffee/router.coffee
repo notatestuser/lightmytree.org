@@ -4,10 +4,11 @@ define [
 	"modules/tree"
 	"modules/charity"
 	"modules/sketch"
+	"modules/donation"
 	"modules/modal"
 ],
 
-(app, User, Tree, Charity, Sketch, Modal) ->
+(app, User, Tree, Charity, Sketch, Donation, Modal) ->
 
 	# Defining the application router, you can attach sub routers here.
 	Router = Backbone.Router.extend
@@ -82,6 +83,8 @@ define [
 					collection: treeModel.charities
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
+				".row-donation": new Donation.Views.GiftPicker
+					model: new Donation.Model
 			.render()
 
 		myTrees: ->
