@@ -70,6 +70,7 @@ define [
 				treeModel.fetch
 					error: => @show404()
 
+			# TODO repeated code! no!
 			userModel = @_otherUsers.get treeId
 			unless userModel
 				# this should resolve with the tree's ID as our Couch byId view takes them into account...
@@ -81,10 +82,11 @@ define [
 				".intro": new Tree.Views.Intro
 					model: userModel
 					collection: treeModel.charities
+				".row-donation": new Donation.Views.GiftPicker
+					model: donation = new Donation.Model()
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
-				".row-donation": new Donation.Views.GiftPicker
-					model: new Donation.Model
+					myDonationModel: donation
 			.render()
 
 		myTrees: ->

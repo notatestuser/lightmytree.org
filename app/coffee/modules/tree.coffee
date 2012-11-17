@@ -4,11 +4,12 @@ define [
 	"backbone"
 	"raphael"
 	"modules/charity"
+	"modules/donation"
 	"modules/modal"
 	"plugins/raphael.sketchpad"
 ],
 
-(app, _, Backbone, Raphael, Charity, Modal) ->
+(app, _, Backbone, Raphael, Charity, Donation, Modal) ->
 
 	Tree = app.module()
 
@@ -185,15 +186,54 @@ define [
 		# template: "tree/view"
 		className: "tree-view"
 
+		events:
+			"click .gifts": "handleClick"
+			"mousemove svg": "handleMouseover"
+
+		initialize: (options = {}) ->
+			if options.myDonationModel
+				@myDonationModel = options.myDonationModel
+				@myDonationModel.on 'change:giftSelected', @showDropLocation, @
+
+		beforeRender: ->
+			$('<div class="gifts"></div>').appendTo @$el
+
 		afterRender: ->
-			@model.on 'change', => @render()
 			self = @
+			@model.on 'change', @render, @
 			$container = @$el
 			# TODO store reference to Raphael canvas to prevent duplicate render bug
 			new Raphael $container[0], $container.width(), $container.height(), ->
 				@setViewBox 0, 0,
 					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
 				@add self.model.get('strokes')
+
+		handleClick: =>
+			alert('drop!') if @myDonationModel.get 'giftSelected'
+
+		handleMouseover: (ev) =>
+			if @myDonationModel and @myDonationModel.get 'giftSelected'
+				offset = $(ev.target).offset()
+				offsetX = ev.clientX - offset.left
+				offsetY = ev.pageY - offset.top
+
+				#  positional difference checking
+				# if @mouseOffsetX? and @mouseOffsetY?
+				# 	diffX = Math.abs(offsetX - @mouseOffsetX)
+				# 	diffY = Math.abs(offsetY - @mouseOffsetY)
+				# 	return if diffX > 150 or diffY > 150
+
+				# prevents a strange bug where the offset will suddenly become very low or negative
+				if offsetX > 40 and offsetY > 40
+					@myDonationView.setDrawOffset offsetX, offsetY
+
+				[ @mouseOffsetX, @mouseOffsetY ] = [ offsetX, offsetY ]
+
+		# this method will be called when the Donation's gift has been selected
+		showDropLocation: ->
+			@myDonationView = new Donation.Views.Gift
+				model: @myDonationModel
+			@insertView('.gifts', @myDonationView).render()
 
 	class Tree.Views.List extends Backbone.View
 		tagName: "ul"

@@ -211,17 +211,31 @@ header
 		background whiteSmoke
 		background radial-gradient(ellipse at center, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
 		background-prefixed-radial-gradient(center, ellipse cover, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
-
 		> div
 			z-index 40
 			height 100%
 			*
 				z-index 50
-
 		.tree-view
 			border 7px solid #468C40
 			border-radius 2px
 			box-sizing(border-box)
+			.gifts
+				position absolute
+				top 0
+				left 0
+				width 100%
+				height inherit
+				height 100%
+				z-index 90
+		.decoration
+			z-index 100
+			width 32px
+			height 32px
+			background red
+			position absolute
+			top 0
+			left 0
 
 	.sketchpad-tools-right
 		.box
@@ -700,56 +714,6 @@ header
 				width 33.3%
 				float left
 				border-radius 16px
-				&:before
-					content ""
-					display block
-					height 93px
-					background transparent url('../img/gift-sprites.png') no-repeat scroll 9999px 9999px
-
-				// Balls
-				&.ball-1:before,
-				&.ball-2:before,
-				&.ball-3:before
-					width 70px
-				&.ball-1:before
-					float right
-					background-position -278px -50px
-				&.ball-2:before
-					margin auto
-					background-position -355px -50px
-				&.ball-3:before
-					float left
-					background-position -430px -50px
-
-				// Gifts
-				&.gift-1:before,
-				&.gift-2:before,
-				&.gift-3:before
-					width 80px
-				&.gift-1:before
-					float right
-					background-position 0px -52px
-				&.gift-2:before
-					margin auto auto -40px auto
-					background-position -83px -1px
-					position relative
-					top -51px
-					height 130px
-				&.gift-3:before
-					float left
-					background-position -166px -38px
-					position relative
-					top -14px
-					width 110px
-
-				// On hover "jumping" effect
-				&:hover:before
-					position relative
-					top -5px
-				&.gift-2:hover:before
-					top -56px !important
-				&.gift-3:hover:before
-					top: -19px !important
 		.copy
 			z-index 10
 			h4
@@ -759,6 +723,60 @@ header
 				text-align justify
 			h4,p
 				z-index 10
+
+	// These may appear either in the gift selector or the tree-view
+	.gifts
+		li,.decoration
+			&:before
+				content ""
+				display block
+				height 93px
+				background transparent url('../img/gift-sprites.png') no-repeat scroll 9999px 9999px
+
+			// Balls
+			&.ball-1:before,
+			&.ball-2:before,
+			&.ball-3:before
+				width 70px
+			&.ball-1:before
+				float right
+				background-position -278px -50px
+			&.ball-2:before
+				margin auto
+				background-position -355px -50px
+			&.ball-3:before
+				float left
+				background-position -430px -50px
+
+			// Gifts
+			&.gift-1:before,
+			&.gift-2:before,
+			&.gift-3:before
+				width 80px
+			&.gift-1:before
+				float right
+				background-position 0px -52px
+			&.gift-2:before
+				margin auto auto -40px auto
+				background-position -83px -1px
+				position relative
+				top -51px
+				height 130px
+			&.gift-3:before
+				float left
+				background-position -166px -38px
+				position relative
+				top -14px
+				width 110px
+
+			// On hover "jumping" effect
+			&:hover:before
+				position relative
+				top -5px
+			&.gift-2:hover:before
+				top -56px !important
+			&.gift-3:hover:before
+				top: -19px !important
 
 	.charity_picker
 		.pagination

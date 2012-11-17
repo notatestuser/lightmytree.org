@@ -12,7 +12,8 @@ define [
 	class Donation.Model extends Backbone.Model
 		defaults:
 			charityId: -1
-			type: 'gift-1'
+			gift: 'gift-1'
+			giftSelected: no
 			name: 'Anonymous'
 			message: 'n/a'
 
@@ -44,7 +45,6 @@ define [
 			showFn = =>
 				setupSelectedGift newClass, $gift, $selectedGift, $selectedGift.find('li'), =>
 					setTimeout =>
-						console.log 'row-sketchpad offset is ' + $('.row-sketchpad').offset().top
 						# TODO fix this - works in FF
 						$('html').animate
 							scrollTop: $('.row-holly.row-first').offset().top
@@ -54,10 +54,24 @@ define [
 				$sketchTeaser.fadeOut 'fast', showFn
 			else showFn()
 
-			# create the model
-			donation = new Donation.Model
-				type: newClass
+			# set the model's gift
+			@model.set
+				gift: newClass
+				giftSelected: yes
+
 			# fire event or add to Tree
 			# re-render Tree view (which is probably why we'd favour an event)
+
+	class Donation.Views.Gift extends Backbone.View
+		className: 'decoration'
+
+		beforeRender: ->
+			@$el.addClass @model.get('gift')
+
+		setDrawOffset: (x, y) ->
+			@$el.css
+				top: y
+				left: x
+
 
 	Donation
