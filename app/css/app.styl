@@ -671,6 +671,7 @@ header
 				text-align center
 			.selected-gift
 				position relative
+				padding-top 3px
 				.gifts
 					border-bottom none
 					clearfix()
@@ -691,13 +692,11 @@ header
 						// 	background-prefixed-radial-gradient(center, ellipse cover,  rgba(224,218,186,1) 0%, rgba(224,218,187,1) 16%, rgba(225,220,194,0) 100%)
 						// 	background -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(224,218,186,1)), color-stop(16%,rgba(224,218,187,1)), color-stop(100%,rgba(225,220,194,0)))
 						// 	background radial-gradient(ellipse at center, rgba(224,218,186,1) 0%,rgba(224,218,187,1) 16%,rgba(225,220,194,0) 100%)
-				.click-to-place
+				p.click-to-place
 					background transparent url("../img/cursor-hand.svg") no-repeat scroll
-					background-position -8px -10px
-					padding 13px 10px 10px 46px
-					// position absolute
-					// top 180px
-					// left 10px
+					background-position -4px -3px
+					background-size 23%
+					padding 13px 10px 10px 38px
 					font-size 13px
 		.column
 			position relative
@@ -742,9 +741,27 @@ header
 				text-align justify
 			h4,p
 				z-index 10
+		.follow
+			z-index 100
+			padding 15px 0
+			h2
+				clearfix()
 
 	// These may appear either in the gift selector or the tree-view
 	.gifts
+		li
+			// Balls
+			&.ball-1:before
+				float right
+			&.ball-3:before
+				float left
+
+			// Gifts
+			&.gift-1:before
+				float right
+			&.gift-3:before
+				float left
+
 		li,.decoration
 			&:before
 				content ""
@@ -758,13 +775,11 @@ header
 			&.ball-3:before
 				width 70px
 			&.ball-1:before
-				float right
 				background-position -278px -50px
 			&.ball-2:before
 				margin auto
 				background-position -355px -50px
 			&.ball-3:before
-				float left
 				background-position -430px -50px
 
 			// Gifts
@@ -773,7 +788,6 @@ header
 			&.gift-3:before
 				width 80px
 			&.gift-1:before
-				float right
 				background-position 0px -52px
 			&.gift-2:before
 				margin auto auto -40px auto
@@ -782,7 +796,6 @@ header
 				top -51px
 				height 130px
 			&.gift-3:before
-				float left
 				background-position -166px -38px
 				position relative
 				top -14px
@@ -796,6 +809,10 @@ header
 				top -56px !important
 			&.gift-3:hover:before
 				top: -19px !important
+
+		.decoration:before
+			margin auto !important
+			position static !important
 
 	.charity_picker
 		.pagination
