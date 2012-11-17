@@ -19,15 +19,13 @@ define [
 		defaults:
 			user: null
 			charityIds: []
+			donations: []
 			strokes: []
 			viewBoxWidth: 600
 			viewBoxHeight: 500
 
 		initialize: ->
 			@charities = new Charity.Collection()
-			@on 'change:strokes change:charityIds', (model) ->
-				console.log "#{(model.get('strokes')).length} stroke(s)"
-				model.save()
 
 		fetch: (options = {}) ->
 			oldCallback = options.success
@@ -49,6 +47,9 @@ define [
 		initialize: ->
 			@remotePersist = false
 			super()
+			@on 'change:strokes change:charityIds', (model) ->
+				console.log "#{(model.get('strokes')).length} stroke(s)"
+				model.save()
 
 		sync: (method, model, options, first = true) ->
 			defaultSyncFn = ->
@@ -188,7 +189,7 @@ define [
 
 		events:
 			"click .gifts": "handleClick"
-			"mousemove svg": "handleMouseover"
+			"mousemove .gifts": "handleMouseover"
 
 		initialize: (options = {}) ->
 			if options.myDonationModel
@@ -209,7 +210,14 @@ define [
 				@add self.model.get('strokes')
 
 		handleClick: =>
-			alert('drop!') if @myDonationModel.get 'giftSelected'
+			if @myDonationModel.get 'giftSelected'
+				dropOffset = @myDonationView.getDropOffset()
+				@myDonationModel.set
+					giftDropX: dropOffset.x
+					giftDropY: dropOffset.y
+				console.log 'gift dropped, offset '
+				console.log dropOffset
+				# add to tree's collection of donations
 
 		handleMouseover: (ev) =>
 			if @myDonationModel and @myDonationModel.get 'giftSelected'

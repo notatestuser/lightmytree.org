@@ -12,10 +12,13 @@ define [
 	class Donation.Model extends Backbone.Model
 		defaults:
 			charityId: -1
-			gift: 'gift-1'
-			giftSelected: no
 			name: 'Anonymous'
 			message: 'n/a'
+			gift: 'gift-1'
+			giftSelected: no
+			giftDropX: 0
+			giftDropY: 0
+			giftVisible: no
 
 	class Donation.Views.GiftPicker extends Backbone.View
 		template: 'tree/view/donation_gifts'
@@ -63,15 +66,24 @@ define [
 			# re-render Tree view (which is probably why we'd favour an event)
 
 	class Donation.Views.Gift extends Backbone.View
-		className: 'decoration'
+		className: 'decoration placing'
+
+		initialize: ->
+			@model.on 'change:gift', @render, @
 
 		beforeRender: ->
-			@$el.addClass @model.get('gift')
+			@$el.removeClass @giftClass if @giftClass
+			@$el.addClass @giftClass = @model.get('gift')
 
 		setDrawOffset: (x, y) ->
 			@$el.css
 				top: y
 				left: x
+
+		getDropOffset: ->
+			parentOffset = @$el.parent().offset()
+			thisOffset = @$el.offset()
+			x:	thisOffset.left - parentOffset.left, y: thisOffset.top - parentOffset.top
 
 
 	Donation
