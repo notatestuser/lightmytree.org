@@ -2,7 +2,7 @@
 (function() {
 
   module.exports = {
-    sessionSecret: 'fortytwo',
+    sessionSecret: 'devmode',
     couchdb: {
       url: 'http://admin:admin@dev.lightmytree.org',
       port: 5984
@@ -10,6 +10,12 @@
     dbs: {
       users: 'lmt_users',
       trees: 'lmt_trees'
+    },
+    justgiving: {
+      apiKey: 'e90e23e0',
+      apiUrl: 'https://api-sandbox.justgiving.com',
+      siteUrl: 'https://www.justgiving.com',
+      callbackUrl: 'http://dev.lightmytree.org:3000/callback/jg'
     },
     twitter: {
       consumerKey: 'Ev4MopNlRrygyAYDCEkFUg',

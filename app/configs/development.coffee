@@ -1,6 +1,6 @@
 module.exports =
 
-	sessionSecret: 'fortytwo'
+	sessionSecret: 'devmode'
 
 	couchdb:
 		url: 'http://admin:admin@dev.lightmytree.org'
@@ -9,6 +9,12 @@ module.exports =
 	dbs:
 		users: 'lmt_users'
 		trees: 'lmt_trees'
+
+	justgiving:
+		apiKey: 'e90e23e0'
+		apiUrl: 'https://api-sandbox.justgiving.com'
+		siteUrl: 'https://www.justgiving.com'
+		callbackUrl: 'http://dev.lightmytree.org:3000/callback/jg'
 
 	twitter:
 		# Light My Tree Labs

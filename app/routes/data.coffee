@@ -1,6 +1,7 @@
 {_}       = require 'underscore'
 {inspect} = require 'util'
 {TreeDatabase, UserDatabase} = require '../database'
+JustGiving = require './helpers/justgiving'
 
 module.exports = (app, config) ->
 
@@ -8,6 +9,9 @@ module.exports = (app, config) ->
 
 	userDb = new UserDatabase config
 	treeDb = new TreeDatabase config
+
+	jg = config.justgiving
+	charityService = new JustGiving jg.siteUrl, jg.apiUrl, jg.apiKey
 
 	withAuth = (callback) ->
 		(req, res) ->
@@ -25,6 +29,13 @@ module.exports = (app, config) ->
 		console.error "ERROR: sendDatabaseError()\n" + inspect(err)
 		console.trace 'sendDatabaseError'
 		res.send "Database error", 500
+
+	wrapError = (res, callback) ->
+		(err, doc) ->
+			if err
+				sendDatabaseError err, res
+			else
+				callback doc
 
 	# /json/my_tree
 	myTreeFn = ensureAuth (req, res, userId) ->
@@ -82,9 +93,36 @@ module.exports = (app, config) ->
 	app.get /^\/json\/trees\/?([a-zA-Z0-9_.-]+)?$/, (req, res) ->
 		if req.params[0]
 			treeDb.findById req.params[0], (err, doc) ->
-				sendDatabaseError(err, res) if err
-				res.json(doc) if doc
-				res.send "Not found", 404 if not doc
+				if err
+					sendDatabaseError(err, res)
+				else
+					res.json(doc) if doc
+					res.send "Not found", 404 if not doc
 		else
 			res.send "Not found", 404
 
+	# /json/trees/:id/donate
+	app.post /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, (req, res) ->
+		data = req.body
+		treeId = req.params[0] if req.params?
+
+		if treeId and data
+			treeDb.findById treeId, wrapError res, (treeDoc) ->
+				if not treeDoc
+					res.send "Not found", 404
+				else
+					donation = _.pick data, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY'
+					if Object.keys(donation).length isnt 6
+						res.send "More data required", 500
+					else
+						donations = treeDoc.donations ?= []
+						donations.push donation
+						treeDb.saveDocument treeDoc, wrapError res, (saveRes) ->
+							ourRef = "#{treeId}_#{donations.length-1}" # <treeId>_<idx>
+							res.json
+								id: ourRef
+								redirectUrl: charityService.getDonationUrl donation.charityId, jg.callbackUrl, ourRef
+
+
+		else
+			res.send "Not found", 404
