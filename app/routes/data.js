@@ -196,9 +196,10 @@
                   id: statusData.id,
                   status: statusData.status,
                   amount: statusData.amount,
-                  time: (new Date()).getTime()
+                  time: (new Date()).getTime(),
+                  giftVisible: true
                 });
-                donations = (_ref1 = treeDoc.donations) != null ? _ref1 : treeDoc.donations = [];
+                donations = (_ref1 = treeDoc.donationData) != null ? _ref1 : treeDoc.donationData = [];
                 donations.push(donation);
                 return treeDb.saveDocument(treeDoc, wrapError(res, function(saveRes) {
                   return res.redirect("/" + treeDoc._id + "/donated");
