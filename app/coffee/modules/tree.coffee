@@ -203,13 +203,14 @@ define [
 			"mousemove .gifts": "handleMouseover"
 
 		initialize: (options = {}) ->
+			@model.on 'change', @render, @
+			@model.donations.on 'reset', @render, @
 			if options.myDonationModel
 				@myDonationModel = options.myDonationModel
 				@myDonationModel.on 'change:giftPlacing', @showDropLocation, @
 
 		beforeRender: ->
-			# @$('.gifts').remove()
-			@$el.empty()
+			@$('.gifts').remove()
 			$('<div class="gifts"></div>').appendTo @$el
 			@model.donations.forEach (donationModel) ->
 				if donationModel.get 'giftVisible'
@@ -220,21 +221,24 @@ define [
 
 		afterRender: ->
 			self = @
-			@model.on 'change', @render, @
 			$container = @$el # this should be empty due to actions taken by beforeRender()
-			# TODO store reference to Raphael canvas to prevent duplicate render bug
-			new Raphael $container[0], $container.width(), $container.height(), ->
-				@setViewBox 0, 0,
-					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
-				@add self.model.get('strokes')
+			if @paper?
+				@paper.clear()
+				@paper.add self.model.get('strokes')
+			else
+				new Raphael $container[0], $container.width(), $container.height(), ->
+					self.paper = @
+					@setViewBox 0, 0,
+						self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
+					@add self.model.get('strokes')
 
 		handleClick: =>
 			if @myDonationModel.get 'giftPlacing'
 				# add the donation model and re-render this view
 				dropOffset = @myDonationView.getDropOffset()
 				@myDonationModel.set
-					giftDropX: dropOffset.x
-					giftDropY: dropOffset.y
+					giftDropX: ( dropOffset.x * 1000 ) / 1000
+					giftDropY: ( dropOffset.y * 1000 ) / 1000
 					giftPlacing: no
 				@model.donations.add @myDonationModel
 				@render()
