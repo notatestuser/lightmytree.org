@@ -226,6 +226,8 @@ header
 			border 7px solid #468C40
 			border-radius 2px
 			box-sizing(border-box)
+			&.placing
+				cursor none
 			.gifts
 				position absolute
 				top 0
@@ -670,9 +672,9 @@ header
 				padding-top 18px
 				text-align center
 			.selected-gift
-				position relative
 				padding-top 3px
 				.gifts
+					position relative
 					border-bottom none
 					clearfix()
 					li
@@ -715,7 +717,7 @@ header
 			margin-top 40px
 			border-top 1px dashed #ccc
 			color #666
-			.label-warning
+			.label
 				margin-left -85px
 				margin-right 7px
 		ul.gifts
@@ -744,8 +746,23 @@ header
 		.follow
 			z-index 100
 			padding 15px 0
+			background #FEFEFB
+			&:before
+				content "^"
+				margin auto
+				font-weight bold
 			h2
 				clearfix()
+			.gifts
+				position relative
+				height 100%
+				min-height 191px
+				.btn-proceed
+					position absolute
+					bottom 0
+					left 0
+			.details
+				padding-top 19px
 
 	// These may appear either in the gift selector or the tree-view
 	.gifts
