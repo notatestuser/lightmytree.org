@@ -33,6 +33,7 @@ The Never Ending 'To Do'
 * SVG path optimisation/compression
 * Scale decorations
 * Mobile sketchpad responsiveness
+* "Horrible content will be removed pronto"
 
 Testing Strategy
 ----------------
