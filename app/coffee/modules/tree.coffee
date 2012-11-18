@@ -237,8 +237,8 @@ define [
 				# add the donation model and re-render this view
 				dropOffset = @myDonationView.getDropOffset()
 				@myDonationModel.set
-					giftDropX: ( dropOffset.x * 1000 ) / 1000
-					giftDropY: ( dropOffset.y * 1000 ) / 1000
+					giftDropX: dropOffset.x
+					giftDropY: dropOffset.y
 					giftPlacing: no
 				@model.donations.add @myDonationModel
 				@render()

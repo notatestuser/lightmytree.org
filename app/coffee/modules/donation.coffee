@@ -133,7 +133,9 @@ define [
 		getDropOffset: ->
 			parentOffset = @$el.parent().offset()
 			thisOffset = @$el.offset()
-			x:	thisOffset.left - parentOffset.left, y: thisOffset.top - parentOffset.top
+			x = Math.round((thisOffset.left - parentOffset.left) * 100) / 100
+			y = Math.round((thisOffset.top - parentOffset.top) * 100) / 100
+			{x: x, y: y}
 
 	class Donation.Partials.Charity extends Backbone.View
 		tagName: 'li'
