@@ -12,6 +12,8 @@
 
     JustGiving.DirectDonatePath = '/donation/direct/charity';
 
+    JustGiving.GetDonationDetails = "/v1/donation/";
+
     function JustGiving(siteUrl, apiUrl, apiKey) {
       this.siteUrl = siteUrl;
       this.apiUrl = apiUrl;
@@ -34,11 +36,12 @@
 
     JustGiving.prototype.getDonationStatus = function(donationId, callback) {
       var buf, opts, url;
-      url = this.apiUrl + ("/" + this.apiKey + "/v1/donation/" + donationId);
+      url = this.apiUrl + JustGiving.GetDonationDetails + donationId;
       buf = '';
       opts = {
         headers: {
-          'Accept': 'application/json'
+          'Accept': 'application/json',
+          'x-api-key': this.apiKey
         }
       };
       return https.get(_.extend(parse(url), opts), function(res) {

@@ -4,6 +4,7 @@ https   = require 'https'
 
 class JustGiving
 	@DirectDonatePath = '/donation/direct/charity'
+	@GetDonationDetails = "/v1/donation/"
 
 	constructor: (@siteUrl, @apiUrl, @apiKey) ->
 
@@ -17,12 +18,13 @@ class JustGiving
 
 	getDonationStatus: (donationId, callback) ->
 		# http get the URL below
-		url = @apiUrl + "/#{@apiKey}/v1/donation/#{donationId}"
+		url = @apiUrl + JustGiving.GetDonationDetails + donationId
 		buf = ''
 
 		opts =
 			headers:
 				'Accept': 'application/json'
+				'x-api-key': @apiKey
 
 		https.get _.extend(parse(url), opts), (res) ->
 			console.log "getDonationStatus() for #{donationId} responded with #{res.statusCode}"
