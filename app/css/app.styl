@@ -123,13 +123,22 @@ body
 	// background linear-gradient(to right,  #eeecdf 0%,#edead7 24%,#eae6cc 50%,#edead7 79%,#eeecdf 100%)
 
 header
-	text-align center
 	background transparent url('../img/header-bg.png') no-repeat scroll 50% 94%
 	background-size 960px 330px
 	color #fff
 
+	a,
+	a:hover,
+	a:visited,
+	a:active
+		text-shadow: 1px 1px 1px #000
+		color #ffe
+	a:hover
+		text-decoration none
+		color #fff
+
 	h1
-		line-height 36px
+		line-height 32px
 	h1 a,
 	h1 a:hover,
 	h1 a:visited,
@@ -138,10 +147,6 @@ header
 		font-weight normal
 		font-size 21pt !important
 		text-shadow 2px 2px 1px #000
-		color #ffe
-	h1 a:hover
-		text-decoration none
-		color #fff
 
 	.peek-banner
 		background transparent url('../img/bg-banner-top-green.png') repeat-x scroll 50% -11%
@@ -170,10 +175,36 @@ header
 				background -webkit-gradient(radial, center center, 0px, center center, 100%, color-stop(0%,rgba(224,218,186,1)), color-stop(16%,rgba(224,218,187,1)), color-stop(100%,rgba(225,220,194,0)))
 				background radial-gradient(ellipse at center, rgba(224,218,186,1) 0%,rgba(224,218,187,1) 16%,rgba(225,220,194,0) 100%)
 
-
-	h1
-		font-size 2rem
-		display none
+	.social
+		margin-top 11px
+		a
+			float left
+			line-height 39px
+			font-size 10pt
+			width auto
+			&:last-child
+				margin-left 3px
+			&:hover
+				span.img
+					border-radius 10px
+					background rgba(0,0,0,0.4)
+					img
+						border-radius 5px
+			span.img
+				display block
+				width 28px
+				height 28px
+				padding 5px
+				background rgba(0,0,0,0.3)
+				float left
+				margin 0 8px 0 5px
+				box-shadow 0 1px 3px rgba(255,255,255,0.4)
+				border-radius 50em
+			img
+				width 28px
+				height 28px
+				border-radius 50em
+				float left
 
 #main
 	margin 0 auto 0 auto
