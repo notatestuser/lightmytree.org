@@ -44,7 +44,7 @@
         if (err) {
           return sendDatabaseError(err, res);
         } else {
-          return callback(doc);
+          return typeof callback === "function" ? callback(doc) : void 0;
         }
       };
     };
@@ -183,14 +183,31 @@
         } catch (err) {
           return res.send(err, 500);
         }
+        console.log(decodedData);
         donation = _.pick(decodedData, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY');
-        if (decodedData.treeId != null) {
+        if ((decodedData.treeId != null) && Object.keys(donation).length === 6) {
           return charityService.getDonationStatus(req.query.id, wrapError(res, function(statusData) {
-            console.log('in callback');
-            return console.log(arguments);
+            return treeDb.findById(decodedData.treeId, wrapError(res, function(treeDoc) {
+              var donations, _ref1;
+              if (!treeDoc) {
+                return res.send("Tree record not found", 404);
+              } else {
+                _.extend(donation, {
+                  id: statusData.id,
+                  status: statusData.status,
+                  amount: statusData.amount,
+                  time: (new Date()).getTime()
+                });
+                donations = (_ref1 = treeDoc.donations) != null ? _ref1 : treeDoc.donations = [];
+                donations.push(donation);
+                return treeDb.saveDocument(treeDoc, wrapError(res, function(saveRes) {
+                  return res.redirect("/" + treeDoc._id + "/donated");
+                }));
+              }
+            }));
           }));
         } else {
-          return res.send("treeId required", 500);
+          return res.send("Some required data was missing from the request", 500);
         }
       } else {
         return res.send("incorrectly formatted re-entry URL", 500);

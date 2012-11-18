@@ -26,16 +26,19 @@ class JustGiving
 				'Accept': 'application/json'
 				'x-api-key': @apiKey
 
-		https.get _.extend(parse(url), opts), (res) ->
+		req = https.get _.extend(parse(url), opts), (res) ->
 			console.log "getDonationStatus() for #{donationId} responded with #{res.statusCode}"
+			if res.statusCode isnt 200
+				callback? "status #{res.statusCode}"
+				req.abort()
 
 			res.on 'data', (data) ->
 				buf += data
 
 			res.on 'end', ->
-				callback null, JSON.parse(buf)
+				callback? null, JSON.parse(buf)
 
 		.on 'error', (e) ->
-			callback e
+			callback? e
 
 module.exports = JustGiving

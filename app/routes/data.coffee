@@ -35,7 +35,7 @@ module.exports = (app, config) ->
 			if err
 				sendDatabaseError err, res
 			else
-				callback doc
+				callback? doc
 
 	# /json/my_tree
 	myTreeFn = ensureAuth (req, res, userId) ->
@@ -135,27 +135,25 @@ module.exports = (app, config) ->
 				decodedData = JSON.parse(new Buffer(req.query.data, 'base64').toString 'utf8')
 			catch err
 				return res.send err, 500
+			console.log decodedData
 			donation = _.pick decodedData, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY'
-			if decodedData.treeId?
+			if decodedData.treeId? and Object.keys(donation).length is 6
 				charityService.getDonationStatus req.query.id, wrapError res, (statusData) ->
-					console.log 'in callback'
-					console.log arguments
-				# treeDb.findById decodedData.treeId, wrapError res, (treeDoc) ->
-				# 	if not treeDoc
-				# 		res.send "Not found", 404
-				# 	else
-				# 		donation = _.pick data, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY'
-				# 		donation.treeId = treeId
-				# 		if Object.keys(donation).length isnt 6
-				# 			res.send "More data required", 500
-				# 		else
-							# donation.id = (new Date()).getTime()
-							# donations = treeDoc.donations ?= []
-							# donations.push donation
-							# treeDb.saveDocument treeDoc, wrapError res, (saveRes) ->
-							# 	ourRef = "#{treeId}_#{donation.id}" # <treeId>_<time>
+					treeDb.findById decodedData.treeId, wrapError res, (treeDoc) ->
+						if not treeDoc
+							res.send "Tree record not found", 404
+						else
+							_.extend donation,
+								id: statusData.id
+								status: statusData.status
+								amount: statusData.amount
+								time: (new Date()).getTime()
+								giftVisible: yes
+							donations = treeDoc.donationData ?= []
+							donations.push donation
+							treeDb.saveDocument treeDoc, wrapError res, (saveRes) ->
+								res.redirect "/#{treeDoc._id}/donated"
 			else
-				res.send "treeId required", 500
-
+				res.send "Some required data was missing from the request", 500
 		else
 			res.send "incorrectly formatted re-entry URL", 500

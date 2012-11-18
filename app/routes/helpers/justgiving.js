@@ -35,7 +35,7 @@
     };
 
     JustGiving.prototype.getDonationStatus = function(donationId, callback) {
-      var buf, opts, url;
+      var buf, opts, req, url;
       url = this.apiUrl + JustGiving.GetDonationDetails + donationId;
       buf = '';
       opts = {
@@ -44,16 +44,22 @@
           'x-api-key': this.apiKey
         }
       };
-      return https.get(_.extend(parse(url), opts), function(res) {
+      return req = https.get(_.extend(parse(url), opts), function(res) {
         console.log("getDonationStatus() for " + donationId + " responded with " + res.statusCode);
+        if (res.statusCode !== 200) {
+          if (typeof callback === "function") {
+            callback("status " + res.statusCode);
+          }
+          req.abort();
+        }
         res.on('data', function(data) {
           return buf += data;
         });
         return res.on('end', function() {
-          return callback(null, JSON.parse(buf));
+          return typeof callback === "function" ? callback(null, JSON.parse(buf)) : void 0;
         });
       }).on('error', function(e) {
-        return callback(e);
+        return typeof callback === "function" ? callback(e) : void 0;
       });
     };
 
