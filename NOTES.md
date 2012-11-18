@@ -14,6 +14,7 @@ The Never Ending 'To Do'
 ------------------------
 
 * Sandbox/prod routing configuration (DONE)
+* Coffeescript server start fix
 * Artificial latency with the contrived fixtures
 * Convert Bootstrap to use individual AMD modules to reduce initial payload size (don't send over all of Bootstrap...)
 * Gzipped requests & responses for static assets & API
@@ -28,6 +29,10 @@ The Never Ending 'To Do'
 * Stop using API key in Backbone model URLs; instead use the URL mechanism already in place
 * Double image loading on tree view page (charities list
 * Enough(tm) pencil colours
+* More nib vendor prefixes? (necessary?)
+* SVG path optimisation/compression
+* Scale decorations
+* Mobile sketchpad responsiveness
 
 Testing Strategy
 ----------------
