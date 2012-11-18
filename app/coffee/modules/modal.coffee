@@ -14,13 +14,15 @@ define [
 	class Modal.Views.Base extends Backbone.View
 		className: "modal hide fade"
 		uniqueName: "modal-views-base"
+		tagName: "div"
 
 		afterRender: ->
 			$('.'+@uniqueName).remove()
 			@$el
 				.detach()
-				.prependTo('body')
+				.prependTo('#main')
 				.addClass(@uniqueName)
+			@show() if @showAfterRender
 
 		show: ->
 			$('.'+@uniqueName).modal()
@@ -32,6 +34,18 @@ define [
 	class Modal.Views.FourOhFour extends Modal.Views.Base
 		template: "modals/404"
 		uniqueName: "modal-views-404"
+
+	class Modal.Views.DonateRedirect extends Modal.Views.Base
+		template: "modals/donate_redirect"
+		uniqueName: "modal-donate-redirect"
+
+		initialize: (options) ->
+			@url = options.url or '#'
+			@processorName = options.processorName or 'our payment processor'
+			@showAfterRender = yes
+
+		serialize: ->
+			{ url: @url, processorName: @processorName }
 
 
 	Modal

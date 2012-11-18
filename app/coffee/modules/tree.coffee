@@ -194,12 +194,13 @@ define [
 
 		events:
 			"click .gifts": "handleClick"
+			# "touchstart .gifts": "handleClick"
 			"mousemove .gifts": "handleMouseover"
 
 		initialize: (options = {}) ->
 			if options.myDonationModel
 				@myDonationModel = options.myDonationModel
-				@myDonationModel.on 'change:giftSelected', @showDropLocation, @
+				@myDonationModel.on 'change:giftPlacing', @showDropLocation, @
 
 		beforeRender: ->
 			# @$('.gifts').remove()
@@ -223,17 +224,21 @@ define [
 				@add self.model.get('strokes')
 
 		handleClick: =>
-			if @myDonationModel.get 'giftSelected'
+			if @myDonationModel.get 'giftPlacing'
 				# add the donation model and re-render this view
 				dropOffset = @myDonationView.getDropOffset()
 				@myDonationModel.set
 					giftDropX: dropOffset.x
 					giftDropY: dropOffset.y
+					giftPlacing: no
 				@model.donations.add @myDonationModel
 				@render()
+				@$el.removeClass 'placing'
 
 		handleMouseover: (ev) =>
-			if @myDonationModel and @myDonationModel.get 'giftSelected'
+			if @myDonationModel and @myDonationModel.get 'giftPlacing'
+				@$el.addClass 'placing' if not @$el.hasClass 'placing'
+
 				offset = $(ev.target).offset()
 				offsetX = ev.clientX - offset.left
 				offsetY = ev.pageY - offset.top

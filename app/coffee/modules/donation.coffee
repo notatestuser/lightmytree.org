@@ -3,9 +3,10 @@ define [
 	"lodash"
 	"backbone"
 	"modules/tree"
+	"modules/modal"
 ],
 
-(app, _, Backbone, Tree) ->
+(app, _, Backbone, Tree, Modal) ->
 
 	Donation = app.module()
 
@@ -16,7 +17,7 @@ define [
 			name: 'Anonymous'
 			message: 'n/a'
 			gift: 'gift-1'
-			giftSelected: no
+			giftPlacing: no
 			giftDropX: 0
 			giftDropY: 0
 			giftVisible: no
@@ -33,12 +34,15 @@ define [
 			"click .selectable": "selectGift"
 			"click .btn-proceed": "beginDonation"
 
+		initialize: ->
+			@model.on 'change:giftPlacing', @_changeGiftPlacing, @
+
 		fadePaneContents = ($pane) ->
 			$pane.children().animate
 				opacity: 0.5
 			, 500
 
-		setupSelectedGift = (newClass, $gift, $selected, $targets, doneFn) ->
+		_setupSelectedGift = (newClass, $gift, $selected, $targets, doneFn) ->
 			$gift.addClass 'selected'
 			$targets.addClass (newClass = $gift.data('gift'))
 			$targets.removeClass oldClass if oldClass = $targets.data('gift')
@@ -55,7 +59,7 @@ define [
 			@$el.addClass 'gift-chosen'
 			fadePaneContents @$el.children(':not(.follow)')
 			showFn = =>
-				setupSelectedGift newClass, $gift, $selectedGift, $selectedGiftEls, =>
+				_setupSelectedGift newClass, $gift, $selectedGift, $selectedGiftEls, =>
 					setTimeout =>
 						# TODO fix this - works in FF
 						$('html').animate
@@ -70,7 +74,7 @@ define [
 			# set the model's gift
 			@model.set
 				gift: newClass
-				giftSelected: yes
+				giftPlacing: yes
 
 			@$('.follow')
 				.fadeIn('slow')
@@ -78,10 +82,12 @@ define [
 					position: 'fixed'
 					bottom: 0
 					left: 0
-					backgroundColor: '#fff'
 
 		beginDonation: ->
 			@model.save()
+
+		_changeGiftPlacing: (model, value) ->
+			@$('.heading').html 'Great! Now select your charity.' if not value
 
 	class Donation.Views.Gift extends Backbone.View
 		className: 'decoration placing'
@@ -107,6 +113,16 @@ define [
 			parentOffset = @$el.parent().offset()
 			thisOffset = @$el.offset()
 			x:	thisOffset.left - parentOffset.left, y: thisOffset.top - parentOffset.top
+
+	class Donation.RedirectListener
+		constructor: (donationModel) ->
+			donationModel.on 'change:redirectUrl', @performRedirect, @
+
+		performRedirect: (model, url) ->
+			modal = new Modal.Views.DonateRedirect
+				processorName: 'JustGiving'
+				url: url
+			modal.render() # showAfterRender is set, so the modal will show
 
 
 	Donation

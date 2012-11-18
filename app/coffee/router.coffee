@@ -83,13 +83,16 @@ define [
 					model: userModel
 					collection: treeModel.charities
 				".row-donation": new Donation.Views.GiftPicker
-					model: donation = new Donation.Model
+					model: donationModel = new Donation.Model
 						treeId: treeId
 						giftVisible: yes
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
-					myDonationModel: donation
+					myDonationModel: donationModel
 			.render()
+
+			# listen for donation redirections
+			new Donation.RedirectListener donationModel
 
 		myTrees: ->
 			app.useLayout('my_trees_page').setViews
