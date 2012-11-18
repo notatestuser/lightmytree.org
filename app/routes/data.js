@@ -148,7 +148,7 @@
       }
       if (treeId && data) {
         return treeDb.findById(treeId, wrapError(res, function(treeDoc) {
-          var donation, donations, _ref1;
+          var donation, ourRef;
           if (!treeDoc) {
             return res.send("Not found", 404);
           } else {
@@ -156,17 +156,11 @@
             if (Object.keys(donation).length !== 6) {
               return res.send("More data required", 500);
             } else {
-              donation.id = (new Date()).getTime();
-              donations = (_ref1 = treeDoc.donations) != null ? _ref1 : treeDoc.donations = [];
-              donations.push(donation);
-              return treeDb.saveDocument(treeDoc, wrapError(res, function(saveRes) {
-                var ourRef;
-                ourRef = "" + treeId + "_" + donation.id;
-                return res.json({
-                  id: ourRef,
-                  redirectUrl: charityService.getDonationUrl(donation.charityId, jg.callbackUrl, ourRef)
-                });
-              }));
+              ourRef = JSON.stringify(donation);
+              return res.json({
+                id: (new Date()).getTime(),
+                redirectUrl: charityService.getDonationUrl(donation.charityId, jg.callbackUrl, ourRef)
+              });
             }
           }
         }));
