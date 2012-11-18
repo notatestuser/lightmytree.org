@@ -179,10 +179,15 @@ define [
 		beforeRender: ->
 			# this is here because we're not using an indepdendent view to represent the stuff in the collection - oh well
 			if not @fetchingCharities
+				encountered = finished = 0
 				@collection.forEach (charityModel) ->
 					@fetchingCharities = yes
+					encountered++
 					charityModel.fetch
 						success: (model) =>
+							if ++finished >= encountered
+								# for the Donation.Views.GiftPicker to catch
+								@collection.trigger 'fetched'
 							@insertView '.charities', new Charity.Views.MiniItem
 								model: charityModel
 							.render()

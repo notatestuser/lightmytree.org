@@ -86,6 +86,7 @@ define [
 					model: donationModel = new Donation.Model
 						treeId: treeId
 						giftVisible: yes
+					collection: treeModel.charities
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
 					myDonationModel: donationModel

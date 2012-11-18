@@ -14,8 +14,8 @@ define [
 		defaults:
 			charityId: -1
 			treeId: -1
-			name: 'Anonymous'
-			message: 'n/a'
+			name: ''
+			message: ''
 			gift: 'gift-1'
 			giftPlacing: no
 			giftDropX: 0
@@ -31,13 +31,23 @@ define [
 		template: 'tree/view/donation_gifts'
 
 		events:
-			"click .selectable": "selectGift"
-			"click .btn-proceed": "beginDonation"
+			"click .selectable": "_selectGift"
+			"click .btn-proceed": "_beginDonation"
 
 		initialize: ->
-			@model.on 'change:giftPlacing', @_changeGiftPlacing, @
+			@model.on 'change:giftPlacing change:charityId', @_renderStateContent, @
+			@collection.on 'reset fetched', @render, @
 
-		fadePaneContents = ($pane) ->
+		afterRender: ->
+			@collection.forEach (charityModel) ->
+				@insertView '.nav-charities', new Donation.Partials.Charity
+					model: charityModel
+					donationModel: @model
+				.render()
+			, @
+			@_renderStateContent()
+
+		_fadePaneContents = ($pane) ->
 			$pane.children().animate
 				opacity: 0.5
 			, 500
@@ -49,7 +59,7 @@ define [
 			$targets.data 'gift', newClass
 			$selected.fadeIn('fast', doneFn) if not $selected.is(':visible')
 
-		selectGift: (e) ->
+		_selectGift: (e) ->
 			$gift = $(e.target)
 			$selectedGift = @$('.selected-gift')
 			$selectedGiftEls = $selectedGift.find('.gifts *')
@@ -57,7 +67,7 @@ define [
 			$sketchTeaser = $('.sketch-teaser')
 			newClass = $gift.data('gift')
 			@$el.addClass 'gift-chosen'
-			fadePaneContents @$el.children(':not(.follow)')
+			_fadePaneContents @$el.children(':not(.follow)')
 			showFn = =>
 				_setupSelectedGift newClass, $gift, $selectedGift, $selectedGiftEls, =>
 					setTimeout =>
@@ -83,11 +93,22 @@ define [
 					bottom: 0
 					left: 0
 
-		beginDonation: ->
-			@model.save()
+		_beginDonation: ->
+			@model.save
+				name: @$('.input-name').val()
+				message: @$('.input-message').val()
 
-		_changeGiftPlacing: (model, value) ->
-			@$('.heading').html 'Great! Now select your charity.' if not value
+		_renderStateContent: =>
+			$proceedBtn = @$('.btn-proceed')
+			proceedBtnDisabled = yes
+			if not @model.get('giftPlacing') and @model.get('giftDropX') > 0
+				$heading = @$('.heading')
+				if @model.get('charityId') is -1
+					$heading.html 'Great! Now select your charity.'
+				else
+					$heading.html 'Click "Donate" to proceed!'
+					proceedBtnDisabled = no
+			$proceedBtn.prop 'disabled', proceedBtnDisabled
 
 	class Donation.Views.Gift extends Backbone.View
 		className: 'decoration placing'
@@ -113,6 +134,35 @@ define [
 			parentOffset = @$el.parent().offset()
 			thisOffset = @$el.offset()
 			x:	thisOffset.left - parentOffset.left, y: thisOffset.top - parentOffset.top
+
+	class Donation.Partials.Charity extends Backbone.View
+		tagName: 'li'
+
+		events:
+			"click": "_handleClick"
+
+		initialize: (options) ->
+			if options.donationModel?
+				@donationModel = options.donationModel
+				@donationModel.on 'change:charityId', @render, @
+
+		beforeRender: ->
+			if not @$el.children().length
+				content = @model.get('name')
+				content += '<i class="icon-chevron-right"></i>'
+				$('<a href="#">'+content+'</a>').appendTo @$el
+
+		afterRender: ->
+			if @donationModel? and parseInt(@donationModel.get('charityId')) is parseInt(@model.id)
+				@$el.addClass 'active'
+			else
+				@$el.removeClass 'active'
+
+		_handleClick: (ev) =>
+			ev.preventDefault()
+			@donationModel.set charityId: @model.id if @donationModel
+			false
+
 
 	class Donation.RedirectListener
 		constructor: (donationModel) ->
