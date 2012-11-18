@@ -3,11 +3,12 @@ class JustGiving
 
 	constructor: (@siteUrl, @apiUrl, @apiKey) ->
 
-	getDonationUrl: (charityId, callbackUrl, ourReference, amount) ->
+	getDonationUrl: (charityId, callbackUrl, ourData, thirdPartyReference, amount) ->
 		url = @siteUrl + JustGiving.DirectDonatePath
 		url += "/#{charityId}?frequency=single"
-		url += "&amount=#{amount}" if amount
-		url += "&exitUrl=" + encodeURIComponent(callbackUrl + "?donationId=JUSTGIVING-DONATION-ID&id=#{ourReference}")
+		url += "&amount=#{amount}" if amount?
+		url += "&reference=" + encodeURIComponent(thirdPartyReference) if thirdPartyReference?
+		url += "&exitUrl=" + encodeURIComponent(callbackUrl + "?id=JUSTGIVING-DONATION-ID&data=#{ourData}")
 		url
 
 	getDonationStatus: (donationId) ->

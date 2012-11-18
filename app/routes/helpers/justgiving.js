@@ -12,14 +12,17 @@
       this.apiKey = apiKey;
     }
 
-    JustGiving.prototype.getDonationUrl = function(charityId, callbackUrl, ourReference, amount) {
+    JustGiving.prototype.getDonationUrl = function(charityId, callbackUrl, ourData, thirdPartyReference, amount) {
       var url;
       url = this.siteUrl + JustGiving.DirectDonatePath;
       url += "/" + charityId + "?frequency=single";
-      if (amount) {
+      if (amount != null) {
         url += "&amount=" + amount;
       }
-      url += "&exitUrl=" + encodeURIComponent(callbackUrl + ("?donationId=JUSTGIVING-DONATION-ID&id=" + ourReference));
+      if (thirdPartyReference != null) {
+        url += "&reference=" + encodeURIComponent(thirdPartyReference);
+      }
+      url += "&exitUrl=" + encodeURIComponent(callbackUrl + ("?id=JUSTGIVING-DONATION-ID&data=" + ourData));
       return url;
     };
 
