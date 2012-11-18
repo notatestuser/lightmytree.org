@@ -74,7 +74,6 @@ module.exports = (app, config) ->
 					createOrUpdateFn()
 		else
 			createOrUpdateFn()
-
 	app.post "/json/my_tree", myTreeFn
 	app.put "/json/my_tree", myTreeFn
 
@@ -102,7 +101,7 @@ module.exports = (app, config) ->
 			res.send "Not found", 404
 
 	# /json/trees/:id/donate
-	app.post /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, (req, res) ->
+	donateFn = (req, res) ->
 		data = req.body
 		treeId = req.params[0] if req.params?
 
@@ -115,14 +114,15 @@ module.exports = (app, config) ->
 					if Object.keys(donation).length isnt 6
 						res.send "More data required", 500
 					else
+						donation.id = (new Date()).getTime()
 						donations = treeDoc.donations ?= []
 						donations.push donation
 						treeDb.saveDocument treeDoc, wrapError res, (saveRes) ->
-							ourRef = "#{treeId}_#{donations.length-1}" # <treeId>_<idx>
+							ourRef = "#{treeId}_#{donation.id}" # <treeId>_<time>
 							res.json
 								id: ourRef
 								redirectUrl: charityService.getDonationUrl donation.charityId, jg.callbackUrl, ourRef
-
-
 		else
 			res.send "Not found", 404
+	app.post /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn
+	app.put /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn

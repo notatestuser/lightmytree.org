@@ -11,7 +11,7 @@
   JustGiving = require('./helpers/justgiving');
 
   module.exports = function(app, config) {
-    var charityService, ensureAuth, jg, myTreeFn, sendDatabaseError, treeDb, userDb, withAuth, wrapError;
+    var charityService, donateFn, ensureAuth, jg, myTreeFn, sendDatabaseError, treeDb, userDb, withAuth, wrapError;
     console.log("Defining DATA routes");
     userDb = new UserDatabase(config);
     treeDb = new TreeDatabase(config);
@@ -140,7 +140,7 @@
         return res.send("Not found", 404);
       }
     });
-    return app.post(/^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, function(req, res) {
+    donateFn = function(req, res) {
       var data, treeId;
       data = req.body;
       if (req.params != null) {
@@ -156,11 +156,12 @@
             if (Object.keys(donation).length !== 6) {
               return res.send("More data required", 500);
             } else {
+              donation.id = (new Date()).getTime();
               donations = (_ref1 = treeDoc.donations) != null ? _ref1 : treeDoc.donations = [];
               donations.push(donation);
               return treeDb.saveDocument(treeDoc, wrapError(res, function(saveRes) {
                 var ourRef;
-                ourRef = "" + treeId + "_" + (donations.length - 1);
+                ourRef = "" + treeId + "_" + donation.id;
                 return res.json({
                   id: ourRef,
                   redirectUrl: charityService.getDonationUrl(donation.charityId, jg.callbackUrl, ourRef)
@@ -172,7 +173,9 @@
       } else {
         return res.send("Not found", 404);
       }
-    });
+    };
+    app.post(/^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn);
+    return app.put(/^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn);
   };
 
 }).call(this);
