@@ -24,8 +24,17 @@ define [
 
 		url: -> "/json/trees/#{@get 'treeId'}/donations"
 
+		getCharity: ->
+			@collection.lookupCharity @get('charityId') if @collection
+
 	class Donation.Collection extends Backbone.Collection
 		model: Donation.Model
+
+		initialize: (models, options) ->
+			@charities = options.charities if options.charities
+
+		lookupCharity: (charityId) ->
+			@charities.get charityId
 
 	class Donation.Views.GiftPicker extends Backbone.View
 		template: 'tree/view/donation_gifts'
@@ -111,10 +120,12 @@ define [
 			$proceedBtn.prop 'disabled', proceedBtnDisabled
 
 	class Donation.Views.Gift extends Backbone.View
-		className: 'decoration placing'
+		className: 'decoration'
 
 		initialize: ->
-			@model.on 'change:gift', @render, @
+			@model.on 'change:gift change:giftPlacing', @render, @
+			if charity = @model.getCharity()
+				charity.on 'change:name', @render, @
 
 		beforeRender: ->
 			@$el.removeClass @giftClass if @giftClass
@@ -123,6 +134,13 @@ define [
 				.css
 					top: @model.get('giftDropY')
 					left: @model.get('giftDropX')
+
+			if not @model.get 'giftPlacing'
+				@$el.removeClass 'placing'
+				@_setupTooltip()
+			else
+				@$el.addClass 'placing'
+
 			# emulate some gravity or something after rendering?
 
 		setDrawOffset: (x, y) ->
@@ -136,6 +154,19 @@ define [
 			x = Math.round((thisOffset.left - parentOffset.left) * 100) / 100
 			y = Math.round((thisOffset.top - parentOffset.top) * 100) / 100
 			{x: x, y: y}
+
+		_setupTooltip: ->
+			tooltipText = if name = @model.get('name') then name else ''
+			charity = @model.getCharity()
+			if charity and charityName = charity.get 'name'
+				tooltipText += if not tooltipText.length then 'Donation ' else ' donated '
+				tooltipText += 'to ' + charityName
+			else
+				tooltipText += 'donated'
+			@$el.tooltip 'destroy'
+			@$el.tooltip
+				title: tooltipText
+				placement: 'top'
 
 	class Donation.Partials.Charity extends Backbone.View
 		tagName: 'li'

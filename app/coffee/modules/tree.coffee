@@ -26,7 +26,8 @@ define [
 
 		initialize: ->
 			@charities = new Charity.Collection()
-			@donations = new Donation.Collection()
+			@donations = new Donation.Collection null,
+				charities: @charities
 
 		fetch: (options = {}) ->
 			oldCallback = options.success
