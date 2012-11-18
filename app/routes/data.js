@@ -188,19 +188,29 @@
         if ((decodedData.treeId != null) && Object.keys(donation).length === 6) {
           return charityService.getDonationStatus(req.query.id, wrapError(res, function(statusData) {
             return treeDb.findById(decodedData.treeId, wrapError(res, function(treeDoc) {
-              var donations, _ref1;
+              var action, base, donations, found, _ref1;
               if (!treeDoc) {
                 return res.send("Tree record not found", 404);
               } else {
-                _.extend(donation, {
-                  id: statusData.id,
-                  status: statusData.status,
-                  amount: statusData.amount,
-                  time: (new Date()).getTime(),
-                  giftVisible: true
-                });
                 donations = (_ref1 = treeDoc.donationData) != null ? _ref1 : treeDoc.donationData = [];
-                donations.push(donation);
+                found = _.where(donations, {
+                  id: statusData.id
+                });
+                if (found && found.length) {
+                  base = found[0];
+                  action = "updating";
+                } else {
+                  base = _.extend(donation, {
+                    id: statusData.id,
+                    amount: statusData.amount,
+                    time: (new Date()).getTime(),
+                    giftVisible: true
+                  });
+                  donations.push(base);
+                  action = "creating";
+                }
+                base.status = statusData.status;
+                console.log("" + action + " donation record " + base.id + " of " + decodedData.treeId);
                 return treeDb.saveDocument(treeDoc, wrapError(res, function(saveRes) {
                   return res.redirect("/" + treeDoc._id + "/donated");
                 }));

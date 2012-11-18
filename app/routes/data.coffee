@@ -143,14 +143,24 @@ module.exports = (app, config) ->
 						if not treeDoc
 							res.send "Tree record not found", 404
 						else
-							_.extend donation,
-								id: statusData.id
-								status: statusData.status
-								amount: statusData.amount
-								time: (new Date()).getTime()
-								giftVisible: yes
 							donations = treeDoc.donationData ?= []
-							donations.push donation
+							found = _.where donations,
+								id: statusData.id
+							if found and found.length
+								# donation sharing our ID has been found - use it instead
+								base = found[0]
+								action = "updating"
+							else
+								# create a new donation record and add it to the array
+								base = _.extend donation,
+									id: statusData.id
+									amount: statusData.amount
+									time: (new Date()).getTime()
+									giftVisible: yes
+								donations.push base
+								action = "creating"
+							base.status = statusData.status
+							console.log "#{action} donation record #{base.id} of #{decodedData.treeId}"
 							treeDb.saveDocument treeDoc, wrapError res, (saveRes) ->
 								res.redirect "/#{treeDoc._id}/donated"
 			else
