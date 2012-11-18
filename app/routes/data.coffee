@@ -111,19 +111,51 @@ module.exports = (app, config) ->
 					res.send "Not found", 404
 				else
 					donation = _.pick data, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY'
-					if Object.keys(donation).length isnt 6
+					donation.treeId = treeId
+					if Object.keys(donation).length isnt 7
 						res.send "More data required", 500
 					else
-						# donation.id = (new Date()).getTime()
-						# donations = treeDoc.donations ?= []
-						# donations.push donation
-						# treeDb.saveDocument treeDoc, wrapError res, (saveRes) ->
-						# 	ourRef = "#{treeId}_#{donation.id}" # <treeId>_<time>
-						ourRef = JSON.stringify donation
-						res.json
-							id: (new Date()).getTime()
-							redirectUrl: charityService.getDonationUrl donation.charityId, jg.callbackUrl, ourRef
+						try
+							ourRef = new Buffer(JSON.stringify donation).toString 'base64'
+							res.json
+								id: (new Date()).getTime()
+								redirectUrl: charityService.getDonationUrl donation.charityId, jg.callbackUrl, ourRef
+						catch err
+							res.send err, 500
 		else
 			res.send "Not found", 404
 	app.post /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn
 	app.put /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn
+
+	# /callback/jg?id=<JUSTGIVING-DONATION-ID>&data=<our encoded json>
+	# e.g. http://dev.lightmytree.org:3000/callback/jg?id=35496621&data=eyJjaGFyaXR5SWQiOiIxODY2ODUiLCJuYW1lIjoiIiwibWVzc2FnZSI6IiIsImdpZnQiOiJnaWZ0LTEiLCJnaWZ0RHJvcFgiOjE3OC40LCJnaWZ0RHJvcFkiOjMzMy40fQ==
+	app.get "/callback/jg", (req, res) ->
+		if req.query.id? and req.query.data?
+			try
+				decodedData = JSON.parse(new Buffer(req.query.data, 'base64').toString 'utf8')
+			catch err
+				return res.send err, 500
+			donation = _.pick decodedData, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY'
+			if decodedData.treeId?
+				charityService.getDonationStatus req.query.id, wrapError res, (statusData) ->
+					console.log 'in callback'
+					console.log arguments
+				# treeDb.findById decodedData.treeId, wrapError res, (treeDoc) ->
+				# 	if not treeDoc
+				# 		res.send "Not found", 404
+				# 	else
+				# 		donation = _.pick data, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY'
+				# 		donation.treeId = treeId
+				# 		if Object.keys(donation).length isnt 6
+				# 			res.send "More data required", 500
+				# 		else
+							# donation.id = (new Date()).getTime()
+							# donations = treeDoc.donations ?= []
+							# donations.push donation
+							# treeDb.saveDocument treeDoc, wrapError res, (saveRes) ->
+							# 	ourRef = "#{treeId}_#{donation.id}" # <treeId>_<time>
+			else
+				res.send "treeId required", 500
+
+		else
+			res.send "incorrectly formatted re-entry URL", 500

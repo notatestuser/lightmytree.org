@@ -153,14 +153,19 @@
             return res.send("Not found", 404);
           } else {
             donation = _.pick(data, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY');
-            if (Object.keys(donation).length !== 6) {
+            donation.treeId = treeId;
+            if (Object.keys(donation).length !== 7) {
               return res.send("More data required", 500);
             } else {
-              ourRef = JSON.stringify(donation);
-              return res.json({
-                id: (new Date()).getTime(),
-                redirectUrl: charityService.getDonationUrl(donation.charityId, jg.callbackUrl, ourRef)
-              });
+              try {
+                ourRef = new Buffer(JSON.stringify(donation)).toString('base64');
+                return res.json({
+                  id: (new Date()).getTime(),
+                  redirectUrl: charityService.getDonationUrl(donation.charityId, jg.callbackUrl, ourRef)
+                });
+              } catch (err) {
+                return res.send(err, 500);
+              }
             }
           }
         }));
@@ -169,7 +174,28 @@
       }
     };
     app.post(/^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn);
-    return app.put(/^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn);
+    app.put(/^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn);
+    return app.get("/callback/jg", function(req, res) {
+      var decodedData, donation;
+      if ((req.query.id != null) && (req.query.data != null)) {
+        try {
+          decodedData = JSON.parse(new Buffer(req.query.data, 'base64').toString('utf8'));
+        } catch (err) {
+          return res.send(err, 500);
+        }
+        donation = _.pick(decodedData, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY');
+        if (decodedData.treeId != null) {
+          return charityService.getDonationStatus(req.query.id, wrapError(res, function(statusData) {
+            console.log('in callback');
+            return console.log(arguments);
+          }));
+        } else {
+          return res.send("treeId required", 500);
+        }
+      } else {
+        return res.send("incorrectly formatted re-entry URL", 500);
+      }
+    });
   };
 
 }).call(this);

@@ -13,7 +13,7 @@ module.exports =
 	justgiving:
 		apiKey: 'e90e23e0'
 		apiUrl: 'https://api-sandbox.justgiving.com'
-		siteUrl: 'https://www.justgiving.com'
+		siteUrl: 'https://v3-sandbox.justgiving.com'
 		callbackUrl: 'http://dev.lightmytree.org:3000/callback/jg'
 
 	twitter:
