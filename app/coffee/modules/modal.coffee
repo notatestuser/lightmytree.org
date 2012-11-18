@@ -27,6 +27,9 @@ define [
 		show: ->
 			$('.'+@uniqueName).modal()
 
+		closeModal: ->
+			$('.'+@uniqueName).modal 'hide'
+
 	class Modal.Views.Authenticate extends Modal.Views.Base
 		template: "modals/authenticate"
 		uniqueName: "modal-views-authenticate"
@@ -46,6 +49,16 @@ define [
 
 		serialize: ->
 			{ url: @url, processorName: @processorName }
+
+	class Modal.Views.Donated extends Modal.Views.Base
+		template: "modals/donated"
+		uniqueName: "modal-donated"
+
+		events:
+			"click .btn-close": "closeModal"
+
+		initialize: ->
+			@showAfterRender = yes
 
 
 	Modal

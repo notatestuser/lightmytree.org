@@ -13,11 +13,12 @@ define [
 	# Defining the application router, you can attach sub routers here.
 	Router = Backbone.Router.extend
 		routes:
-			"":               "index"
-			"sketch":         "sketch"
-			"my_trees":       "myTrees"
-			":treeName":      "tree" # pending change to /trees/%s/1 ?
-			"*other":         "show404"
+			"":                 "index"
+			"sketch":           "sketch"
+			"my_trees":         "myTrees"
+			":treeName":        "tree"
+			":treeName/:param": "tree"
+			"*other":           "show404"
 
 		initialize: ->
 			models =
@@ -62,7 +63,7 @@ define [
 				".authenticate_modal": new Modal.Views.Authenticate
 			.render()
 
-		tree: (treeId) ->
+		tree: (treeId, param) ->
 			# grab the cached tree or fetch one
 			treeModel = @_otherTrees.get treeId
 			unless treeModel
@@ -78,7 +79,7 @@ define [
 				userModel.fetch
 					error: => @show404()
 
-			app.useLayout('tree_page').setViews
+			views =
 				".intro": new Tree.Views.Intro
 					model: userModel
 					collection: treeModel.charities
@@ -90,7 +91,11 @@ define [
 				".sketchpad-editor": new Tree.Views.Solo
 					model: treeModel
 					myDonationModel: donationModel
-			.render()
+
+			if param is 'donated'
+				views[".donated_modal"] = new Modal.Views.Donated()
+
+			app.useLayout('tree_page').setViews(views).render()
 
 			# listen for donation redirections
 			new Donation.RedirectListener donationModel
