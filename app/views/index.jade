@@ -6,14 +6,27 @@ header
 					a(href="#")= title
 				a.banner.span2.offset2(href="#")
 				.social.span5
-					a(href="/auth/facebook")
-						span.img
-							img(src="/img/social/facebook.png", alt="Connect with Facebook")
-						| Connect with Facebook
-					a(href="/auth/twitter")
-						span.img
-							img(src="/img/social/twitter.png", alt="Connect with Twitter")
-						| Connect with Twitter
+					- if (!loggedIn)
+						a(href="/auth/facebook")
+							span.img-outer
+								img(src="/img/social/facebook.png", alt="Connect with Facebook")
+							| Connect with Facebook
+						a(href="/auth/twitter")
+							span.img-outer
+								img(src="/img/social/twitter.png", alt="Connect with Twitter")
+							| Connect with Twitter
+					- else
+						a.profile
+							span.img-outer
+								img(src=user.imageUrl, alt=user.screenName)
+							=user.screenName
+						a(href="#my_trees")
+							span.img-outer
+								img(src="/img/social/my_trees.gif", alt="Connect with Facebook")
+							| My Trees
+						a.profile-action(href="/logout")
+							i(class="icon-share icon-white")
+							| Log Out
 
 div(role="main", id="main").container
 	.span-12

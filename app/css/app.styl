@@ -182,15 +182,20 @@ header
 			line-height 39px
 			font-size 10pt
 			width auto
-			&:last-child
+			&:nth-child(2)
 				margin-left 3px
 			&:hover
-				span.img
+				.img-outer
+					background rgba(0,0,0,0.9)
+			&.profile
+				.img-outer
 					border-radius 10px
 					background rgba(0,0,0,0.4)
 					img
 						border-radius 5px
-			span.img
+			&.profile-action
+				float right !important
+			.img-outer
 				display block
 				width 28px
 				height 28px
@@ -205,6 +210,8 @@ header
 				height 28px
 				border-radius 50em
 				float left
+			i.icon-share
+				margin-right 4px
 
 #main
 	margin 0 auto 0 auto

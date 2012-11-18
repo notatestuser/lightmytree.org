@@ -64,7 +64,10 @@ require('./routes/data') app, envConfig
 require(apiRoutes) app
 
 app.get '/*', (req, res) ->
-	res.render 'index', { title : 'LightMyTree' }
+	res.render 'index',
+		title : 'LightMyTree'
+		loggedIn: req.loggedIn
+		user: req.user
 
 ### start server ###
 app.listen 3000, ->
