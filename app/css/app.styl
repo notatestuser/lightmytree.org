@@ -1,6 +1,6 @@
 @import '../vendor/bootstrap/css/bootstrap.min.css'
 
-@import url('http://fonts.googleapis.com/css?family=Lobster|Lora');
+@import url('http://fonts.googleapis.com/css?family=Dancing+Script|Lobster|Lora');
 
 @import 'nib'
 
@@ -124,21 +124,39 @@ body
 
 header
 	text-align center
+	background transparent url('../img/header-bg.png') no-repeat scroll 50% 94%
+	background-size 960px 330px
+	color #fff
+
+	h1
+		line-height 36px
+	h1 a,
+	h1 a:hover,
+	h1 a:visited,
+	h1 a:active
+		font-family 'Dancing Script', cursive
+		font-weight normal
+		font-size 21pt !important
+		text-shadow 2px 2px 1px #000
+		color #ffe
+	h1 a:hover
+		text-decoration none
+		color #fff
 
 	.peek-banner
-		background transparent url('../img/bg-banner-top-green.png') repeat-x scroll center bottom
-		height 50px
+		background transparent url('../img/bg-banner-top-green.png') repeat-x scroll 50% -11%
+		min-height 50px
+		width 100%
 
 	.container
-		z-index -5
-		background transparent url('../img/header-bg.png') no-repeat scroll 50% 94%
-		min-height 250px
-		margin-bottom 10px
+		min-height 260px
+		margin-bottom 32px
+		.row-fluid
+			margin-top -9px
 		.banner
 			width 130px
 			height 223px
-			position relative
-			top -50px
+			margin-top 8px
 			background transparent url('../img/dangler-tree.png') no-repeat scroll center top
 			&:after
 				content ''
