@@ -15,7 +15,7 @@
     JustGiving.prototype.getDonationUrl = function(charityId, callbackUrl, ourReference, amount) {
       var url;
       url = this.siteUrl + JustGiving.DirectDonatePath;
-      url += "/" + charityId + "/donate?frequency=single";
+      url += "/" + charityId + "?frequency=single";
       if (amount) {
         url += "&amount=" + amount;
       }

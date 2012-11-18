@@ -5,7 +5,7 @@ class JustGiving
 
 	getDonationUrl: (charityId, callbackUrl, ourReference, amount) ->
 		url = @siteUrl + JustGiving.DirectDonatePath
-		url += "/#{charityId}/donate?frequency=single"
+		url += "/#{charityId}?frequency=single"
 		url += "&amount=#{amount}" if amount
 		url += "&exitUrl=" + encodeURIComponent(callbackUrl + "?donationId=JUSTGIVING-DONATION-ID&id=#{ourReference}")
 		url
