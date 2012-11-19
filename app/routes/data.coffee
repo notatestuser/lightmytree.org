@@ -13,6 +13,13 @@ module.exports = (app, config) ->
 	jg = config.justgiving
 	charityService = new JustGiving jg.siteUrl, jg.apiUrl, jg.apiKey
 
+	recentCharities = []
+
+
+	#
+	# some helper functions
+	#
+
 	withAuth = (callback) ->
 		(req, res) ->
 			return callback(req, res, req.user._id) if req.user? and req.user._id?
@@ -49,8 +56,20 @@ module.exports = (app, config) ->
 			charityService.charitySearch query, 8, 1, wrapError res, (docs) ->
 				results = docs.charitySearchResults or []
 				res.json _.pluck(results, 'name')
+
+				# if we have results, update our array of recentCharities
+				if results.length
+					recentCharities =
+						_.chain(recentCharities)
+						 .union(_.first(results, 4))
+						 .last(4)
+						 .value()
 		else
 			res.send "More query data required", 500
+
+	# /json/recent_charities
+	app.get "/json/recent_charities", (req, res) ->
+		res.json _.first(recentCharities, 4)
 
 	# /json/my_tree
 	myTreeFn = ensureAuth (req, res, userId) ->
