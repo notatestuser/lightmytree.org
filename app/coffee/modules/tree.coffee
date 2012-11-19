@@ -7,6 +7,7 @@ define [
 	"modules/donation"
 	"modules/modal"
 	"plugins/raphael.sketchpad"
+	"plugins/jquery.sharrre-1.3.4.min"
 ],
 
 (app, _, Backbone, Raphael, Charity, Donation, Modal) ->
@@ -67,6 +68,7 @@ define [
 					res = $.jStorage.set Tree.Model.LocalStorageKey, @toJSON()
 					if @remotePersist
 						defaultSyncFn()
+						$.jStorage.deleteKey Tree.Model.LocalStorageKey
 					else
 						options.success model, res, options
 				when "read"
@@ -147,9 +149,10 @@ define [
 		serialize: ->
 			@model.toJSON()
 
-		afterRender: ->
+		beforeRender: ->
 			if app.authed
-				view = new Tree.Partials.ShareLoggedIn()
+				view = new Tree.Partials.ShareLoggedIn
+					model: @model
 				@model.remotePersist = yes
 				@model.save()
 			else
@@ -159,6 +162,35 @@ define [
 
 	class Tree.Partials.ShareLoggedIn extends Backbone.View
 		template: "tree/share/logged_in"
+
+		_renderShareButtons = ->
+			@$('.share_widgets').sharrre
+				share:
+					twitter: yes
+					facebook: yes
+					# googlePlus: yes
+					pinterest: yes
+				buttons:
+					facebook:
+						layout: 'box_count'
+					twitter:
+						count: 'vertical'
+						via: 'LightMyTree'
+						# hashtags: 'LightMyTree'
+					googlePlus:
+						size: 'tall'
+						annotation: 'inline'
+					pinterest:
+						layout: 'vertical'
+				url: 'http://lightmytree.org/' + @model.id
+				urlCurl: ''
+
+		initialize: ->
+			@model.on 'change', @render, @
+			@_debouncedRenderShareButtons = _.debounce _renderShareButtons.bind(@), 500, no
+
+		afterRender: ->
+			@_debouncedRenderShareButtons()
 
 	class Tree.Partials.ShareNotLoggedIn extends Tree.Views.Save # inherit save event/handling
 		template: "tree/share/not_logged_in"

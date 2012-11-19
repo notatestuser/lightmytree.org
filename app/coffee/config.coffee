@@ -37,6 +37,7 @@ require.config
 		"../vendor/bootstrap/js/bootstrap": ["jquery"]
 		"plugins/jquery.json-2.3.min":      ["jquery"] # for jstorage
 		"plugins/jquery.jstorage":          ["jquery"]
+		"plugins/jquery.sharrre-1.3.4.min": ["jquery"]
 
 		# Backbone.LayoutManager depends on Backbone.
 		"plugins/backbone.layoutmanager": ["backbone"]
