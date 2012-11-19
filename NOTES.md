@@ -13,7 +13,7 @@ Flow
 The Never Ending 'To Do'
 ------------------------
 
-* Sandbox/prod routing configuration (DONE)
+* Sandbox/prod routing configuration (sort of done, we still need to be able to switch in and out of fixture mode)
 * Coffeescript server start fix
 * Artificial latency with the contrived fixtures
 * Convert Bootstrap to use individual AMD modules to reduce initial payload size (don't send over all of Bootstrap...)
