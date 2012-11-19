@@ -34,23 +34,6 @@
         urls: urls
       });
     });
-    app.get("/json/typeahead_charities", function(req, res) {
-      return res.json([
-        {
-          "charityId": "188496",
-          "name": "Care for Cancer"
-        }, {
-          "charityId": "123456",
-          "name": "Cancer Research UK"
-        }, {
-          "charityId": "789012",
-          "name": "Unicef UK"
-        }, {
-          "charityId": "987654",
-          "name": "Oxfam UK"
-        }
-      ]);
-    });
     app.get("/json/recent_charities", function(req, res) {
       return res.json([
         {

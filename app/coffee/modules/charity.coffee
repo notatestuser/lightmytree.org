@@ -35,10 +35,15 @@ define [
 			@fetch()
 
 	class Charity.TypeaheadCollection extends Charity.Collection
-		url: "/json/typeahead_charities"
+		url: -> "/json/typeahead_charities/" + @query
 
-		getSource: ->
-			@map (charity) -> charity.get 'name'
+		getSourceFn: ->
+			self = @
+			(query, processFn) ->
+				self.query = query
+				self.fetch
+					success: (collection, response) ->
+						processFn response
 
 	class Charity.SearchCollection extends Charity.Collection
 		@ItemsPerFetch: 4
@@ -64,7 +69,6 @@ define [
 
 	class Charity.Views.Picker extends Backbone.View
 		template: "charity/picker"
-		tagName: "div"
 
 		# events:
 		# 	"keypress .search-charities-typeahead": "startSearch"
@@ -109,19 +113,20 @@ define [
 				@setView '.pagination-holder', new Charity.Partials.Pagination
 					collection: @collection
 				.render()
-			@typeaheadCharities.on 'reset', =>
-				@$('.search-charities-typeahead').typeahead
-					source: @typeaheadCharities.getSource()
-					updater: (item) =>
-						@startSearch item
-						item
-			.fetch()
+			@$('.search-charities-typeahead').typeahead
+				minLength: 4
+				source: @typeaheadCharities.getSourceFn()
+				updater: (item) =>
+					@startSearch item
+					item
 
 		startSearch: (query) ->
 			@collection = new Charity.SearchCollection
 				query: query
 			@collection.fetch
-				success: => @render()
+				success: =>
+					@$el.addClass 'showing-search-results'
+					@render()
 			@collection.on 'reset', @render, @
 
 	class Charity.Partials.Pagination extends Backbone.View

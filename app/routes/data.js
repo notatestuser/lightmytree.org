@@ -48,6 +48,19 @@
         }
       };
     };
+    app.get("/json/typeahead_charities/:query", function(req, res) {
+      var query;
+      if ((req.params.query != null) && req.params.query.length > 2) {
+        query = req.params.query;
+        return charityService.charitySearch(query, 8, 1, wrapError(res, function(docs) {
+          var results;
+          results = docs.charitySearchResults || [];
+          return res.json(_.pluck(results, 'name'));
+        }));
+      } else {
+        return res.send("More query data required", 500);
+      }
+    });
     myTreeFn = ensureAuth(function(req, res, userId) {
       var createOrUpdateFn, data;
       data = req.body;

@@ -34,21 +34,21 @@ module.exports = (app) ->
 			authed: req.user?
 			urls: urls
 
-	# /json/typeahead_charities
-	app.get "/json/typeahead_charities", (req, res) ->
-		res.json [
-				"charityId": "188496"
-				"name": "Care for Cancer"
-			,
-				"charityId": "123456"
-				"name": "Cancer Research UK"
-			,
-				"charityId": "789012"
-				"name": "Unicef UK"
-			,
-				"charityId": "987654"
-				"name": "Oxfam UK"
-		]
+	# # /json/typeahead_charities
+	# app.get "/json/typeahead_charities", (req, res) ->
+	# 	res.json [
+	# 			"charityId": "188496"
+	# 			"name": "Care for Cancer"
+	# 		,
+	# 			"charityId": "123456"
+	# 			"name": "Cancer Research UK"
+	# 		,
+	# 			"charityId": "789012"
+	# 			"name": "Unicef UK"
+	# 		,
+	# 			"charityId": "987654"
+	# 			"name": "Oxfam UK"
+	# 	]
 
 	# /json/recent_charities
 	app.get "/json/recent_charities", (req, res) ->

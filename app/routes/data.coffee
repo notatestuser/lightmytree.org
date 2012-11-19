@@ -37,6 +37,21 @@ module.exports = (app, config) ->
 			else
 				callback? doc
 
+
+	#
+	# here come our service route handlers
+	#
+
+	# /json/typeahead_charities
+	app.get "/json/typeahead_charities/:query", (req, res) ->
+		if req.params.query? and req.params.query.length > 2
+			query = req.params.query
+			charityService.charitySearch query, 8, 1, wrapError res, (docs) ->
+				results = docs.charitySearchResults or []
+				res.json _.pluck(results, 'name')
+		else
+			res.send "More query data required", 500
+
 	# /json/my_tree
 	myTreeFn = ensureAuth (req, res, userId) ->
 		data = req.body

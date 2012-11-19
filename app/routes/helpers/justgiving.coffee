@@ -3,8 +3,33 @@ https   = require 'https'
 {_}     = require 'underscore'
 
 class JustGiving
-	@DirectDonatePath = '/donation/direct/charity'
-	@GetDonationDetails = "/v1/donation/"
+	@DirectDonatePath   = '/donation/direct/charity'
+	@GetDonationDetails = '/v1/donation/'
+	@CharitySearch      = '/v1/charity/search'
+
+	doApiCall = (fullUrl, apiKey, callback) ->
+		buf = ''
+
+		opts =
+			headers:
+				'Accept': 'application/json'
+				'x-api-key': apiKey
+
+		req = https.get _.extend(parse(fullUrl), opts), (res) ->
+			console.log "JG: #{fullUrl} responded with #{res.statusCode}"
+			# we're permitting 404s because they can be a very valid response...
+			if res.statusCode isnt 200 and res.statusCode isnt 404
+				callback? "status #{res.statusCode}"
+				req.abort()
+
+			res.on 'data', (data) ->
+				buf += data
+
+			res.on 'end', ->
+				callback? null, JSON.parse(buf)
+
+		.on 'error', (e) ->
+			callback? e
 
 	constructor: (@siteUrl, @apiUrl, @apiKey) ->
 
@@ -19,26 +44,14 @@ class JustGiving
 	getDonationStatus: (donationId, callback) ->
 		# http get the URL below
 		url = @apiUrl + JustGiving.GetDonationDetails + donationId
-		buf = ''
+		doApiCall url, @apiKey, callback
 
-		opts =
-			headers:
-				'Accept': 'application/json'
-				'x-api-key': @apiKey
+	charitySearch: (query, pageSize = 4, page = 1, callback) ->
+		url = @apiUrl + JustGiving.CharitySearch
+		url += "?q=" + query
+		url += "&pageSize=" + pageSize if pageSize
+		url += "&page=" + page if page
+		doApiCall url, @apiKey, callback
 
-		req = https.get _.extend(parse(url), opts), (res) ->
-			console.log "getDonationStatus() for #{donationId} responded with #{res.statusCode}"
-			if res.statusCode isnt 200
-				callback? "status #{res.statusCode}"
-				req.abort()
-
-			res.on 'data', (data) ->
-				buf += data
-
-			res.on 'end', ->
-				callback? null, JSON.parse(buf)
-
-		.on 'error', (e) ->
-			callback? e
 
 module.exports = JustGiving
