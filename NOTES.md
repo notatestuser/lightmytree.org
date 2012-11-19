@@ -34,6 +34,7 @@ The Never Ending 'To Do'
 * Scale decorations
 * Mobile sketchpad responsiveness
 * "Horrible content will be removed pronto"
+* Glowing baubles
 
 Testing Strategy
 ----------------
