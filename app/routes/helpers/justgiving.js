@@ -9,10 +9,41 @@
   _ = require('underscore')._;
 
   JustGiving = (function() {
+    var doApiCall;
 
     JustGiving.DirectDonatePath = '/donation/direct/charity';
 
-    JustGiving.GetDonationDetails = "/v1/donation/";
+    JustGiving.GetDonationDetails = '/v1/donation/';
+
+    JustGiving.CharitySearch = '/v1/charity/search';
+
+    doApiCall = function(fullUrl, apiKey, callback) {
+      var buf, opts, req;
+      buf = '';
+      opts = {
+        headers: {
+          'Accept': 'application/json',
+          'x-api-key': apiKey
+        }
+      };
+      return req = https.get(_.extend(parse(fullUrl), opts), function(res) {
+        console.log("JG: " + fullUrl + " responded with " + res.statusCode);
+        if (res.statusCode !== 200 && res.statusCode !== 404) {
+          if (typeof callback === "function") {
+            callback("status " + res.statusCode);
+          }
+          req.abort();
+        }
+        res.on('data', function(data) {
+          return buf += data;
+        });
+        return res.on('end', function() {
+          return typeof callback === "function" ? callback(null, JSON.parse(buf)) : void 0;
+        });
+      }).on('error', function(e) {
+        return typeof callback === "function" ? callback(e) : void 0;
+      });
+    };
 
     function JustGiving(siteUrl, apiUrl, apiKey) {
       this.siteUrl = siteUrl;
@@ -35,32 +66,28 @@
     };
 
     JustGiving.prototype.getDonationStatus = function(donationId, callback) {
-      var buf, opts, req, url;
+      var url;
       url = this.apiUrl + JustGiving.GetDonationDetails + donationId;
-      buf = '';
-      opts = {
-        headers: {
-          'Accept': 'application/json',
-          'x-api-key': this.apiKey
-        }
-      };
-      return req = https.get(_.extend(parse(url), opts), function(res) {
-        console.log("getDonationStatus() for " + donationId + " responded with " + res.statusCode);
-        if (res.statusCode !== 200) {
-          if (typeof callback === "function") {
-            callback("status " + res.statusCode);
-          }
-          req.abort();
-        }
-        res.on('data', function(data) {
-          return buf += data;
-        });
-        return res.on('end', function() {
-          return typeof callback === "function" ? callback(null, JSON.parse(buf)) : void 0;
-        });
-      }).on('error', function(e) {
-        return typeof callback === "function" ? callback(e) : void 0;
-      });
+      return doApiCall(url, this.apiKey, callback);
+    };
+
+    JustGiving.prototype.charitySearch = function(query, pageSize, page, callback) {
+      var url;
+      if (pageSize == null) {
+        pageSize = 4;
+      }
+      if (page == null) {
+        page = 1;
+      }
+      url = this.apiUrl + JustGiving.CharitySearch;
+      url += "?q=" + query;
+      if (pageSize) {
+        url += "&pageSize=" + pageSize;
+      }
+      if (page) {
+        url += "&page=" + page;
+      }
+      return doApiCall(url, this.apiKey, callback);
     };
 
     return JustGiving;

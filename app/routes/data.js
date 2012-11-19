@@ -11,12 +11,13 @@
   JustGiving = require('./helpers/justgiving');
 
   module.exports = function(app, config) {
-    var charityService, donateFn, ensureAuth, jg, myTreeFn, sendDatabaseError, treeDb, userDb, withAuth, wrapError;
+    var charityService, donateFn, ensureAuth, jg, myTreeFn, recentCharities, sendDatabaseError, treeDb, userDb, withAuth, wrapError;
     console.log("Defining DATA routes");
     userDb = new UserDatabase(config);
     treeDb = new TreeDatabase(config);
     jg = config.justgiving;
     charityService = new JustGiving(jg.siteUrl, jg.apiUrl, jg.apiKey);
+    recentCharities = [];
     withAuth = function(callback) {
       return function(req, res) {
         if ((req.user != null) && (req.user._id != null)) {
@@ -48,6 +49,25 @@
         }
       };
     };
+    app.get("/json/typeahead_charities/:query", function(req, res) {
+      var query;
+      if ((req.params.query != null) && req.params.query.length > 2) {
+        query = req.params.query;
+        return charityService.charitySearch(query, 8, 1, wrapError(res, function(docs) {
+          var results;
+          results = docs.charitySearchResults || [];
+          res.json(_.pluck(results, 'name'));
+          if (results.length) {
+            return recentCharities = _.chain(recentCharities).union(_.first(results, 4)).last(4).value();
+          }
+        }));
+      } else {
+        return res.send("More query data required", 500);
+      }
+    });
+    app.get("/json/recent_charities", function(req, res) {
+      return res.json(_.first(recentCharities, 4));
+    });
     myTreeFn = ensureAuth(function(req, res, userId) {
       var createOrUpdateFn, data;
       data = req.body;
