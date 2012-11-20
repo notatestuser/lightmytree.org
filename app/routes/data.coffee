@@ -3,6 +3,10 @@
 {TreeDatabase, UserDatabase} = require '../database'
 JustGiving = require './helpers/justgiving'
 
+fs      = require 'fs'
+raphael = require 'node-raphael'
+gm      = require 'gm'
+
 module.exports = (app, config) ->
 
 	console.log "Defining DATA routes"
@@ -138,7 +142,6 @@ module.exports = (app, config) ->
 	donateFn = (req, res) ->
 		data = req.body
 		treeId = req.params[0] if req.params?
-
 		if treeId and data
 			treeDb.findById treeId, wrapError res, (treeDoc) ->
 				if not treeDoc
@@ -160,6 +163,45 @@ module.exports = (app, config) ->
 			res.send "Not found", 404
 	app.post /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn
 	app.put /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn
+
+	# /json/trees/:id/out.svg
+	app.get /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/out\.svg$/, (req, res) ->
+		treeId = req.params[0] if req.params?
+		if treeId
+			treeDb.findById treeId, wrapError res, (treeDoc) ->
+				if not treeDoc
+					res.send "Not found", 404
+				else
+					res.writeHead 200, {"Content-Type": "image/svg+xml"}
+					svg = raphael.generate treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, (paper) ->
+						paper.setViewBox(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, true)
+						paper.add(treeDoc.strokes)
+					res.end svg.replace('svg style="', 'svg style="background-color:#FEFDF8;')
+
+	# /json/trees/:id/out.png
+	app.get /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/out\.png$/, (req, res) ->
+		treeId = req.params[0] if req.params?
+		if treeId
+			treeDb.findById treeId, wrapError res, (treeDoc) ->
+				if not treeDoc
+					res.send "Not found", 404
+				else
+					svg = raphael.generate treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, (paper) ->
+						paper.setViewBox(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, true)
+						bg = paper.rect(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight)
+						bg.attr fill: "#FEFDF8"
+						paper.add(treeDoc.strokes)
+					buf = new Buffer svg
+					filename = (time = (new Date()).getTime()) + '.svg'
+					outfile  =  time + '.png'
+					fs.writeFile filename, buf, (err) ->
+						console.error err if err
+						gm(filename).scale(250,1000).write outfile, (err) ->
+							console.error err if err
+							res.sendfile outfile, ->
+								fs.unlink filename
+								fs.unlink outfile
+
 
 	# /callback/jg?id=<JUSTGIVING-DONATION-ID>&data=<our encoded json>
 	# e.g. http://dev.lightmytree.org:3000/callback/jg?id=35496621&data=eyJjaGFyaXR5SWQiOiIxODY2ODUiLCJuYW1lIjoiIiwibWVzc2FnZSI6IiIsImdpZnQiOiJnaWZ0LTEiLCJnaWZ0RHJvcFgiOjE3OC40LCJnaWZ0RHJvcFkiOjMzMy40fQ==
