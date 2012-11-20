@@ -86,7 +86,7 @@ define [
 				when "delete"
 					$.jStorage.deleteKey Tree.Model.LocalStorageKey
 
-		validate: (attrs) ->
+		validate: (attrs = @attributes) ->
 			if not attrs.strokes or attrs.strokes.length < 1
 				return "You must attempt to draw something!"
 			# else if not attrs.charityIds or attrs.charityIds.length < 1
@@ -141,6 +141,16 @@ define [
 		events:
 			"click .btn-save": "save"
 
+		initialize: ->
+			@model.on 'change:strokes change:charityIds', @render, @
+
+		serialize: ->
+			charityCount: @model.get('charityIds').length
+			maxCharities: Tree.MyModel.MaxCharities
+
+		afterRender: ->
+			@_setButtonDisabledState()
+
 		save: ->
 			# @$('.btn-save').button 'loading'
 			if not @model.validate @model.attributes
@@ -149,6 +159,13 @@ define [
 					(new Modal.Views.Authenticate()).show()
 				else
 					app.router.go 'my_trees'
+
+		_setButtonDisabledState: ->
+			if @model.validate() or not @model.get('charityIds').length
+				disabled = yes
+			else
+				disabled = no
+			@$('.btn-save').prop 'disabled', disabled
 
 	class Tree.Views.Share extends Backbone.View
 		template: "tree/share"
