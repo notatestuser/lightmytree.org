@@ -61,7 +61,7 @@ coffee.stdout.on 'data', (data) ->
 
 ### app routes ###
 require('./routes/data') app, envConfig
-require(apiRoutes) app
+require(apiRoutes) app, envConfig
 
 app.get '/*', (req, res) ->
 	res.render 'index',
