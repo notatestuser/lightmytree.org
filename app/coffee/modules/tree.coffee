@@ -313,7 +313,8 @@ define [
 							.render()
 				, @
 			else
-				@insertView(new Tree.Partials.NothingToShow()).render()
+				# TODO: fix this - it's rendering when it's not supposed to, messing up the layout
+				# @insertView(new Tree.Partials.NothingToShow()).render()
 
 	class Tree.Partials.NothingToShow extends Backbone.View
 		tagName: "h4"
