@@ -35,23 +35,53 @@ module.exports = (app, config) ->
 	# /img/trees/:id.png
 	app.get /^\/img\/trees\/([a-zA-Z0-9_.-]+)\.png$/, (req, res) ->
 		treeId = req.params[0] if req.params?
+		width  = Math.min req.param('width', 250), 1000
 		if treeId
 			treeDb.findById treeId, wrapError res, (treeDoc) ->
 				if not treeDoc
 					res.send "Not found", 404
 				else
-					svg = raphael.generate treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, (paper) ->
-						paper.setViewBox(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, true)
-						bg = paper.rect(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight)
-						bg.attr fill: "#FEFDF8"
-						paper.add(treeDoc.strokes)
-					buf = new Buffer svg
-					filename = (time = (new Date()).getTime()) + '.svg'
-					outfile  =  time + '.png'
-					fs.writeFile filename, buf, (err) ->
-						console.error err if err
-						gm(filename).scale(250,1000).write outfile, (err) ->
-							console.error err if err
-							res.sendfile outfile, ->
-								fs.unlink filename
-								fs.unlink outfile
+					pngFilename = "#{width}.png"
+
+					if treeDoc._attachments?.hasOwnProperty pngFilename
+						# the file already exists in the database - just stream it out!
+						stream = treeDb.db.getAttachment treeDoc._id, pngFilename
+						stream.addListener 'response', (response) ->
+							res.headers = response.headers
+							res.headers.status = response.statusCode
+							# res.body = ""
+						stream.addListener 'data', (chunk) -> res.write(chunk, 'binary')
+						stream.addListener 'end', -> res.end()
+
+					else
+						# generate the svg
+						svg = raphael.generate treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, (paper) ->
+							paper.setViewBox(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, true)
+							bg = paper.rect(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight)
+							bg.attr fill: "#FEFDF8"
+							paper.add(treeDoc.strokes)
+						buf = new Buffer svg
+
+						svgFilename = (time = (new Date()).getTime()) + '.svg'
+						# out file  =  time + '.png'
+
+						# write out the svg
+						fs.writeFile svgFilename, buf, (err) ->
+							if err
+								console.error err
+							else
+								# call on graphicsmagick to convert our svg to a png
+								gm(svgFilename).scale(width, 1500).stream 'png', (err, stdout, stderr) ->
+									# open up a stream to our attachment
+									stream = treeDb.db.saveAttachment(
+										treeDoc,
+											name: pngFilename
+											contentType: 'image/png'
+											# body: fs.createReadStream(outfile)
+										, (err, data) ->
+											console.log err if err
+											fs.unlink svgFilename
+									)
+									res.contentType 'image/png'
+									stdout.pipe(stream)
+									stdout.pipe(res)

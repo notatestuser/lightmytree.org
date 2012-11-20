@@ -48,42 +48,63 @@
       }
     });
     return app.get(/^\/img\/trees\/([a-zA-Z0-9_.-]+)\.png$/, function(req, res) {
-      var treeId;
+      var treeId, width;
       if (req.params != null) {
         treeId = req.params[0];
       }
+      width = Math.min(req.param('width', 250), 1000);
       if (treeId) {
         return treeDb.findById(treeId, wrapError(res, function(treeDoc) {
-          var buf, filename, outfile, svg, time;
+          var buf, pngFilename, stream, svg, svgFilename, time, _ref;
           if (!treeDoc) {
             return res.send("Not found", 404);
           } else {
-            svg = raphael.generate(treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, function(paper) {
-              var bg;
-              paper.setViewBox(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, true);
-              bg = paper.rect(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight);
-              bg.attr({
-                fill: "#FEFDF8"
+            pngFilename = "" + width + ".png";
+            if ((_ref = treeDoc._attachments) != null ? _ref.hasOwnProperty(pngFilename) : void 0) {
+              stream = treeDb.db.getAttachment(treeDoc._id, pngFilename);
+              stream.addListener('response', function(response) {
+                res.headers = response.headers;
+                return res.headers.status = response.statusCode;
               });
-              return paper.add(treeDoc.strokes);
-            });
-            buf = new Buffer(svg);
-            filename = (time = (new Date()).getTime()) + '.svg';
-            outfile = time + '.png';
-            return fs.writeFile(filename, buf, function(err) {
-              if (err) {
-                console.error(err);
-              }
-              return gm(filename).scale(250, 1000).write(outfile, function(err) {
-                if (err) {
-                  console.error(err);
-                }
-                return res.sendfile(outfile, function() {
-                  fs.unlink(filename);
-                  return fs.unlink(outfile);
+              stream.addListener('data', function(chunk) {
+                return res.write(chunk, 'binary');
+              });
+              return stream.addListener('end', function() {
+                return res.end();
+              });
+            } else {
+              svg = raphael.generate(treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, function(paper) {
+                var bg;
+                paper.setViewBox(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, true);
+                bg = paper.rect(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight);
+                bg.attr({
+                  fill: "#FEFDF8"
                 });
+                return paper.add(treeDoc.strokes);
               });
-            });
+              buf = new Buffer(svg);
+              svgFilename = (time = (new Date()).getTime()) + '.svg';
+              return fs.writeFile(svgFilename, buf, function(err) {
+                if (err) {
+                  return console.error(err);
+                } else {
+                  return gm(svgFilename).scale(width, 1500).stream('png', function(err, stdout, stderr) {
+                    stream = treeDb.db.saveAttachment(treeDoc, {
+                      name: pngFilename,
+                      contentType: 'image/png'
+                    }, function(err, data) {
+                      if (err) {
+                        console.log(err);
+                      }
+                      return fs.unlink(svgFilename);
+                    });
+                    res.contentType('image/png');
+                    stdout.pipe(stream);
+                    return stdout.pipe(res);
+                  });
+                }
+              });
+            }
           }
         }));
       }
