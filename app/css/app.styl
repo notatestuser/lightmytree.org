@@ -413,6 +413,8 @@ header
 			top 0
 			left 0
 			transform-scale(0.6, 0.6)
+		&.collapse
+			height auto
 
 
 	.sketchpad-tools-right
@@ -754,14 +756,16 @@ header
 
 	.row-intro,
 	.row-post-intro,
-	.row-picker
+	.row-picker,
+	.row-pre-my-trees
 		h2
 			text-align center
 			font-weight normal
 			text-shadow 1px 1px #ffeeee
 
 	.row-intro,
-	.row-picker
+	.row-picker,
+	.row-pre-my-trees
 		position relative
 		h2
 			display block
@@ -821,7 +825,13 @@ header
 
 	.row-share-button
 		padding-top 30px
-		padding-bottom 60px
+		padding-bottom 30px
+
+	.row-share-warning
+		padding-bottom 30px
+		font-size 14px
+		p
+			text-align center
 
 	.row-first
 		padding-top 60px
@@ -831,13 +841,15 @@ header
 			// background #EDEAD7 - darker
 			background #EDE8DE // lighter
 		.left
+			padding-left 25px
 			h2
 				text-align left
 				margin-bottom 40px
-			padding-left 25px
 		.right
 			border-left 1px dashed #ccc
 			height 100%
+			h2
+				text-align center
 			.sketch-teaser
 				min-height 169px
 				border-bottom 1px dashed #ccc
@@ -1159,26 +1171,132 @@ header
 					display none
 
 	.tree-share-view
+		clearfix()
 		.share_preview
 			text-align center
-		.share_widgets
-			min-height 67px
-			clearfix()
-			.box,
-			.buttons .button
-				margin-right 20px
-			.box
-				float left
-				font-size 28pt
-				padding 20px 0 0 6px
-			.buttons
-				float left
-				.button
-					float left
+			p
+				padding-top 11px
 		.alert-not-logged-in
 			margin-bottom 0
 			margin-top 20px
+		.share_widgets.box
+			font-size 28pt
 
+	.share_widgets
+		min-height 72px
+		margin-bottom 0
+		clearfix()
+		.box,
+		.buttons .button
+			margin-right 6px
+			margin-left 5px
+		.box
+			float left
+		.count
+			color:#525b67;
+			display:block;
+			font-size:18px;
+			font-weight:bold;
+			line-height:40px;
+			height:40px;
+			position:relative;
+			text-align:center;
+			width:70px;
+			-webkit-border-radius:4px;
+			-moz-border-radius:4px;
+			border-radius:4px;
+			border:1px solid #b2c6cc;
+			background: #fbfbfb; /* Old browsers */
+			background: -moz-linear-gradient(top, #fbfbfb 0%, #f6f6f6 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#fbfbfb), color-stop(100%,#f6f6f6)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top, #fbfbfb 0%,#f6f6f6 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top, #fbfbfb 0%,#f6f6f6 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top, #fbfbfb 0%,#f6f6f6 100%); /* IE10+ */
+			background: linear-gradient(top, #fbfbfb 0%,#f6f6f6 100%); /* W3C */
+			&:before,
+			&:after
+				content:"";
+				display:block;
+				position:absolute;
+				left:49%;
+				width:0;
+				height:0;
+			&:before
+				border:solid 7px transparent;
+				border-top-color:#b2c6cc;
+				margin-left:-7px;
+				bottom: -14px;
+			&:after
+				border:solid 6px transparent;
+				margin-left:-6px;
+				bottom:-12px;
+				border-top-color:#fbfbfb;
+		p
+			clear both
+			padding-top 21px
+
+		.share
+			color:#FFFFFF;
+			display:block;
+			font-size:12px;
+			font-weight:bold;
+			height:30px;
+			line-height:30px;
+			margin-top:8px;
+			padding:0;
+			text-align:center;
+			text-decoration:none;
+			width:70px;
+			-webkit-border-radius:4px;
+			-moz-border-radius:4px;
+			border-radius:4px;
+
+		.twitter .share
+			text-shadow: 1px 0px 0px #0077be;
+			// filter: dropshadow(color=#0077be, offx=1, offy=0);
+			border:1px solid #0075c5;
+			background: #26c3eb;
+			background: -moz-linear-gradient(top, #26c3eb 0%, #26b3e6 50%, #00a2e1 51%, #0080d6 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#26c3eb), color-stop(50%,#26b3e6), color-stop(51%,#00a2e1), color-stop(100%,#0080d6)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top, #26c3eb 0%,#26b3e6 50%,#00a2e1 51%,#0080d6 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top, #26c3eb 0%,#26b3e6 50%,#00a2e1 51%,#0080d6 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top, #26c3eb 0%,#26b3e6 50%,#00a2e1 51%,#0080d6 100%); /* IE10+ */
+			background: linear-gradient(top, #26c3eb 0%,#26b3e6 50%,#00a2e1 51%,#0080d6 100%); /* W3C */
+			// filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#26c3eb', endColorstr='#0080d6',GradientType=0 ); /* IE6-9 */
+			box-shadow: 0 1px 4px #DDDDDD, 0 1px 0 #5cd3f1 inset;
+
+		.facebook .share
+			text-shadow: 1px 0px 0px #26427e;
+			// filter: dropshadow(color=#26427e, offx=1, offy=0);
+			border:1px solid #24417c;
+			background: #5582c9; /* Old browsers */
+			background: -moz-linear-gradient(top, #5582c9 0%, #33539a 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#5582c9), color-stop(100%,#33539a)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top, #5582c9 0%,#33539a 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top, #5582c9 0%,#33539a 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top, #5582c9 0%,#33539a 100%); /* IE10+ */
+			background: linear-gradient(top, #5582c9 0%,#33539a 100%); /* W3C */
+			// filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#5582c9', endColorstr='#33539a',GradientType=0 ); /* IE6-9 */
+			box-shadow: 0 1px 4px #DDDDDD, 0 1px 0 #80a1d6 inset;
+
+		.googlePlus .share
+			text-shadow: 1px 0px 0px #222222;
+			// filter: dropshadow(color=#222222, offx=1, offy=0);
+			border:1px solid #262626;
+			background: #6d6d6d; /* Old browsers */
+			background: -moz-linear-gradient(top, #6d6d6d 0%, #434343 100%); /* FF3.6+ */
+			background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#6d6d6d), color-stop(100%,#434343)); /* Chrome,Safari4+ */
+			background: -webkit-linear-gradient(top, #6d6d6d 0%,#434343 100%); /* Chrome10+,Safari5.1+ */
+			background: -o-linear-gradient(top, #6d6d6d 0%,#434343 100%); /* Opera 11.10+ */
+			background: -ms-linear-gradient(top, #6d6d6d 0%,#434343 100%); /* IE10+ */
+			background: linear-gradient(top, #6d6d6d 0%,#434343 100%); /* W3C */
+			// filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#6d6d6d', endColorstr='#434343',GradientType=0 ); /* IE6-9 */
+			box-shadow: 0 1px 4px #DDDDDD, 0 1px 0 #929292 inset;
+
+		.buttons
+			float left
+			.button
+				float left
 
 
 // Shamelessly ripped from the Bootstrap docs

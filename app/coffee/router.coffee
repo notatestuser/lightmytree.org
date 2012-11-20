@@ -101,17 +101,22 @@ define [
 			new Donation.RedirectListener donationModel
 
 		myTrees: ->
-			app.useLayout('my_trees_page').setViews
-				".share_my_tree": new Tree.Views.Share
-					model: @_newTree
-					views:
-						".share_preview": new Tree.Views.Item
-							model: @_newTree
-							hideButtons: yes
+			views =
 				".my_trees": new Tree.Views.List
 					collection: @_myTrees
 				".authenticate_modal": new Modal.Views.Authenticate
-			.render()
+
+			if @_newTree.isNew()
+				_.extend views,
+					".share_my_tree": new Tree.Views.Share
+						model: @_newTree
+						views:
+							".share_preview": new Tree.Views.Item
+								model: @_newTree
+								hideShareWidgets: yes
+								# hideButtons: yes
+
+			app.useLayout('my_trees_page').setViews(views).render()
 
 		show404: ->
 			@go()

@@ -58,6 +58,9 @@ define [
 				console.log "#{(model.get('strokes')).length} stroke(s)"
 				model.save()
 
+		isNew: ->
+			@get('strokes').length and super()
+
 		sync: (method, model, options, first = true) ->
 			defaultSyncFn = ->
 				Backbone.sync method, model, options
@@ -67,8 +70,8 @@ define [
 				when "create", "update"
 					res = $.jStorage.set Tree.Model.LocalStorageKey, @toJSON()
 					if @remotePersist
-						defaultSyncFn()
 						$.jStorage.deleteKey Tree.Model.LocalStorageKey
+						return defaultSyncFn()
 					else
 						options.success model, res, options
 				when "read"
@@ -82,6 +85,12 @@ define [
 						options.success model, true, options
 				when "delete"
 					$.jStorage.deleteKey Tree.Model.LocalStorageKey
+
+		validate: (attrs) ->
+			if not attrs.strokes or attrs.strokes.length < 1
+				return "You must attempt to draw something!"
+			# else if not attrs.charityIds or attrs.charityIds.length < 1
+			# 	"You must select at least one charity!"
 
 		addCharity: (model) ->
 			if @get('charityIds').length < MyModel.MaxCharities
@@ -128,7 +137,6 @@ define [
 
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"
-		className: "tree-save-view"
 
 		events:
 			"click .btn-save": "save"
@@ -136,15 +144,15 @@ define [
 		save: ->
 			# @$('.btn-save').button 'loading'
 			@model.remotePersist = yes if app.authed
-			@model.save()
-			if not app.authed
-				(new Modal.Views.Authenticate()).show()
-			else
-				app.router.go 'my_trees'
+			if not @model.validate @model.attributes
+				if not app.authed
+					(new Modal.Views.Authenticate()).show()
+				else
+					app.router.go 'my_trees'
 
 	class Tree.Views.Share extends Backbone.View
 		template: "tree/share"
-		className: "tree-share-view"
+		className: "tree-share-view well"
 
 		serialize: ->
 			@model.toJSON()
@@ -163,34 +171,18 @@ define [
 	class Tree.Partials.ShareLoggedIn extends Backbone.View
 		template: "tree/share/logged_in"
 
-		_renderShareButtons = ->
-			@$('.share_widgets').sharrre
-				share:
-					twitter: yes
-					facebook: yes
-					# googlePlus: yes
-					pinterest: yes
-				buttons:
-					facebook:
-						layout: 'box_count'
-					twitter:
-						count: 'vertical'
-						via: 'LightMyTree'
-						# hashtags: 'LightMyTree'
-					googlePlus:
-						size: 'tall'
-						annotation: 'inline'
-					pinterest:
-						layout: 'vertical'
-				url: 'http://lightmytree.org/' + @model.id
-				urlCurl: ''
+		_showSuccessMessage = ->
+			@$('.alert-saving').addClass 'hide'
+			@$('.alert-success')
+				.removeClass('hide')
+				.addClass('in')
 
 		initialize: ->
-			@model.on 'change', @render, @
-			@_debouncedRenderShareButtons = _.debounce _renderShareButtons.bind(@), 500, no
-
-		afterRender: ->
-			@_debouncedRenderShareButtons()
+			@model.on 'sync', =>
+				_showSuccessMessage.call @
+				@insertView new Tree.Views.ShareWidgets
+					model: @model
+				.render()
 
 	class Tree.Partials.ShareNotLoggedIn extends Tree.Views.Save # inherit save event/handling
 		template: "tree/share/not_logged_in"
@@ -312,30 +304,144 @@ define [
 				@render()
 
 			# TODO: dynamically create rows to prevent padding issues?
-			@collection.forEach (treeModel) ->
-				treeModel.fetch
-					success: (model) =>
-						@insertView new Tree.Views.Item
-							model: treeModel
-						.render()
-			, @
+			if @collection and @collection.length
+				@collection.forEach (treeModel) ->
+					treeModel.fetch
+						success: (model) =>
+							@insertView new Tree.Views.Item
+								model: treeModel
+							.render()
+				, @
+			else
+				@insertView(new Tree.Partials.NothingToShow()).render()
+
+	class Tree.Partials.NothingToShow extends Backbone.View
+		tagName: "h4"
+
+		beforeRender: ->
+			@$el.html "There's nothing here. <a href='#sketch'>Draw something</a>"
 
 	class Tree.Views.Item extends Backbone.View
 		template: "tree/list_item"
 		tagName: "li"
-		className: "mini-tree-view span4"
+		className: "mini-tree-view span4 thumbnail"
+
+		events:
+			"click .canvas": "_goToTreePage"
+
+		initialize: (options = {}) ->
+			@hideShareWidgets = options.hideShareWidgets or no
+			@model.on 'change:id', @render, @
 
 		serialize: -> id: @model.id
+
+		beforeRender: ->
+			if not @hideShareWidgets
+				@insertView new Tree.Views.ShareWidgets
+					model: @model
+				.render()
 
 		afterRender: ->
 			if @options and @options.hideButtons
 				@$('.buttons').hide()
 
 			self = @
-			$container = @$el
+			$container = @$('.canvas')
 			new Raphael $container[0], 256, 256, ->
 				@setViewBox 0, 0,
 					self.model.get('viewBoxWidth') or 0, self.model.get('viewBoxHeight') or 0, true
 				@add self.model.get('strokes')
+
+		_goToTreePage: ->
+			app.go @model.id
+
+	class Tree.Views.ShareWidgets extends Backbone.View
+		className: "share_widgets well"
+
+		events:
+			"click a": "_nullifyHyperlink"
+
+		_addContainer = ($container, networkName) ->
+			$("<div class='#{networkName}'></div>").appendTo $container
+
+		_renderShareButtons = ->
+			url = 'http://lightmytree.org/' + @model.id
+
+			text = "Don't try to guess my dream gift this year! Instead, I'd rather you decorate my virtual tree with charitable gifts."
+
+			@$('.twitter').sharrre
+				share: twitter: yes
+				enableHover: no
+				enableTracking: yes
+				buttons:
+					twitter:
+						url: url
+						via: 'LightMyTree'
+				text: text
+				title: 'Tweet'
+				click: (api, options) ->
+					api.simulateClick()
+					api.openPopup('twitter')
+
+			@$('.facebook').sharrre
+				share: facebook: yes
+				enableHover: no
+				enableTracking: yes
+				buttons:
+					facebook:
+						url: url
+				# text: text
+				title: 'Like'
+				click: (api, options) ->
+					api.simulateClick()
+					api.openPopup('facebook')
+
+			# @$('.pinterest').sharrre
+			# 	share: pinterest: yes
+			# 	enableHover: no
+			# 	enableTracking: yes
+			# 	# text: 'Some text'
+			# 	title: 'Pin'
+			# 	enableCounter: no
+			# 	# urlCurl: ''
+			# 	url: url
+			# 	# media: ''
+			# 	description: ''
+			# 	layout: 'vertical'
+			# 	click: (api, options) ->
+			# 		api.simulateClick()
+			# 		api.openPopup('pinterest')
+
+			@$('.googlePlus').sharrre
+				share: googlePlus: yes
+				enableHover: no
+				enableTracking: yes
+				buttons:
+					googlePlus:
+						url: url
+				# text: text
+				title: '+1'
+				enableCounter: yes
+				urlCurl: ''
+				click: (api, options) ->
+					api.simulateClick()
+					api.openPopup('googlePlus')
+
+		initialize: ->
+			@_debouncedRenderShareButtons = _.debounce _renderShareButtons.bind(@), 300, no
+			# @model.on 'change:id change:_id', @render, @
+
+		beforeRender: ->
+			@$el.empty()
+			_addContainer @$el, 'twitter'
+			_addContainer @$el, 'facebook'
+			_addContainer @$el, 'googlePlus'
+
+		afterRender: ->
+			@_debouncedRenderShareButtons()
+
+		_nullifyHyperlink: (ev) ->
+			ev.preventDefault()
+			false
 
 	Tree
