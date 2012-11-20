@@ -13,35 +13,31 @@
     typeahead_charities: wrap((function() {
       return "/json/typeahead_charities";
     }).toString()),
-    charity_donate: wrap((function(charityId, amount, ourId) {
-      JustGiving;
-      +("/donation/direct/charity/" + charityId + "/donate");
-      +("?amount=" + amount);
-      +"&frequency=single";
-      +"&exitUrl=";
-      return +encodeURI("http://our.app/callbacks/jg-donate?donationId=JUSTGIVING-DONATION-ID&id=" + ourId);
+    justgiving_charity: wrap((function() {
+      return app.env.justgiving.apiUrl + '/' + app.env.justgiving.apiKey + "/v1/charity";
     }).toString()),
-    donation_status: wrap((function(donationId, appKey) {
-      if (appKey == null) {
-        appKey = JustGivingKey;
+    justgiving_charity_search: wrap((function(query, pageSize, page) {
+      if (pageSize == null) {
+        pageSize = 8;
       }
-      JustGiving;
-
-      return +("/api/" + appKey + "/v1/donation/" + donationId);
+      if (page == null) {
+        page = 1;
+      }
+      return app.env.justgiving.apiUrl + '/' + app.env.justgiving.apiKey + "/v1/charity/search" + "?q=" + query + "&pageSize=" + pageSize + "&page=" + page;
     }).toString())
   };
 
-  module.exports = function(app) {
-    var JustGiving, JustGivingKey;
+  module.exports = function(app, config) {
     console.log("Defining API routes");
-    JustGiving = "https://api-sandbox.justgiving.com";
-    JustGivingKey = "e90e23e0";
-    app.get("/json/client_init", function(req, res) {
+    return app.get("/json/client_init", function(req, res) {
       return res.json({
+        authed: req.user != null,
+        env: {
+          justgiving: _.pick(config.justgiving, 'apiKey', 'apiUrl')
+        },
         urls: urls
       });
     });
-    return app.get("/json/recent_charities", function(req, res) {});
   };
 
 }).call(this);

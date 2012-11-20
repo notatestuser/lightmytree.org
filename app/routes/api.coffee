@@ -11,31 +11,44 @@ urls =
 		"/json/typeahead_charities"
 	).toString()
 
-	charity_donate: wrap ((charityId, amount, ourId) ->
-		JustGiving
-		+ "/donation/direct/charity/#{charityId}/donate"
-		+ "?amount=#{amount}"
-		+ "&frequency=single"
-		+ "&exitUrl="
-		+ encodeURI("http://our.app/callbacks/jg-donate?donationId=JUSTGIVING-DONATION-ID&id=#{ourId}")
+	justgiving_charity: wrap (() ->
+		app.env.justgiving.apiUrl + '/' +
+		app.env.justgiving.apiKey +
+		"/v1/charity"
 	).toString()
 
-	donation_status: wrap ((donationId, appKey = JustGivingKey) ->
-		JustGiving
-		+ "/api/#{appKey}/v1/donation/#{donationId}"
+	justgiving_charity_search: wrap ((query, pageSize = 8, page = 1) ->
+		app.env.justgiving.apiUrl + '/' +
+		app.env.justgiving.apiKey +
+		"/v1/charity/search" +
+		"?q=" + query +
+		"&pageSize=" + pageSize +
+		"&page=" + page
 	).toString()
 
-module.exports = (app) ->
+	# charity_donate: wrap ((charityId, amount, ourId) ->
+	# 	JustGiving
+	# 	+ "/donation/direct/charity/#{charityId}/donate"
+	# 	+ "?amount=#{amount}"
+	# 	+ "&frequency=single"
+	# 	+ "&exitUrl="
+	# 	+ encodeURI("http://our.app/callbacks/jg-donate?donationId=JUSTGIVING-DONATION-ID&id=#{ourId}")
+	# ).toString()
+
+	# donation_status: wrap ((donationId, appKey = JustGivingKey) ->
+	# 	JustGiving
+	# 	+ "/api/#{appKey}/v1/donation/#{donationId}"
+	# ).toString()
+
+module.exports = (app, config) ->
 	console.log "Defining API routes"
-
-	JustGiving    = "https://api-sandbox.justgiving.com"
-	JustGivingKey = "e90e23e0"
 
 	# /json/client_init
 	app.get "/json/client_init", (req, res) ->
-		res.json urls: urls
-
-	# /json/recent_charities
-	app.get "/json/recent_charities", (req, res) ->
+		res.json
+			authed: req.user?
+			env:
+				justgiving: _.pick config.justgiving, 'apiKey', 'apiUrl'
+			urls: urls
 
 # # real response

@@ -1,3 +1,5 @@
+{_} = require 'underscore'
+
 # needed because eval() in Chrome requires that anonymous functions are surrounded with parenthesis
 wrap = (fnString) ->
 	"(" + fnString + ")"
@@ -24,7 +26,22 @@ urls =
 		"/api/#{apiKey}/v1/donation/#{donationId}"
 	).toString()
 
-module.exports = (app) ->
+	justgiving_charity: wrap (() ->
+		app.env.justgiving.apiUrl + '/' +
+		app.env.justgiving.apiKey +
+		"/v1/charity"
+	).toString()
+
+	justgiving_charity_search: wrap ((query, pageSize = 8, page = 1) ->
+		app.env.justgiving.apiUrl + '/' +
+		app.env.justgiving.apiKey +
+		"/v1/charity/search" +
+		"?q=" + query +
+		"&pageSize=" + pageSize +
+		"&page=" + page
+	).toString()
+
+module.exports = (app, config) ->
 
 	console.log "Defining FIXTURE routes"
 
@@ -32,6 +49,8 @@ module.exports = (app) ->
 	app.get "/json/client_init", (req, res) ->
 		res.json
 			authed: req.user?
+			env:
+				justgiving: _.pick config.justgiving, 'apiKey', 'apiUrl'
 			urls: urls
 
 	# # /json/typeahead_charities

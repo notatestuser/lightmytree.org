@@ -2,7 +2,7 @@
 define [
 	"jquery", "lodash", "backbone"
 	"../vendor/bootstrap/js/bootstrap"
-	"plugins/jquery.ie.xdr.js"
+	"plugins/jquery.ie.xdr"
 	"plugins/jquery.json-2.3.min"
 	"plugins/jquery.jstorage"
 	"plugins/backbone.layoutmanager"
@@ -14,7 +14,7 @@ define [
 		root: '/'
 
 	# Prepare to fetch client configuration
-	deferred = $.get app.root + 'json/client_init', (data) ->
+	initDeferred = $.get app.root + 'json/client_init', (data) ->
 		_.extend(app, data)
 		console.log 'Client configuration initialised'
 	, 'json'
@@ -23,10 +23,13 @@ define [
 	app.waitForUrl = (key, callback) ->
 		callbackFn = ->
 			callback eval app.urls[key]
-		if deferred.state() is 'resolved'
+		if initDeferred.state() is 'resolved'
 			callbackFn()
 		else
-			deferred.then callbackFn
+			initDeferred.then callbackFn
+
+	app.getUrlFn = (key) ->
+		eval app.urls[key]
 
 
 	# Localize or create a new JavaScript Template object.
@@ -53,7 +56,13 @@ define [
 			done = @async()
 
 			$.get app.root + path, (contents) ->
-				done(app.templates[path] = _.template contents)
+				app.templates[path] = _.template contents
+
+				# wait for client_init to have been completed before we begin rendering views
+				if initDeferred.state() is 'resolved'
+					done app.templates[path]
+				else
+					initDeferred.then done.bind(@, app.templates[path])
 
 			app.templates[path]
 

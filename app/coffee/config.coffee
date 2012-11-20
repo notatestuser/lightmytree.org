@@ -35,7 +35,7 @@ require.config
 			exports: "Raphael"
 
 		"../vendor/bootstrap/js/bootstrap": ["jquery"]
-		"plugins/jquery.ie.xdr.js":         ["jquery"]
+		"plugins/jquery.ie.xdr":         ["jquery"]
 		"plugins/jquery.json-2.3.min":      ["jquery"] # for jstorage
 		"plugins/jquery.jstorage":          ["jquery"]
 		"plugins/jquery.sharrre-1.3.4.min": ["jquery"]
