@@ -70,8 +70,8 @@ define [
 	class Charity.Views.Picker extends Backbone.View
 		template: "charity/picker"
 
-		# events:
-		# 	"keypress .search-charities-typeahead": "startSearch"
+		events:
+			"submit .form-charity-search": "_nullifySubmitOnEnter"
 
 		initialize: (options) ->
 			@treeModel = options.treeModel if options.treeModel
@@ -128,6 +128,10 @@ define [
 					@$el.addClass 'showing-search-results'
 					@render()
 			@collection.on 'reset', @render, @
+
+		_nullifySubmitOnEnter: (ev) ->
+			ev.preventDefault()
+			no
 
 	class Charity.Partials.Pagination extends Backbone.View
 		@PageCap: 9
