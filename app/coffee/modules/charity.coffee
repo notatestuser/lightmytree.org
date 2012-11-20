@@ -22,10 +22,7 @@ define [
 		model: Charity.Model
 		cache: yes
 
-		# TODO: get from the URL gathering function in app
-		url: "https://api-sandbox.justgiving.com/" +
-			"e90e23e0" +
-			"/v1/charity"
+		url: -> (app.getUrlFn('justgiving_charity'))()
 
 	class Charity.RecentCharitiesCollection extends Charity.Collection
 		url: "/json/recent_charities"
@@ -50,13 +47,9 @@ define [
 
 		isResultsCollection: yes
 
-		url: -> # TODO: get from the URL gathering function in app
-			"https://api-sandbox.justgiving.com/" +
-			"e90e23e0" +
-			"/v1/charity/search" +
-			"?q=" + @query +
-			"&pageSize=" + SearchCollection.ItemsPerFetch +
-			"&page=" + @page
+		url: ->
+			urlFn = (app.getUrlFn('justgiving_charity_search'))
+			urlFn(@query, SearchCollection.ItemsPerFetch, @page)
 
 		initialize: (options) ->
 			@query = options.query or ''
