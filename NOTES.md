@@ -13,28 +13,46 @@ Flow
 The Never Ending 'To Do'
 ------------------------
 
-* Sandbox/prod routing configuration (sort of done, we still need to be able to switch in and out of fixture mode)
-* Coffeescript server start fix
-* Artificial latency with the contrived fixtures
-* Convert Bootstrap to use individual AMD modules to reduce initial payload size (don't send over all of Bootstrap...)
+I'm leaving out the incredibly obvious stuff like TEST COVERAGE as this is merely a list of things required to get our first prototype online.
+
+### High priority
+
+* attempted in branch: CSS vendor prefixing (use cssFx and remove all vendor-specific prefixing?)
+* Social network sharing buttons
+* Tree PNG generation and serving
 * Gzipped requests & responses for static assets & API
-* Re-initialise sketchpad on resize (Chrome bug)
+* Clear local storage on final share (to prevent edits and clean up)
+* INTERNET EXPLORER TESTING - :before :after IE polyfill
+* Strip down size of header-bg.png
+* "Horrible content will be removed pronto"
+
+### Medium priority
+
+* Convert Bootstrap to use individual AMD modules to reduce initial payload size (don't send over all of Bootstrap...)
+* Limit drawing submissions in UI & data layer
 * Limit stroke submissions in UI & data layer
 * Limit charity selections in data layer
-* Limit drawing submissions in UI & data layer
-* Clear local storage on final share (to prevent edits and clean up)
-* :before :after IE polyfill
-* SVG generation
-* Strip down size of header-bg.png
-* Stop using API key in Backbone model URLs; instead use the URL mechanism already in place
-* Double image loading on tree view page (charities list
 * Enough(tm) pencil colours
-* More nib vendor prefixes? (necessary?)
-* SVG path optimisation/compression
-* Scale decorations
 * Mobile sketchpad responsiveness
-* "Horrible content will be removed pronto"
+* ERROR: sendDatabaseError()
+	{ error: 'conflict', reason: 'Document update conflict.' }
+	Trace: sendDatabaseError
+	    at module.exports.sendDatabaseError (/Users/luke/Dropbox/Greenfield/lightmytree/app/routes/data.js:40:15)
+	    at module.exports.createOrUpdateFn (/Users/luke/Dropbox/Greenfield/lightmytree/app/routes/data.js:89:21)
+	    at BaseDatabase.saveDocument (/Users/luke/Dropbox/Greenfield/lightmytree/app/database.js:39:16)
+
+### Low priority
+
+* Artificial latency with the contrived fixtures
+* Coffeescript server start fix
+* Sandbox/prod routing configuration (sort of done, we still need to be able to switch in and out of fixture mode)
+* Re-initialise sketchpad on resize (Chrome bug)
+* Stop using API key in Backbone model URLs; instead use the URL mechanism already in place
 * Glowing baubles
+
+### ???
+* SVG path optimisation/compression
+
 
 Testing Strategy
 ----------------
