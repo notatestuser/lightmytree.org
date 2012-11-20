@@ -50,6 +50,27 @@ class UserDatabase extends BaseDatabase
 						newDoc._id = newDoc.id = res.id # defensive programming!
 						promise.fulfill newDoc
 
+	findOrCreateByFacebook: (promise, userData, accessToken, accessTokExtra) ->
+		@db.view 'users/byFacebook', key: userData.id, (err, doc) =>
+			if err
+				promise.fail err
+			else if doc and doc.length
+				promise.fulfill doc[0].value
+			else
+				providerData =
+					id: userData.id
+					accessToken: accessToken
+					accessTokenExtra: accessTokExtra
+				newDoc = createDocument 'facebook', providerData, userData.username or userData.name, userData.name,
+					userData.picture, userData.locale
+				@db.save newDoc, (err, res) ->
+					if err
+						throw err
+					else
+						console.log "Facebook user created: #{userData.username}"
+						newDoc._id = newDoc.id = res.id # defensive programming!
+						promise.fulfill newDoc
+
 class TreeDatabase extends BaseDatabase
 	constructor: (config) ->
 		super config, 'trees'

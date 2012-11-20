@@ -21,3 +21,7 @@ module.exports =
 		consumerKey: 'Ev4MopNlRrygyAYDCEkFUg'
 		consumerSecret: '5DPw6SeeIChXriFOf0AT38O5pJWi0vfg8NChQvWY'
 
+	facebook:
+		# LightMyTree Labs
+		appId: '532521580109742'
+		appSecret: 'e7cd640d2c338ff60f6e594bd6636fa4'

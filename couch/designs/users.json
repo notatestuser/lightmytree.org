@@ -1,6 +1,6 @@
 {
 	"_id": "_design/users",
-	"_rev": "6-fd68b8160ec18cddea19c0875c319894",
+	"_rev": "7-ed601ce54993e4e4a221ddcb807460d4",
 	"views": {
 		"byId": {
 			"map": "function (doc) { if (doc._id) { emit(doc._id, doc) }; if (doc.treeIds) { for (var idx in doc.treeIds) { emit(doc.treeIds[idx], doc) } } }"
@@ -8,8 +8,8 @@
 		"byTwitter": {
 			"map": "function (doc) { if (doc.twitter && doc.twitter.id) { emit(doc.twitter.id, doc) } }"
 		},
-		"all": {
-			"map": "function (doc) { if (doc.fullName) emit(doc.fullName, doc); }"
+		"byFacebook": {
+			"map": "function (doc) { if (doc.facebook && doc.facebook.id) { emit(doc.facebook.id, doc) } }"
 		}
 	}
 }
