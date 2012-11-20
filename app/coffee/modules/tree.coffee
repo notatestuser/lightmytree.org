@@ -143,8 +143,8 @@ define [
 
 		save: ->
 			# @$('.btn-save').button 'loading'
-			@model.remotePersist = yes if app.authed
 			if not @model.validate @model.attributes
+				@model.remotePersist = yes if app.authed
 				if not app.authed
 					(new Modal.Views.Authenticate()).show()
 				else
