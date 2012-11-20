@@ -1,13 +1,13 @@
 !!!
-html
-	head(prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# lightmytree: http://ogp.me/ns/fb/lightmytree#")
+html(prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# lightmytree: http://ogp.me/ns/fb/lightmytree#")
+	head
 		title= title
 		meta(name='description', content='')
 		meta(name='author', content='Luke Plaster, notatestuser@gmail.com')
 
-		- if openGraphObject
-			- each prop in openGraphObject
-				meta(property='#{prop.prefix}:#{prop.property}', content='#{prop:content}')
+		if openGraphObject
+			each content, prop in openGraphObject
+				meta(property='#{prop}', content='#{content}')
 
 		//- meta(property='og:type', content='lightmytree:tree')
 		//- meta(property='og:description', content='entry.content')

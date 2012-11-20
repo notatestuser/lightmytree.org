@@ -64,11 +64,14 @@ require('./routes/data') app, envConfig
 require('./routes/images') app, envConfig
 require(apiRoutes) app, envConfig
 
-app.get '/*', (req, res) ->
+og = require('./opengrapher') app, envConfig
+
+app.get '/*', og (req, res, og) ->
 	res.render 'index',
 		title : 'LightMyTree'
 		loggedIn: req.loggedIn
 		user: req.user
+		openGraphObject: og
 
 ### start server ###
 app.listen 3000, ->
