@@ -138,7 +138,6 @@ module.exports = (app, config) ->
 	donateFn = (req, res) ->
 		data = req.body
 		treeId = req.params[0] if req.params?
-
 		if treeId and data
 			treeDb.findById treeId, wrapError res, (treeDoc) ->
 				if not treeDoc

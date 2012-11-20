@@ -11,6 +11,12 @@
       users: 'lmt_users',
       trees: 'lmt_trees'
     },
+    opengraph: {
+      siteName: 'LightMyTree',
+      defaultImage: 'http://dev.lightmytree.org:3000/img/dangler-tree.png',
+      treeImageBase: 'http://dev.lightmytree.org:3000/img/trees',
+      siteBase: 'http://dev.lightmytree.org:3000'
+    },
     justgiving: {
       apiKey: 'e90e23e0',
       apiUrl: 'https://api-sandbox.justgiving.com',

@@ -1,9 +1,22 @@
 !!!
-html
+html(prefix="og: http://ogp.me/ns# fb: http://ogp.me/ns/fb# lightmytree: http://ogp.me/ns/fb/lightmytree#")
 	head
 		title= title
 		meta(name='description', content='')
 		meta(name='author', content='Luke Plaster, notatestuser@gmail.com')
+
+		if openGraphObject
+			each content, prop in openGraphObject
+				meta(property='#{prop}', content='#{content}')
+
+		//- meta(property='og:type', content='lightmytree:tree')
+		//- meta(property='og:description', content='entry.content')
+		//- meta(property='og:title', content='#{entry.title}')
+		//- meta(property='og:image', content='#{protocol}://#{site}#{fb_image}')
+		//- meta(property='og:type', content='article')
+		//- meta(property='og:url', content='#{protocol}://#{site}#{entry.get_absolute_url()}')
+		//- meta(property='og:site_name', content='LightMyTree')
+
 		meta(http-equiv='X-UA-Compatible', content='IE=edge,chrome=1')
 		meta(width='device-width', initial-scale=1.0)
 		meta(name='viewport', content='width=device-width')
