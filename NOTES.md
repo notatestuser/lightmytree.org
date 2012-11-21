@@ -18,17 +18,18 @@ I'm leaving out the incredibly obvious stuff like TEST COVERAGE as this is merel
 ### High priority
 
 * attempted in branch: CSS vendor prefixing (use cssFx and remove all vendor-specific prefixing?)
-* Social network sharing buttons
-* Tree PNG generation and serving
-* Gzipped requests & responses for static assets & API
-* Clear local storage on final share (to prevent edits and clean up)
+* require.js optimizer
 * INTERNET EXPLORER TESTING - :before :after IE polyfill
-* Strip down size of header-bg.png
-* "Horrible content will be removed pronto"
+* Gzipped requests & responses for static assets & API
+* (done) Open Graph Protocol tags
+* (done) Strip down size of header-bg.png
+* (done) "Horrible content will be removed pronto"
+* (done) Clear local storage on final share (to prevent edits and clean up)
+* (done) Social network sharing buttons
+* (done) Tree PNG generation and serving
 
 ### Medium priority
 
-* Convert Bootstrap to use individual AMD modules to reduce initial payload size (don't send over all of Bootstrap...)
 * Limit drawing submissions in UI & data layer
 * Limit stroke submissions in UI & data layer
 * Limit charity selections in data layer
@@ -40,6 +41,7 @@ I'm leaving out the incredibly obvious stuff like TEST COVERAGE as this is merel
 	    at module.exports.sendDatabaseError (/Users/luke/Dropbox/Greenfield/lightmytree/app/routes/data.js:40:15)
 	    at module.exports.createOrUpdateFn (/Users/luke/Dropbox/Greenfield/lightmytree/app/routes/data.js:89:21)
 	    at BaseDatabase.saveDocument (/Users/luke/Dropbox/Greenfield/lightmytree/app/database.js:39:16)
+* (done) Convert Bootstrap to use individual modules to reduce initial payload size (don't send over all of Bootstrap...)
 
 ### Low priority
 
