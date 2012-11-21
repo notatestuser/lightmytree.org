@@ -256,6 +256,7 @@ header
 		z-index 1
 		position fixed
 		right 0
+		top 65px
 		.googlePlus,.pinterest
 			display none
 
@@ -454,6 +455,7 @@ header
 			padding-top 10px
 			overflow hidden
 			border-radius 3px
+			overflow visible !important
 			box-sizing(border-box)
 
 			.thumbnail
@@ -801,7 +803,8 @@ header
 			background transparent url("../img/xmas-header-decor.png") no-repeat scroll -56px 4px
 	.row-intro,
 	.row-picker,
-	.row-donation
+	.row-donation,
+	.row-recent-charities-header
 		h3,h4
 			display block
 			font-size 1.1em
@@ -832,6 +835,10 @@ header
 			font-size 0.8em
 		form
 			margin-top 15px
+
+	.row-picker .intro
+		p
+			text-align center
 
 	.row-recent-charities-header
 		h3
@@ -871,8 +878,12 @@ header
 			h2
 				text-align center
 			.sketch-teaser
-				min-height 169px
+				min-height 170px
 				border-bottom 1px dashed #ccc
+				text-align center
+				img
+					margin auto
+					display block
 			.donate-anyway
 				padding-top 18px
 				text-align center
