@@ -57,7 +57,6 @@ define [
 			@remotePersist = false
 			super()
 			@on 'change:strokes change:charityIds', (model) ->
-				console.log "#{(model.get('strokes')).length} stroke(s)"
 				model.save()
 
 		isNew: ->
@@ -80,7 +79,6 @@ define [
 					try
 						model.set $.jStorage.get(Tree.Model.LocalStorageKey, {})
 					catch ex
-						console.error "Gracefully handling Tree.Model.sync() exception"
 					if app.authed
 						defaultSyncFn()
 					else

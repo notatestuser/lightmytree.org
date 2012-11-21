@@ -276,7 +276,6 @@ define [
 
 		resizeCanvas: ->
 			if @$container
-				console.log "New canvas dimensions: #{@$container.width()} #{@$container.height()}"
 				@sketchpad.paper().setSize @$container.width(), @$container.height()
 
 		_changePencilColour: (model, newColour) =>

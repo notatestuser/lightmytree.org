@@ -15,7 +15,6 @@ define [
 	# Prepare to fetch client configuration
 	initDeferred = $.get app.root + 'json/client_init', (data) ->
 		_.extend(app, data)
-		console.log 'Client configuration initialised'
 	, 'json'
 
 	# This simple function will allow higher-level layers to request a URL and only sync when it has arrived
@@ -47,19 +46,15 @@ define [
 
 		fetch: (path) ->
 			path += ".html"
-			console.log 'Using template: ' + path
 
 			return app.templates[path] if typeof app.templates[path] is 'function'
 
 			done = @async()
 
 			if app.templates[path]?
-				console.log 'Template cache QUEUE'
 				app.templates[path].then ->
-					console.log 'Template cache RESOLVE'
 					done app.templates[path]
 			else
-				console.log 'Template cache MISS, fetching'
 				app.templates[path] = $.Deferred()
 
 				$.get app.root + path, (contents) ->
