@@ -24,8 +24,8 @@ define [
 			charityIds: []
 			donationData: []
 			strokes: []
-			viewBoxWidth: 600
-			viewBoxHeight: 500
+			viewBoxWidth: 430
+			viewBoxHeight: 470
 
 		initialize: ->
 			@charities = new Charity.Collection()
@@ -266,12 +266,16 @@ define [
 			$container = @$el # this should be empty due to actions taken by beforeRender()
 			if @paper?
 				@paper.clear()
+				@paper.setViewBox 0, 0,
+					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
+				console.log "a #{self.model.get('viewBoxWidth')} #{self.model.get('viewBoxHeight')}"
 				@paper.add self.model.get('strokes')
 			else
 				new Raphael $container[0], $container.width(), $container.height(), ->
 					self.paper = @
 					@setViewBox 0, 0,
 						self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
+					console.log "b #{self.model.get('viewBoxWidth')} #{self.model.get('viewBoxHeight')}"
 					@add self.model.get('strokes')
 
 		handleClick: =>
