@@ -1,6 +1,5 @@
 {
 	"_id": "_design/trees",
-	"_rev": "3-883c92c292e0f890d962e08566d04dc3",
 	"views": {
 		"byId": {
 			"map":

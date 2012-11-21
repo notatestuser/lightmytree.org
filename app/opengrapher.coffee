@@ -42,6 +42,7 @@ module.exports = (app, config) ->
 			.addOrSetProperty('og:site_name', config.opengraph.siteName)
 			.addOrSetProperty('og:image', config.opengraph.defaultImage)
 			.addOrSetProperty('og:url', config.opengraph.siteBase + request.url)
+			.addOrSetProperty('og:description': 'Draw a virtual Christmas tree, share it with friends and receive donations in lieu of physical gifts. Ask for a better kind of gift this Christmas.')
 
 	_addSketchPageProperties = (og) ->
 		if og.isRequestFor '/sketch'

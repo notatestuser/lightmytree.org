@@ -1,0 +1,9 @@
+node_modules
+couch
+assets
+assets_mine
+app/*.js
+app/*/*.js
+app/*/*/*.js
+NOTES.md
+*.sh

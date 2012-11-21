@@ -1,3 +1,5 @@
+{_} = require 'underscore'
+
 # needed because eval() in Chrome requires that anonymous functions are surrounded with parenthesis
 wrap = (fnString) ->
 	"(" + fnString + ")"

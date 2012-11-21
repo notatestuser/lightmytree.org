@@ -32,6 +32,7 @@ class UserDatabase extends BaseDatabase
 	findOrCreateByTwitter: (promise, userData, accessToken, accessTokenSecret) ->
 		@db.view 'users/byTwitter', key: userData.id_str, (err, doc) =>
 			if err
+				console.error err
 				promise.fail err
 			else if doc and doc.length
 				promise.fulfill doc[0].value
@@ -44,6 +45,7 @@ class UserDatabase extends BaseDatabase
 					userData.profile_image_url, userData.location
 				@db.save newDoc, (err, res) ->
 					if err
+						console.error err
 						throw err
 					else
 						console.log "Twitter user created: #{userData.screen_name}"
@@ -53,6 +55,7 @@ class UserDatabase extends BaseDatabase
 	findOrCreateByFacebook: (promise, userData, accessToken, accessTokExtra) ->
 		@db.view 'users/byFacebook', key: userData.id, (err, doc) =>
 			if err
+				console.error err
 				promise.fail err
 			else if doc and doc.length
 				promise.fulfill doc[0].value
@@ -65,6 +68,7 @@ class UserDatabase extends BaseDatabase
 					userData.picture, userData.locale
 				@db.save newDoc, (err, res) ->
 					if err
+						console.error err
 						throw err
 					else
 						console.log "Facebook user created: #{userData.username}"

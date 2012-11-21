@@ -6,3 +6,4 @@ assets_mine
 assets_live
 app/*.js
 app/*/*.js
+app/*/*/*.js

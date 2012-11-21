@@ -16,6 +16,7 @@ rprod = /-{1,2}(p|production)/
 for s in ARGV
 	m = rargs.exec s
 	app.env = 'production' if m and m[0] and m[0].match rprod
+app.env = 'production' if app.settings.env is 'production'
 
 ### environment configuration ###
 if app.env isnt 'production'
@@ -44,10 +45,11 @@ app.configure ->
 	app.set 'views', __dirname + '/views'
 	app.set 'view engine', 'jade'
 	app.use express.bodyParser()
-	app.use stylus.middleware
-		src: __dirname
-		dest: __dirname + '/../assets'
-		compile: compile
+	if app.env isnt 'production'
+		app.use stylus.middleware
+			src: __dirname
+			dest: __dirname + '/../assets'
+			compile: compile
 	# app.use express.static __dirname + '/../assets'
 	app.use gzippo.staticGzip __dirname + '/../assets' + assetsSuffix
 	app.use express.cookieParser()
@@ -57,9 +59,8 @@ app.configure ->
 	app.use gzippo.compress()
 
 ### watch coffeescript sources ###
-coffee = espresso.core.exec 'coffee -o ../assets/js -w -c coffee'
-coffee.stdout.on 'data', (data) ->
-	espresso.core.minify() if app.env == 'production'
+if app.env isnt 'production'
+	coffee = espresso.core.exec 'coffee -o ../assets/js -w -c coffee'
 
 ### watch stylus sources ###
 # espresso.core.exec 'stylus -w -c styl -o ../assets/css'
