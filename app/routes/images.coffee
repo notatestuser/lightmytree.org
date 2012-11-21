@@ -45,6 +45,7 @@ module.exports = (app, config) ->
 
 					if treeDoc._attachments?.hasOwnProperty pngFilename
 						# the file already exists in the database - just stream it out!
+						res.contentType 'image/png'
 						stream = treeDb.db.getAttachment treeDoc._id, pngFilename
 						stream.addListener 'response', (response) ->
 							res.headers = response.headers

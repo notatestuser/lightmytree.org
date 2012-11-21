@@ -42,7 +42,7 @@ module.exports = (app, config) ->
 			.addOrSetProperty('og:site_name', config.opengraph.siteName)
 			.addOrSetProperty('og:image', config.opengraph.defaultImage)
 			.addOrSetProperty('og:url', config.opengraph.siteBase + request.url)
-			.addOrSetProperty('og:description': 'Draw a virtual Christmas tree, share it with friends and receive donations in lieu of physical gifts. Ask for a better kind of gift this Christmas.')
+			.addOrSetProperty('og:description', 'Draw a virtual Christmas tree, share it with friends and receive donations in lieu of physical gifts. Ask for a better kind of gift this Christmas.')
 
 	_addSketchPageProperties = (og) ->
 		if og.isRequestFor '/sketch'
@@ -58,15 +58,14 @@ module.exports = (app, config) ->
 
 	_addTreePageProperties = (og) ->
 		if og.isRequestUnmatched()
-			og.addOrSetProperty('og:image', config.opengraph.treeImageBase + og.parsedUrl.pathname + '.png')
 			og.addOrSetProperty('og:type', 'lightmytree:tree')
 			treeDb.findById og.parsedUrl.pathname.substring(1), (err, res) ->
 				if res and not err
-					# console.log res
 					userId = res.user.id
 					userDb.findById userId, (err, res) ->
 						if res and not err
 							og.addOrSetProperty('og:title', "#{res.fullName}'s festive scene")
+								.addOrSetProperty('og:image', config.opengraph.treeImageBase + og.parsedUrl.pathname + '.png?' + res._rev.substring 0, 8)
 								.addOrSetProperty('og:description', "Don't try to guess #{res.fullName}'s dream gift this year! Instead, they'd rather you decorate their virtual tree with charitable gifts.")
 								.done()
 						else
