@@ -50,19 +50,29 @@ define [
 			path += ".html"
 			console.log 'Using template: ' + path
 
-			return app.templates[path] if app.templates[path]
-			console.log 'Template cache MISS, fetching'
+			return app.templates[path] if typeof app.templates[path] is 'function'
 
 			done = @async()
 
-			$.get app.root + path, (contents) ->
-				app.templates[path] = _.template contents
-
-				# wait for client_init to have been completed before we begin rendering views
-				if initDeferred.state() is 'resolved'
+			if app.templates[path]?
+				console.log 'Template cache QUEUE'
+				app.templates[path].then ->
+					console.log 'Template cache RESOLVE'
 					done app.templates[path]
-				else
-					initDeferred.then done.bind(@, app.templates[path])
+			else
+				console.log 'Template cache MISS, fetching'
+				app.templates[path] = $.Deferred()
+
+				$.get app.root + path, (contents) ->
+					deferred = app.templates[path]
+					app.templates[path] = _.template contents
+					deferred.resolve()
+
+					# wait for client_init to have been completed before we begin rendering views
+					if initDeferred.state() is 'resolved'
+						done app.templates[path]
+					else
+						initDeferred.then done.bind(@, app.templates[path])
 
 			app.templates[path]
 
