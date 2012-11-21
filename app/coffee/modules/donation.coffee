@@ -4,6 +4,7 @@ define [
 	"backbone"
 	"modules/tree"
 	"modules/modal"
+	"bootstrap/bootstrap-tooltip"
 ],
 
 (app, _, Backbone, Tree, Modal) ->

@@ -1,5 +1,6 @@
 define [
 	"app", "backbone"
+	"bootstrap/bootstrap-typeahead"
 ],
 
 (app, Backbone) ->

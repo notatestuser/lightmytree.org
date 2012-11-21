@@ -1,5 +1,6 @@
 define [
 	"app", "backbone"
+	"bootstrap/bootstrap-modal"
 ],
 
 (app, Backbone) ->

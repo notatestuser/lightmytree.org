@@ -1,7 +1,7 @@
 # Application.
 define [
 	"jquery", "lodash", "backbone"
-	"../vendor/bootstrap/js/bootstrap"
+	"bootstrap/bootstrap-transition"
 	"plugins/jquery.ie.xdr"
 	"plugins/jquery.json-2.3.min"
 	"plugins/jquery.jstorage"

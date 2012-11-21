@@ -6,6 +6,8 @@ define [
 	"modules/charity"
 	"modules/donation"
 	"modules/modal"
+	"bootstrap/bootstrap-popover"
+
 	"plugins/raphael.sketchpad"
 	"plugins/jquery.sharrre-1.3.4.min"
 ],

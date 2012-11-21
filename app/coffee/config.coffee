@@ -12,11 +12,12 @@ require.config
 		#plugins: "../js/plugins",
 
 		# Libraries.
-		jquery: "../js/libs/jquery"
-		lodash: "../js/libs/lodash"
-		backbone: "../js/libs/backbone"
-		raphael: "../js/libs/raphael"
-		eve: "../js/libs/eve"
+		jquery: "libs/jquery"
+		lodash: "libs/lodash"
+		backbone: "libs/backbone"
+		raphael: "libs/raphael"
+		eve: "libs/eve"
+		bootstrap: "libs/bootstrap"
 
 	shim:
 
@@ -25,24 +26,38 @@ require.config
 			deps: ["lodash", "jquery"]
 			exports: "Backbone"
 
+		# Backbone.LayoutManager depends on Backbone.
+		"plugins/backbone.layoutmanager":	["backbone"]
+
+		"plugins/raphael.sketchpad":
+			deps: ["raphael"]
+			exports: "Raphael.sketchpad"
+
+		# Bootstrap Javascript components
+		"bootstrap/bootstrap-affix":		["jquery"]
+		"bootstrap/bootstrap-alert":		["jquery"]
+		"bootstrap/bootstrap-button":		["jquery"]
+		"bootstrap/bootstrap-carousel":	["jquery"]
+		"bootstrap/bootstrap-collapse":	["jquery"]
+		"bootstrap/bootstrap-dropdown":	["jquery"]
+		"bootstrap/bootstrap-modal":		["jquery"]
+		"bootstrap/bootstrap-popover":		["jquery", "bootstrap/bootstrap-tooltip"]
+		"bootstrap/bootstrap-scrollspy":	["jquery"]
+		"bootstrap/bootstrap-tab":			["jquery"]
+		"bootstrap/bootstrap-tooltip":		["jquery"]
+		"bootstrap/bootstrap-transition":	["jquery"]
+		"bootstrap/bootstrap-typeahead":	["jquery"]
+
 		# Eve is required by Raphael for internal namespacing
 		eve:
 			exports: "eve"
 
 		raphael:
-			# Eve is required by Raphael for internal namespacing
 			deps: ["eve"]
 			exports: "Raphael"
 
-		"../vendor/bootstrap/js/bootstrap": ["jquery"]
-		"plugins/jquery.ie.xdr":         ["jquery"]
-		"plugins/jquery.json-2.3.min":      ["jquery"] # for jstorage
-		"plugins/jquery.jstorage":          ["jquery"]
-		"plugins/jquery.sharrre-1.3.4.min": ["jquery"]
+		"plugins/jquery.ie.xdr":				["jquery"]
+		"plugins/jquery.json-2.3.min":		["jquery"] # for jstorage
+		"plugins/jquery.jstorage":				["jquery"]
+		"plugins/jquery.sharrre-1.3.4.min":	["jquery"]
 
-		# Backbone.LayoutManager depends on Backbone.
-		"plugins/backbone.layoutmanager": ["backbone"]
-
-		"plugins/raphael.sketchpad":
-			deps: ["raphael"]
-			exports: "Raphael.sketchpad"

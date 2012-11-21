@@ -2,6 +2,7 @@ define [
 	"app"
 	"lodash"
 	"backbone"
+	"bootstrap/bootstrap-tooltip"
 ],
 
 (app, _, Backbone) ->
