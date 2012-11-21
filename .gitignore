@@ -5,3 +5,4 @@ assets/css/app.css
 assets_mine
 assets_live
 app/*.js
+app/*/*.js
