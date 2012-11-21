@@ -35,18 +35,18 @@ require.config
 
 		# Bootstrap Javascript components
 		"bootstrap/bootstrap-affix":		["jquery"]
-		"bootstrap/bootstrap-alert":		["jquery"]
-		"bootstrap/bootstrap-button":		["jquery"]
+		"bootstrap/bootstrap-alert":		["jquery", "bootstrap/bootstrap-transition"]
+		"bootstrap/bootstrap-button":		["jquery", "bootstrap/bootstrap-transition"]
 		"bootstrap/bootstrap-carousel":	["jquery"]
 		"bootstrap/bootstrap-collapse":	["jquery"]
 		"bootstrap/bootstrap-dropdown":	["jquery"]
-		"bootstrap/bootstrap-modal":		["jquery"]
-		"bootstrap/bootstrap-popover":		["jquery", "bootstrap/bootstrap-tooltip"]
+		"bootstrap/bootstrap-modal":		["jquery", "bootstrap/bootstrap-transition"]
+		"bootstrap/bootstrap-popover":	["jquery", "bootstrap/bootstrap-tooltip"]
 		"bootstrap/bootstrap-scrollspy":	["jquery"]
 		"bootstrap/bootstrap-tab":			["jquery"]
-		"bootstrap/bootstrap-tooltip":		["jquery"]
-		"bootstrap/bootstrap-transition":	["jquery"]
-		"bootstrap/bootstrap-typeahead":	["jquery"]
+		"bootstrap/bootstrap-tooltip":	["jquery", "bootstrap/bootstrap-transition"]
+		"bootstrap/bootstrap-transition":["jquery"]
+		"bootstrap/bootstrap-typeahead":	["jquery", "bootstrap/bootstrap-transition"]
 
 		# Eve is required by Raphael for internal namespacing
 		eve:
