@@ -83,6 +83,8 @@ define [
 				".intro": new Tree.Views.Intro
 					model: userModel
 					collection: treeModel.charities
+				".share-widget": new Tree.Views.ShareWidgets
+					model: treeModel
 				".row-donation": new Donation.Views.GiftPicker
 					model: donationModel = new Donation.Model
 						treeId: treeId
