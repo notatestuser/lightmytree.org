@@ -1,3 +1,8 @@
+###
+ * LightMyTree Application Module
+ * Copyright (c) 2012 Luke Plaster (notatestuser@gmail.com)
+###
+
 # Application.
 define [
 	"jquery", "lodash", "backbone"

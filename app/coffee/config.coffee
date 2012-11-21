@@ -1,3 +1,8 @@
+###
+ * LightMyTree Application Bootstrapper
+ * Copyright (c) 2012 Luke Plaster (notatestuser@gmail.com)
+###
+
 # Set the require.js configuration for your application.
 require.config
 

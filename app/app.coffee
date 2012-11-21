@@ -2,6 +2,7 @@
 express = require 'express'
 espresso = require './espresso'
 stylus = require 'stylus'
+gzippo = require 'gzippo'
 nib = require 'nib'
 
 ### create express server ###
@@ -21,10 +22,12 @@ if app.env isnt 'production'
 	console.log "Welcome to development mode"
 	apiRoutes = './routes/fixtures'
 	envConfig = require './configs/development'
+	assetsSuffix = ''
 else
 	console.log "Welcome to production mode"
 	apiRoutes = './routes/api'
 	envConfig = require './configs/production'
+	assetsSuffix = '_live'
 
 ### stylus compilation func ###
 compile = (str, path) ->
@@ -45,11 +48,13 @@ app.configure ->
 		src: __dirname
 		dest: __dirname + '/../assets'
 		compile: compile
-	app.use express.static __dirname + '/../assets'
+	# app.use express.static __dirname + '/../assets'
+	app.use gzippo.staticGzip __dirname + '/../assets' + assetsSuffix
 	app.use express.cookieParser()
 	app.use express.session secret: envConfig.sessionSecret
 	app.use everyauth.middleware()
 	app.use express.errorHandler()
+	app.use gzippo.compress()
 
 ### watch coffeescript sources ###
 coffee = espresso.core.exec 'coffee -o ../assets/js -w -c coffee'
