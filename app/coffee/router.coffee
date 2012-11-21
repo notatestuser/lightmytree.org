@@ -33,10 +33,10 @@ define [
 			_.extend @, models
 
 		index: ->
-			app.useLayout('home_page').setViews
+			app.useLayout('home_page').setViews({}).render()
 				#".create_tree": new Tree.Views.Sketch @
-				".existing_tree": new Tree.Views.List @
-			.render()
+				# ".existing_tree": new Tree.Views.List @
+			# .render()
 
 		sketch: ->
 			app.useLayout('sketch_page').setViews
