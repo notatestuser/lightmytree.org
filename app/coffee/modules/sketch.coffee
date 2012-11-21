@@ -129,9 +129,9 @@ define [
 				.appendTo(@$el)
 			@_changePencilColour null, @model.get('pencilColour')
 			@_changePencilWidth null, @model.get('pencilWidth')
-			@$el.tooltip
-				title: 'Thickness'
-				placement: 'top'
+			# @$el.tooltip
+			# 	title: 'Thickness'
+			# 	placement: 'top'
 
 		_setThisWidth: ->
 			if @width
@@ -172,9 +172,9 @@ define [
 			@_changePencilColour null, @model.get('pencilColour')
 			@_changePencilWidth null, @model.get('pencilWidth')
 			@_changePencilOpacity null, @model.get('pencilOpacity')
-			@$el.tooltip
-				title: 'Transparency'
-				placement: 'bottom'
+			# @$el.tooltip
+			# 	title: 'Transparency'
+			# 	placement: 'bottom'
 
 		_setThisOpacity: ->
 			if @opacity
