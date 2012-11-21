@@ -803,22 +803,24 @@ header
 			font-weight normal
 			text-transform uppercase
 			font-family 'Lora', serif
-		h3:before
-			content ""
-			display inline-block
-			width 100px
-			height 12px
-			margin-right 6px
-			background transparent url("../img/smaller-header-decor.png") no-repeat scroll right center
-			background-size 100%
-		h3:after
-			content ""
-			display inline-block
-			width 100px
-			height 12px
-			margin-left 6px
-			background transparent url("../img/smaller-header-decor.png") no-repeat scroll left center
-			background-size 100%
+		h3
+			text-align center
+			&.charities-donate-header:before
+				content ""
+				display inline-block
+				width 100px
+				height 12px
+				margin-right 6px
+				background transparent url("../img/smaller-header-decor.png") no-repeat scroll right center
+				background-size 100%
+			&.charities-donate-header:after
+				content ""
+				display inline-block
+				width 100px
+				height 12px
+				margin-left 6px
+				background transparent url("../img/smaller-header-decor.png") no-repeat scroll left center
+				background-size 100%
 		h4
 			font-size 0.8em
 		form
