@@ -66,7 +66,7 @@ module.exports = (app, config) ->
 						if userRes and not err
 							firstName = userRes.fullName.substring 0, userRes.fullName.indexOf(' ')
 							displayName = firstName or userRes.fullName
-							og.addOrSetProperty('og:title', "#{displayName}'s festive scene")
+							og.addOrSetProperty('og:title', "#{displayName}'s festive tree")
 								.addOrSetProperty('og:image', config.opengraph.treeImageBase + og.parsedUrl.pathname + '.png?' + userRes._rev.substring 0, 8)
 								.addOrSetProperty('og:description', "Don't try to guess #{displayName}'s dream gift this year! Instead, they'd rather you decorate their virtual tree with charitable gifts.")
 								.addOrSetProperty('lightmytree:charity_count', treeRes.charityIds.length)
