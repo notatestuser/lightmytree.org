@@ -68,7 +68,7 @@ module.exports = (app, config) ->
 								.addOrSetProperty('og:image', config.opengraph.treeImageBase + og.parsedUrl.pathname + '.png?' + userRes._rev.substring 0, 8)
 								.addOrSetProperty('og:description', "Don't try to guess #{userRes.fullName}'s dream gift this year! Instead, they'd rather you decorate their virtual tree with charitable gifts.")
 								.addOrSetProperty('lightmytree:charity_count', treeRes.charityIds.length)
-							network = 'twitter' = userRes.twitter?
+							network = 'twitter' if userRes.twitter?
 							network = 'facebook' if userRes.facebook?
 							og.addOrSetProperty('lightmytree:author', config[network].profileBaseUrl + userRes.screenName)
 							donatedTotal = .0
