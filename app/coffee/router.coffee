@@ -115,8 +115,8 @@ define [
 						views:
 							".share_preview": new Tree.Views.Item
 								model: @_newTree
+								# hideButtons: yes - now automatic
 								hideShareWidgets: yes
-								# hideButtons: yes
 
 			app.useLayout('my_trees_page').setViews(views).render()
 

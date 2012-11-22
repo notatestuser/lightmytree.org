@@ -6,7 +6,9 @@ define [
 	"modules/charity"
 	"modules/donation"
 	"modules/modal"
+	# "bootstrap/bootstrap-dropdown"
 	"bootstrap/bootstrap-popover"
+	# "bootstrap/bootstrap-button"
 
 	"plugins/raphael.sketchpad"
 	"plugins/jquery.sharrre-1.3.4.min"
@@ -154,10 +156,10 @@ define [
 		save: ->
 			# @$('.btn-save').button 'loading'
 			if not @model.validate @model.attributes
-				@model.remotePersist = yes if app.authed
-				if not app.authed
-					(new Modal.Views.Authenticate()).show()
-				else
+				# @model.remotePersist = yes if app.authed
+				# if not app.authed
+				# 	(new Modal.Views.Authenticate()).show()
+				# else
 					app.router.go 'my_trees'
 
 		_setButtonDisabledState: ->
@@ -170,6 +172,11 @@ define [
 	class Tree.Views.Share extends Backbone.View
 		template: "tree/share"
 		className: "tree-share-view well"
+
+		events:
+			"click .btn-group-facebook": "_showFacebookPublishDropdown"
+			"click .btn-facebook-publish": "_authFacebookPublish"
+			"click .btn-facebook-nopublish": "_authFacebookNoPublish"
 
 		serialize: ->
 			@model.toJSON()
@@ -184,6 +191,20 @@ define [
 				view = new Tree.Partials.ShareNotLoggedIn
 					model: @model
 			@setView(".comment_section", view).render()
+
+		_showFacebookPublishDropdown: ->
+			@$('.btn-group-facebook .dropdown-menu').show()
+
+		_authFacebookPublish: ->
+			@_saveAndAuthFacebook yes
+
+		_authFacebookNoPublish: ->
+			@_saveAndAuthFacebook no
+
+		_saveAndAuthFacebook: (publish = no) ->
+			@model.save(publishFacebookWall: publish)
+			# usually we'd have to wait on the XHR to complete here, but as we're saving to localstorage we know it's done
+			app.authRedirect 'facebook'
 
 	class Tree.Partials.ShareLoggedIn extends Backbone.View
 		template: "tree/share/logged_in"
@@ -362,9 +383,7 @@ define [
 				.render()
 
 		afterRender: ->
-			if @options and @options.hideButtons
-				@$('.buttons').hide()
-
+			@$('.buttons').addClass 'hide' if not @model.id
 			self = @
 			$container = @$('.canvas')
 			new Raphael $container[0], 256, 256, ->
@@ -447,6 +466,11 @@ define [
 					api.simulateClick()
 					api.openPopup('googlePlus')
 
+		_addPostedToWallNotification = ($container) ->
+			notice = '<p><span class="label label-info">Note</span> '+
+				'Your drawing will be posted to your Facebook wall.</p>'
+			$(notice).appendTo $container
+
 		initialize: ->
 			@_debouncedRenderShareButtons = _.debounce _renderShareButtons.bind(@), 300, no
 			# @model.on 'change:id change:_id', @render, @
@@ -456,6 +480,7 @@ define [
 			_addContainer @$el, 'twitter'
 			_addContainer @$el, 'facebook'
 			_addContainer @$el, 'googlePlus'
+			_addPostedToWallNotification @$el if @model.get 'publishFacebookWall'
 
 		afterRender: ->
 			@_debouncedRenderShareButtons()
