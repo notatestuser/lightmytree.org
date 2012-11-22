@@ -3,7 +3,7 @@
   "version": "0.2.4",
   "private": true,
   "dependencies": {
-    "express": "2.5.11",
+    "express": "2.5.x",
     "coffee-script": "1.3.3",
     "stylus": "*",
     "nib": "0.8.x",
@@ -13,8 +13,7 @@
     "everyauth": "0.3.x",
     "cradle": "0.6.x",
     "node-raphael": "git://github.com/notatestuser/node-raphael.git#quick-upgrade-2.1.0-compiled",
-    "gm": "1.6.x",
-    "gzippo": "0.2.x"
+    "gm": "1.6.x"
   },
   "scripts": {
     "start": "coffee app.coffee"
