@@ -268,14 +268,12 @@ define [
 				@paper.clear()
 				@paper.setViewBox 0, 0,
 					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
-				console.log "a #{self.model.get('viewBoxWidth')} #{self.model.get('viewBoxHeight')}"
 				@paper.add self.model.get('strokes')
 			else
 				new Raphael $container[0], $container.width(), $container.height(), ->
 					self.paper = @
 					@setViewBox 0, 0,
 						self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
-					console.log "b #{self.model.get('viewBoxWidth')} #{self.model.get('viewBoxHeight')}"
 					@add self.model.get('strokes')
 
 		handleClick: =>
