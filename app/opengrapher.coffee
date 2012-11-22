@@ -59,14 +59,20 @@ module.exports = (app, config) ->
 	_addTreePageProperties = (og) ->
 		if og.isRequestUnmatched()
 			og.addOrSetProperty('og:type', 'lightmytree:tree')
-			treeDb.findById og.parsedUrl.pathname.substring(1), (err, res) ->
-				if res and not err
-					userId = res.user.id
-					userDb.findById userId, (err, res) ->
-						if res and not err
-							og.addOrSetProperty('og:title', "#{res.fullName}'s festive scene")
-								.addOrSetProperty('og:image', config.opengraph.treeImageBase + og.parsedUrl.pathname + '.png?' + res._rev.substring 0, 8)
-								.addOrSetProperty('og:description', "Don't try to guess #{res.fullName}'s dream gift this year! Instead, they'd rather you decorate their virtual tree with charitable gifts.")
+			treeDb.findById og.parsedUrl.pathname.substring(1), (err, treeRes) ->
+				if treeRes and not err
+					userId = treeRes.user.id
+					userDb.findById userId, (err, userRes) ->
+						if userRes and not err
+							og.addOrSetProperty('og:title', "#{userRes.fullName}'s festive scene")
+								.addOrSetProperty('og:image', config.opengraph.treeImageBase + og.parsedUrl.pathname + '.png?' + userRes._rev.substring 0, 8)
+								.addOrSetProperty('og:description', "Don't try to guess #{userRes.fullName}'s dream gift this year! Instead, they'd rather you decorate their virtual tree with charitable gifts.")
+								.addOrSetProperty('lightmytree:charity_count', treeRes.charityIds.length)
+							og.addOrSetProperty('lightmytree:author', config.opengraph.graphBase + userRes.screenName) if userRes.facebook
+							donatedTotal = .0
+							if treeRes.donationData and treeRes.donationData.length
+								treeRes.donationData.forEach (donation) -> donatedTotal += parseFloat(donation.amount) if donation.amount?
+							og.addOrSetProperty('lightmytree:donated_total', donatedTotal)
 								.done()
 						else
 							og.done()
