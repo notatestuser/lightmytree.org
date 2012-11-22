@@ -196,13 +196,16 @@ define [
 		className: "pencil"
 
 		@Classes = [
+			"pencil-red"
 			"pencil-blue"
+			"pencil-cyan"
 			"pencil-green"
 			"pencil-darkgreen"
 			"pencil-yellow"
 			"pencil-purple"
 			"pencil-pink"
 			"pencil-orange"
+			"pencil-black"
 		]
 		@AvailableClasses = [] # we'll build this up in initialize()
 

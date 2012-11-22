@@ -83,9 +83,9 @@ background-prefixed-radial-gradient(start, type, stop1, stop2, stop3)
 // Style builders
 
 coloured-pencil($colour)
-	$tinted = darken($colour, 15)
-	$darker = darken($tinted, 10)
-	$darkest = darken($darker, 10)
+	$tinted = darken($colour, 8)
+	$darker = darken($tinted, 6)
+	$darkest = darken($darker, 6)
 	.darkest-bb
 		border-bottom-color $darkest !important
 	.darkest-bg
@@ -560,20 +560,26 @@ header
 				height 100%
 				box-sizing(border-box)
 
+		.pencil-red
+			coloured-pencil(#ea0024)
 		.pencil-blue
 			coloured-pencil(#3FC1FF)
+		.pencil-cyan
+			coloured-pencil(#22d0d0)
 		.pencil-green
-			coloured-pencil(#C7E20A)
+			coloured-pencil(#1aa01a)
 		.pencil-darkgreen
-			coloured-pencil(#4C7C4C)
+			coloured-pencil(#178416)
 		.pencil-yellow
-			coloured-pencil(#FFCC00)
+			coloured-pencil(#fccf1d)
 		.pencil-purple
-			coloured-pencil(#FA64FB)
+			coloured-pencil(#f111a3)
 		.pencil-pink
-			coloured-pencil(#F819F9)
+			coloured-pencil(#e90ae9)
 		.pencil-orange
-			coloured-pencil(#EE6401)
+			coloured-pencil(#f8a300)
+		.pencil-black
+			coloured-pencil(#444444)
 
 		.pencil
 			height 270px
