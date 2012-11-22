@@ -26,8 +26,10 @@ module.exports =
 		# LightMyTree @LightMyTree
 		consumerKey: '2GSh7g7qzzzJEKnpC9pg'
 		consumerSecret: 'zAVeqiBJlvvkQLEYi5f8XIeGmKOWsYDHZbYhu3jJXF4'
+		profileBaseUrl: 'http://www.twitter.com/'
 
 	facebook:
 		# LightMyTree
 		appId: '382936798455563'
 		appSecret: '896aa7df91165adb981cc70bf4f508f8'
+		profileBaseUrl: 'http://www.facebook.com/'
