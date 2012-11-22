@@ -2,7 +2,6 @@
 express = require 'express'
 espresso = require './espresso'
 stylus = require 'stylus'
-gzippo = require 'gzippo'
 nib = require 'nib'
 
 ### create express server ###
@@ -44,19 +43,19 @@ everyauth = require('./authentication')(envConfig)
 app.configure ->
 	app.set 'views', __dirname + '/views'
 	app.set 'view engine', 'jade'
+	app.use express.compress()
 	app.use express.bodyParser()
 	if app.env isnt 'production'
 		app.use stylus.middleware
 			src: __dirname
 			dest: __dirname + '/../assets'
 			compile: compile
-	# app.use express.static __dirname + '/../assets'
-	app.use gzippo.staticGzip __dirname + '/../assets' + assetsSuffix
 	app.use express.cookieParser()
 	app.use express.session secret: envConfig.sessionSecret
 	app.use everyauth.middleware()
+	app.use app.router
+	app.use express.static __dirname + '/../assets' + assetsSuffix
 	app.use express.errorHandler()
-	app.use gzippo.compress()
 
 ### watch coffeescript sources ###
 if app.env isnt 'production'
@@ -72,7 +71,7 @@ require(apiRoutes) app, envConfig
 
 og = require('./opengrapher') app, envConfig
 
-app.get '/*', og (req, res, og) ->
+app.get /^\/([a-zA-Z0-9_.-]+)?(\/[a-z]+)?\/?$/, og (req, res, og) ->
 	res.render 'index',
 		title : 'LightMyTree'
 		loggedIn: req.loggedIn
