@@ -2,7 +2,6 @@
 express = require 'express'
 espresso = require './espresso'
 stylus = require 'stylus'
-gzippo = require 'gzippo'
 nib = require 'nib'
 
 ### create express server ###
