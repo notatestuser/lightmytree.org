@@ -64,9 +64,11 @@ module.exports = (app, config) ->
 					userId = treeRes.user.id
 					userDb.findById userId, (err, userRes) ->
 						if userRes and not err
-							og.addOrSetProperty('og:title', "#{userRes.fullName}'s festive scene")
+							firstName = userRes.fullName.substring 0, userRes.fullName.indexOf(' ')
+							displayName = firstName or userRes.fullName
+							og.addOrSetProperty('og:title', "#{displayName}'s festive scene")
 								.addOrSetProperty('og:image', config.opengraph.treeImageBase + og.parsedUrl.pathname + '.png?' + userRes._rev.substring 0, 8)
-								.addOrSetProperty('og:description', "Don't try to guess #{userRes.fullName}'s dream gift this year! Instead, they'd rather you decorate their virtual tree with charitable gifts.")
+								.addOrSetProperty('og:description', "Don't try to guess #{displayName}'s dream gift this year! Instead, they'd rather you decorate their virtual tree with charitable gifts.")
 								.addOrSetProperty('lightmytree:charity_count', treeRes.charityIds.length)
 							network = 'twitter' if userRes.twitter?
 							network = 'facebook' if userRes.facebook?
