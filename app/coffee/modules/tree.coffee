@@ -154,13 +154,9 @@ define [
 			@_setButtonDisabledState()
 
 		save: ->
-			# @$('.btn-save').button 'loading'
 			if not @model.validate @model.attributes
-				# @model.remotePersist = yes if app.authed
-				# if not app.authed
-				# 	(new Modal.Views.Authenticate()).show()
-				# else
-					app.router.go 'my_trees'
+				# rather than save() or show a modal, we just go straight to my_trees here
+				app.router.go 'my_trees'
 
 		_setButtonDisabledState: ->
 			if @model.validate() or not @model.get('charityIds').length
