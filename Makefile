@@ -34,4 +34,7 @@ build:
 	@echo "${HR}\n"
 	@echo "You're awesome."
 
-.PHONY: compile watch build
+deploy: build
+	jitsu deploy
+
+.PHONY: compile watch build deploy
