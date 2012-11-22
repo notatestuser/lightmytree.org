@@ -33,15 +33,21 @@ define [
 			@fetch()
 
 	class Charity.TypeaheadCollection extends Charity.Collection
+		@LookupDebounceTime: 500
+
+		@LookupFn: _.debounce((query, processFn) ->
+				@query = query
+				@fetch
+					success: (collection, response) ->
+						collection.trigger 'lookup:success'
+						processFn response
+		, TypeaheadCollection.LookupDebounceTime)
+
 		url: -> "/json/typeahead_charities/" + @query
 
-		getSourceFn: ->
-			self = @
-			(query, processFn) ->
-				self.query = query
-				self.fetch
-					success: (collection, response) ->
-						processFn response
+		getSourceFn: -> =>
+			@trigger 'lookup:bounce'
+			TypeaheadCollection.LookupFn.apply @, arguments
 
 	class Charity.SearchCollection extends Charity.Collection
 		@ItemsPerFetch: 4
@@ -69,7 +75,10 @@ define [
 
 		initialize: (options) ->
 			@treeModel = options.treeModel if options.treeModel
-			@typeaheadCharities = options.typeaheadCharities if options.typeaheadCharities
+			if options.typeaheadCharities
+				@typeaheadCharities = options.typeaheadCharities
+					.on('lookup:bounce', @_renderSearchingState, @)
+					.on('lookup:success', @_renderSearchSuccessState, @)
 
 		beforeRender: ->
 			treeModel = @treeModel
@@ -111,6 +120,7 @@ define [
 				minLength: 4
 				source: @typeaheadCharities.getSourceFn()
 				updater: (item) =>
+					@_renderSearchSuccessState()
 					@startSearch item
 					item
 
@@ -126,6 +136,12 @@ define [
 		_nullifySubmitOnEnter: (ev) ->
 			ev.preventDefault()
 			no
+
+		_renderSearchingState: ->
+			@$('.form-charity-search').addClass 'searching'
+
+		_renderSearchSuccessState: ->
+			@$('form-charity-search').removeClass 'searching'
 
 	class Charity.Partials.Pagination extends Backbone.View
 		@PageCap: 9
