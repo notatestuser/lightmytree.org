@@ -42,6 +42,8 @@ module.exports = (app, config) ->
 	openGraphPublishLock = {}
 
 	_ensureGraphActionPublished = (treeDoc, userDoc) ->
+		console.log '_ensureGraphActionPublished()'
+
 		# just to double check...
 		return if not treeDoc.publishGraphAction or treeDoc.graph or
 			not userDoc.facebook? or not treeDoc._id? or not userDoc._id? or openGraphPublishLock[treeDoc._id]
@@ -66,8 +68,11 @@ module.exports = (app, config) ->
 				treeDb.saveDocument treeDoc, (err, saveRes) ->
 					if err?
 						# try again (as it's possible the document has been revised in the meantime)
-						treeDb.saveDocument treeDoc, (err, saveRes) ->
-							console.error err if err?
+						treeDb.findById treeDoc._id, (err, treeDoc) ->
+							if not err?
+								treeDb.saveDocument treeDoc, (err, saveRes) ->
+									console.error err if err?
+							else console.error err
 
 			delete openGraphPublishLock[treeDoc._id]
 
@@ -94,7 +99,8 @@ module.exports = (app, config) ->
 	_addTreePageProperties = (og) ->
 		if og.isRequestUnmatched()
 			og.addOrSetProperty('og:type', 'lightmytree:tree')
-			treeDb.findById og.parsedUrl.pathname.substring(1), (err, treeRes) ->
+			treeId = decodeURIComponent og.parsedUrl.pathname.substring(1)
+			treeDb.findById treeId, (err, treeRes) ->
 				if treeRes and not err
 					userId = treeRes.user.id
 					userDb.findById userId, (err, userRes) ->
