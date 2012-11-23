@@ -54,14 +54,15 @@ module.exports = (app, config) ->
 		action    = config.opengraph.treeAction
 		objectUrl = config.opengraph.siteBase + '/' + treeDoc._id
 
-		console.log "Publishing graph action for #{treeDoc._id} (#{userDoc._id}, #{userDoc.screenName}): #{action} #{object} #{objectUrl}"
+		console.log "Publishing graph action for #{treeDoc._id} (#{userDoc._id} #{userDoc.screenName}): #{action} #{object} #{objectUrl}"
 
 		openGraph.publish userDoc.facebook.id, userDoc.facebook.accessToken, action, object, objectUrl, (err, res) ->
-			if err?
+			if err? or res.error?
 				console.error err
+				console.error res
 			else if res? and typeof res is 'object'
 				# just set the 'graph' attribute to the response we got; it's something like {"id":"127771810711045"}
-				treeDoc.graph = res
+				console.log treeDoc.graph = res
 			delete openGraphPublishLock[treeDoc._id]
 
 	_makeBaseOg = (request) ->
