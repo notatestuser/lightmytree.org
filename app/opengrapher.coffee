@@ -113,7 +113,7 @@ module.exports = (app, config) ->
 								.addOrSetProperty('lightmytree:charity_count', treeRes.charityIds.length)
 							network = 'twitter' if userRes.twitter?
 							network = 'facebook' if userRes.facebook?
-							og.addOrSetProperty('lightmytree:author', config[network].profileBaseUrl + userRes.screenName)
+							og.addOrSetProperty('lightmytree:author', config[network].profileBaseUrl + userRes[network].id)
 							donatedTotal = 0.0
 							if treeRes.donationData and treeRes.donationData.length
 								treeRes.donationData.forEach (donation) -> donatedTotal += parseFloat(donation.amount) if donation.amount?
