@@ -63,6 +63,11 @@ module.exports = (app, config) ->
 			else if res? and typeof res is 'object'
 				# just set the 'graph' attribute to the response we got; it's something like {"id":"127771810711045"}
 				console.log treeDoc.graph = res
+
+				# save the tree document
+				treeDb.saveDocument treeDoc, (err, saveRes) ->
+					console.error err if err?
+
 			delete openGraphPublishLock[treeDoc._id]
 
 	_makeBaseOg = (request) ->
