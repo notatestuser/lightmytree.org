@@ -64,7 +64,10 @@ module.exports = (app, config) ->
 
 				# save the tree document
 				treeDb.saveDocument treeDoc, (err, saveRes) ->
-					console.error err if err?
+					if err?
+						# try again (as it's possible the document has been revised in the meantime)
+						treeDb.saveDocument treeDoc, (err, saveRes) ->
+							console.error err if err?
 
 			delete openGraphPublishLock[treeDoc._id]
 
