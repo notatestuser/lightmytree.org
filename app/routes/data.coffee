@@ -113,7 +113,7 @@ module.exports = (app, config) ->
 	app.put "/json/my_tree", myTreeFn
 
 	# /json/users/:userId
-	app.get /^\/json\/users\/?([a-zA-Z0-9_.-]+)?$/, withAuth (req, res, userId) ->
+	app.get /^\/json\/users\/?([a-zA-Z0-9_.\- %]+)?$/, withAuth (req, res, userId) ->
 		id = req.params[0] or userId
 		if id
 			userDb.findById req.params[0] or userId, (err, doc) ->
@@ -124,7 +124,7 @@ module.exports = (app, config) ->
 			res.send "Please authenticate or supply a user ID", 401
 
 	# /json/trees/:id
-	app.get /^\/json\/trees\/?([a-zA-Z0-9_.-]+)?$/, (req, res) ->
+	app.get /^\/json\/trees\/?([a-zA-Z0-9_.\- %]+)?$/, (req, res) ->
 		if req.params[0]
 			treeDb.findById req.params[0], (err, doc) ->
 				if err
@@ -158,8 +158,8 @@ module.exports = (app, config) ->
 							res.send err, 500
 		else
 			res.send "Not found", 404
-	app.post /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn
-	app.put /^\/json\/trees\/([a-zA-Z0-9_.-]+)\/donations$/, donateFn
+	app.post /^\/json\/trees\/([a-zA-Z0-9_.\- ]+)\/donations$/, donateFn
+	app.put /^\/json\/trees\/([a-zA-Z0-9_.\- ]+)\/donations$/, donateFn
 
 	# /callback/jg?id=<JUSTGIVING-DONATION-ID>&data=<our encoded json>
 	# e.g. http://dev.lightmytree.org:3000/callback/jg?id=35496621&data=eyJjaGFyaXR5SWQiOiIxODY2ODUiLCJuYW1lIjoiIiwibWVzc2FnZSI6IiIsImdpZnQiOiJnaWZ0LTEiLCJnaWZ0RHJvcFgiOjE3OC40LCJnaWZ0RHJvcFkiOjMzMy40fQ==
@@ -169,7 +169,6 @@ module.exports = (app, config) ->
 				decodedData = JSON.parse(new Buffer(req.query.data, 'base64').toString 'utf8')
 			catch err
 				return res.send err, 500
-			console.log decodedData
 			donation = _.pick decodedData, 'charityId', 'name', 'message', 'gift', 'giftDropX', 'giftDropY'
 			if decodedData.treeId? and Object.keys(donation).length is 6
 				charityService.getDonationStatus req.query.id, wrapError res, (statusData) ->

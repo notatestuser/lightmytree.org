@@ -71,7 +71,7 @@ class UserDatabase extends BaseDatabase
 						console.error err
 						throw err
 					else
-						console.log "Facebook user created: #{userData.username}"
+						console.log "Facebook user created: #{userData.username or userData.name}"
 						newDoc._id = newDoc.id = res.id # defensive programming!
 						promise.fulfill newDoc
 
