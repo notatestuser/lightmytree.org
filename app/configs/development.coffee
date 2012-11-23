@@ -15,6 +15,9 @@ module.exports =
 		defaultImage: 'http://dev.lightmytree.org:3000/img/dangler-tree.png'
 		treeImageBase: 'http://dev.lightmytree.org:3000/img/trees'
 		siteBase: 'http://dev.lightmytree.org:3000'
+		namespace: 'lightmytree_dev'
+		treeObject: 'tree'
+		treeAction: 'draw'
 
 	justgiving:
 		apiKey: 'e90e23e0'

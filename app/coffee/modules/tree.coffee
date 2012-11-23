@@ -28,6 +28,7 @@ define [
 			strokes: []
 			viewBoxWidth: 430
 			viewBoxHeight: 470
+			publishGraphAction: no
 
 		initialize: ->
 			@charities = new Charity.Collection()
@@ -198,7 +199,7 @@ define [
 			@_saveAndAuthFacebook no
 
 		_saveAndAuthFacebook: (publish = no) ->
-			@model.save(publishFacebookWall: publish)
+			@model.save(publishGraphAction: publish)
 			# usually we'd have to wait on the XHR to complete here, but as we're saving to localstorage we know it's done
 			app.authRedirect 'facebook'
 
@@ -476,7 +477,7 @@ define [
 			_addContainer @$el, 'twitter'
 			_addContainer @$el, 'facebook'
 			_addContainer @$el, 'googlePlus'
-			_addPostedToWallNotification @$el if @model.get 'publishFacebookWall'
+			_addPostedToWallNotification @$el if @model.get 'publishGraphAction'
 
 		afterRender: ->
 			@_debouncedRenderShareButtons()

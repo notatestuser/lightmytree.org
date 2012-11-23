@@ -13,7 +13,8 @@
     "everyauth": "0.3.x",
     "cradle": "0.6.x",
     "node-raphael": "git://github.com/notatestuser/node-raphael.git#quick-upgrade-2.1.0-compiled",
-    "gm": "1.6.x"
+    "gm": "1.6.x",
+    "facebook-open-graph": ">= 0.0.3"
   },
   "scripts": {
     "start": "coffee app.coffee"

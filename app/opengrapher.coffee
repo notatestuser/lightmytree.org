@@ -2,6 +2,8 @@
 {parse}   = require 'url'
 {inspect} = require 'util'
 
+OpenGraph  = require 'facebook-open-graph'
+
 {TreeDatabase, UserDatabase} = require './database'
 
 class OpengraphProperties
@@ -35,6 +37,32 @@ module.exports = (app, config) ->
 
 	userDb = new UserDatabase config
 	treeDb = new TreeDatabase config
+
+	openGraph = new OpenGraph(config.opengraph.namespace)
+	openGraphPublishLock = {}
+
+	_ensureGraphActionPublished = (treeDoc, userDoc) ->
+		console.log 'in here'
+
+		# just to double check...
+		return if not treeDoc.publishGraphAction or treeDoc.graph or
+			not userDoc.facebook? or not treeDoc._id? or not userDoc._id? or openGraphPublishLock[treeDoc._id]
+
+		openGraphPublishLock[treeDoc._id] = yes
+
+		object    = config.opengraph.treeObject
+		action    = config.opengraph.treeAction
+		objectUrl = config.opengraph.siteBase + '/' + treeDoc._id
+
+		console.log "Publishing graph action for #{treeDoc._id} (#{userDoc._id}, #{userDoc.screenName}): #{action} #{object} #{objectUrl}"
+
+		openGraph.publish userDoc.facebook.id, userDoc.facebook.accessToken, action, object, objectUrl, (err, res) ->
+			if err?
+				console.error err
+			else if res? and typeof res is 'object'
+				# just set the 'graph' attribute to the response we got; it's something like {"id":"127771810711045"}
+				treeDoc.graph = res
+			delete openGraphPublishLock[treeDoc._id]
 
 	_makeBaseOg = (request) ->
 		og = new OpengraphProperties(request)
@@ -73,11 +101,14 @@ module.exports = (app, config) ->
 							network = 'twitter' if userRes.twitter?
 							network = 'facebook' if userRes.facebook?
 							og.addOrSetProperty('lightmytree:author', config[network].profileBaseUrl + userRes.screenName)
-							donatedTotal = .0
+							donatedTotal = 0.0
 							if treeRes.donationData and treeRes.donationData.length
 								treeRes.donationData.forEach (donation) -> donatedTotal += parseFloat(donation.amount) if donation.amount?
 							og.addOrSetProperty('lightmytree:donated_total', donatedTotal)
 								.done()
+
+							# take this opportunity to ensure we have successfully published this item to a Facebook profile
+							_ensureGraphActionPublished treeRes, userRes if treeRes.publishGraphAction
 						else
 							og.done()
 				else
