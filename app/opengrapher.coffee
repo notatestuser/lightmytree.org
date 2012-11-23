@@ -42,8 +42,6 @@ module.exports = (app, config) ->
 	openGraphPublishLock = {}
 
 	_ensureGraphActionPublished = (treeDoc, userDoc) ->
-		console.log 'in here'
-
 		# just to double check...
 		return if not treeDoc.publishGraphAction or treeDoc.graph or
 			not userDoc.facebook? or not treeDoc._id? or not userDoc._id? or openGraphPublishLock[treeDoc._id]
@@ -56,13 +54,18 @@ module.exports = (app, config) ->
 
 		console.log "Publishing graph action for #{treeDoc._id} (#{userDoc._id} #{userDoc.screenName}): #{action} #{object} #{objectUrl}"
 
-		openGraph.publish userDoc.facebook.id, userDoc.facebook.accessToken, action, object, objectUrl, (err, res) ->
+		openGraph.publish userDoc.facebook.id, userDoc.facebook.accessToken, action, object, objectUrl, yes, (err, res) ->
 			if err? or res.error?
 				console.error err
 				console.error res
 			else if res? and typeof res is 'object'
 				# just set the 'graph' attribute to the response we got; it's something like {"id":"127771810711045"}
 				console.log treeDoc.graph = res
+
+				# save the tree document
+				treeDb.saveDocument treeDoc, (err, saveRes) ->
+					console.error err if err?
+
 			delete openGraphPublishLock[treeDoc._id]
 
 	_makeBaseOg = (request) ->
