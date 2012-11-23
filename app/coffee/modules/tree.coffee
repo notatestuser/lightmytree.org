@@ -51,6 +51,11 @@ define [
 		loadDonations: ->
 			@donations.reset @get('donationData')
 
+		triggerGraphPublish: ->
+			# there's no point doing this if we haven't been asked to publish an action
+			if @get('publishGraphAction') and @id
+				$.get "/#{@id}"
+
 	class Tree.MyModel extends Tree.Model
 		@MaxCharities: 4
 
@@ -183,7 +188,7 @@ define [
 				view = new Tree.Partials.ShareLoggedIn
 					model: @model
 				@model.remotePersist = yes
-				@model.save()
+				@model.save().done => @model.triggerGraphPublish()
 			else
 				view = new Tree.Partials.ShareNotLoggedIn
 					model: @model
@@ -398,8 +403,6 @@ define [
 		events:
 			"click a": "_nullifyHyperlink"
 
-		initialize: (@showPublishGraphActionNotice = no) ->
-
 		_addContainer = ($container, networkName) ->
 			$("<div class='#{networkName}'></div>").appendTo $container
 
@@ -471,8 +474,9 @@ define [
 				'Your drawing will be posted to your Facebook wall.</p>'
 			$(notice).appendTo $container
 
-		initialize: ->
+		initialize: (options = {}) ->
 			@_debouncedRenderShareButtons = _.debounce _renderShareButtons.bind(@), 300, no
+			@showPublishGraphActionNotice = options.showPublishGraphActionNotice or no
 			# @model.on 'change:id change:_id', @render, @
 
 		beforeRender: ->
@@ -480,7 +484,8 @@ define [
 			_addContainer @$el, 'twitter'
 			_addContainer @$el, 'facebook'
 			_addContainer @$el, 'googlePlus'
-			_addPostedToWallNotification @$el if @showPublishGraphActionNotice and @model.get 'publishGraphAction'
+			if @showPublishGraphActionNotice and @model.get 'publishGraphAction'
+				_addPostedToWallNotification @$el
 
 		afterRender: ->
 			@_debouncedRenderShareButtons()
