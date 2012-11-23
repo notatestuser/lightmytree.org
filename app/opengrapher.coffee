@@ -56,7 +56,7 @@ module.exports = (app, config) ->
 
 		console.log "Publishing graph action for #{treeDoc._id} (#{userDoc._id} #{userDoc.screenName}): #{action} #{object} #{objectUrl}"
 
-		openGraph.publish userDoc.facebook.id, userDoc.facebook.accessToken, action, object, objectUrl, yes, (err, res) ->
+		openGraph.publish userDoc.facebook.id, userDoc.facebook.accessToken, action, object, objectUrl, (err, res) ->
 			if err? or res.error?
 				console.error err
 				console.error res
