@@ -6,7 +6,9 @@ define [
 	"modules/charity"
 	"modules/donation"
 	"modules/modal"
+	# "bootstrap/bootstrap-dropdown"
 	"bootstrap/bootstrap-popover"
+	# "bootstrap/bootstrap-button"
 
 	"plugins/raphael.sketchpad"
 	"plugins/jquery.sharrre-1.3.4.min"
@@ -26,6 +28,7 @@ define [
 			strokes: []
 			viewBoxWidth: 430
 			viewBoxHeight: 470
+			publishGraphAction: no
 
 		initialize: ->
 			@charities = new Charity.Collection()
@@ -47,6 +50,11 @@ define [
 
 		loadDonations: ->
 			@donations.reset @get('donationData')
+
+		triggerGraphPublish: ->
+			# there's no point doing this if we haven't been asked to publish an action
+			if @get('publishGraphAction') and @id
+				$.get "/#{@id}"
 
 	class Tree.MyModel extends Tree.Model
 		@MaxCharities: 4
@@ -152,13 +160,9 @@ define [
 			@_setButtonDisabledState()
 
 		save: ->
-			# @$('.btn-save').button 'loading'
 			if not @model.validate @model.attributes
-				@model.remotePersist = yes if app.authed
-				if not app.authed
-					(new Modal.Views.Authenticate()).show()
-				else
-					app.router.go 'my_trees'
+				# rather than save() or show a modal, we just go straight to my_trees here
+				app.router.go 'my_trees'
 
 		_setButtonDisabledState: ->
 			if @model.validate() or not @model.get('charityIds').length
@@ -171,6 +175,11 @@ define [
 		template: "tree/share"
 		className: "tree-share-view well"
 
+		events:
+			"click .btn-group-facebook": "_showFacebookPublishDropdown"
+			"click .btn-facebook-publish": "_authFacebookPublish"
+			"click .btn-facebook-nopublish": "_authFacebookNoPublish"
+
 		serialize: ->
 			@model.toJSON()
 
@@ -179,11 +188,25 @@ define [
 				view = new Tree.Partials.ShareLoggedIn
 					model: @model
 				@model.remotePersist = yes
-				@model.save()
+				@model.save().done => @model.triggerGraphPublish()
 			else
 				view = new Tree.Partials.ShareNotLoggedIn
 					model: @model
 			@setView(".comment_section", view).render()
+
+		_showFacebookPublishDropdown: ->
+			@$('.btn-group-facebook .dropdown-menu').show()
+
+		_authFacebookPublish: ->
+			@_saveAndAuthFacebook yes
+
+		_authFacebookNoPublish: ->
+			@_saveAndAuthFacebook no
+
+		_saveAndAuthFacebook: (publish = no) ->
+			@model.save(publishGraphAction: publish)
+			# usually we'd have to wait on the XHR to complete here, but as we're saving to localstorage we know it's done
+			app.authRedirect 'facebook'
 
 	class Tree.Partials.ShareLoggedIn extends Backbone.View
 		template: "tree/share/logged_in"
@@ -199,6 +222,7 @@ define [
 				_showSuccessMessage.call @
 				@insertView new Tree.Views.ShareWidgets
 					model: @model
+					showPublishGraphActionNotice: yes
 				.render()
 
 	class Tree.Partials.ShareNotLoggedIn extends Tree.Views.Save # inherit save event/handling
@@ -362,9 +386,7 @@ define [
 				.render()
 
 		afterRender: ->
-			if @options and @options.hideButtons
-				@$('.buttons').hide()
-
+			@$('.buttons').addClass 'hide' if not @model.id
 			self = @
 			$container = @$('.canvas')
 			new Raphael $container[0], 256, 256, ->
@@ -447,8 +469,14 @@ define [
 					api.simulateClick()
 					api.openPopup('googlePlus')
 
-		initialize: ->
+		_addPostedToWallNotification = ($container) ->
+			notice = '<p><span class="label label-info">Note</span> '+
+				'Your drawing will be posted to your Facebook wall.</p>'
+			$(notice).appendTo $container
+
+		initialize: (options = {}) ->
 			@_debouncedRenderShareButtons = _.debounce _renderShareButtons.bind(@), 300, no
+			@showPublishGraphActionNotice = options.showPublishGraphActionNotice or no
 			# @model.on 'change:id change:_id', @render, @
 
 		beforeRender: ->
@@ -456,6 +484,8 @@ define [
 			_addContainer @$el, 'twitter'
 			_addContainer @$el, 'facebook'
 			_addContainer @$el, 'googlePlus'
+			if @showPublishGraphActionNotice and @model.get 'publishGraphAction'
+				_addPostedToWallNotification @$el
 
 		afterRender: ->
 			@_debouncedRenderShareButtons()

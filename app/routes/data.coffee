@@ -1,6 +1,7 @@
 {_}       = require 'underscore'
 {inspect} = require 'util'
 {TreeDatabase, UserDatabase} = require '../database'
+
 JustGiving = require './helpers/justgiving'
 
 module.exports = (app, config) ->

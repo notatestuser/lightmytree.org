@@ -100,7 +100,8 @@ class TreeDatabase extends BaseDatabase
 	createDocument = (userDoc, data, makeId, callback) ->
 		if not data.strokes?.length? or not data.charityIds?.length?
 			throw "`strokes` and `charityIds` must have some entries"
-		doc = _.pick data, 'strokes', 'charityIds', 'viewBoxWidth', 'viewBoxHeight'
+		# list of whitelisted fields to cherry-pick
+		doc = _.pick data, 'strokes', 'charityIds', 'viewBoxWidth', 'viewBoxHeight', 'publishGraphAction'
 		doc.user = id: userDoc._id
 		if makeId
 			makeSlugId.call @, userDoc, (slugId) ->

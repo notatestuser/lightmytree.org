@@ -1,15 +1,27 @@
 <div class="alert alert-not-logged-in fade">
-	<button type="button" class="close" data-dismiss="alert">×</button>
 	<p>
 		<h4 class="alert-heading">
-			Oops, we can't save your drawing!
+			Connect with a social network to save your drawing
 		</h4>
 	</p>
 	<p>
-		Until you connect with a social network, we're unable to save or share your drawing!
+		Logging in gives us your name and some basic details that we can use to make your tree's page. You may even publish it to your wall if you'd like.
 	</p>
-	<p>
+<!-- 	<p>
 		<button type="button" class="btn btn-warning btn-save">Do that now!</button>
 		<button type="button" class="btn">Just save to my computer</button>
-	</p>
+	</p> -->
+
+	<div class="btn-group btn-group-facebook">
+		<a class="btn btn-large dropdown-toggle" href="javascript:void(0)"><img src="/img/social/facebook.png" alt="Connect with Facebook">
+			<span class="caret"></span>
+		</a>
+		<ul class="dropdown-menu">
+			<li><a class="btn-facebook-publish" tabindex="-1" href="javascript:void(0)">Publish to your wall</a></li>
+			<li><a class="btn-facebook-nopublish" tabindex="-1" href="javascript:void(0)">Do not publish</a></li>
+		</ul>
+	</div>
+	<div class="btn-group">
+		<a class="btn" href="/auth/twitter"><img src="/img/social/twitter.png" alt="Connect with Twitter"></a>
+	</div>
 </div>

@@ -34,6 +34,9 @@ define [
 	app.getUrlFn = (key) ->
 		eval app.urls[key]
 
+	app.authRedirect = (provider) ->
+		window.location.href = "/auth/#{provider}"
+
 
 	# Localize or create a new JavaScript Template object.
 	app.templates ||= window.JST ||= {}
