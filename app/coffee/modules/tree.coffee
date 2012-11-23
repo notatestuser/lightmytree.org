@@ -217,6 +217,7 @@ define [
 				_showSuccessMessage.call @
 				@insertView new Tree.Views.ShareWidgets
 					model: @model
+					showPublishGraphActionNotice: yes
 				.render()
 
 	class Tree.Partials.ShareNotLoggedIn extends Tree.Views.Save # inherit save event/handling
@@ -397,6 +398,8 @@ define [
 		events:
 			"click a": "_nullifyHyperlink"
 
+		initialize: (@showPublishGraphActionNotice = no) ->
+
 		_addContainer = ($container, networkName) ->
 			$("<div class='#{networkName}'></div>").appendTo $container
 
@@ -477,7 +480,7 @@ define [
 			_addContainer @$el, 'twitter'
 			_addContainer @$el, 'facebook'
 			_addContainer @$el, 'googlePlus'
-			_addPostedToWallNotification @$el if @model.get 'publishGraphAction'
+			_addPostedToWallNotification @$el if @showPublishGraphActionNotice and @model.get 'publishGraphAction'
 
 		afterRender: ->
 			@_debouncedRenderShareButtons()
