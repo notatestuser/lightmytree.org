@@ -42,8 +42,6 @@ module.exports = (app, config) ->
 	openGraphPublishLock = {}
 
 	_ensureGraphActionPublished = (treeDoc, userDoc) ->
-		console.log 'in here'
-
 		# just to double check...
 		return if not treeDoc.publishGraphAction or treeDoc.graph or
 			not userDoc.facebook? or not treeDoc._id? or not userDoc._id? or openGraphPublishLock[treeDoc._id]
@@ -56,7 +54,7 @@ module.exports = (app, config) ->
 
 		console.log "Publishing graph action for #{treeDoc._id} (#{userDoc._id} #{userDoc.screenName}): #{action} #{object} #{objectUrl}"
 
-		openGraph.publish userDoc.facebook.id, userDoc.facebook.accessToken, action, object, objectUrl, (err, res) ->
+		openGraph.publish userDoc.facebook.id, userDoc.facebook.accessToken, action, object, objectUrl, yes, (err, res) ->
 			if err? or res.error?
 				console.error err
 				console.error res
