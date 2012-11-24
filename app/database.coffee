@@ -14,7 +14,9 @@ class BaseDatabase
 
 	saveDocument: (doc, callback) ->
 		@db.save doc, (err, res) ->
-			console.trace 'saveDocument' if err
+			if err?
+				console.error err
+				console.trace 'saveDocument'
 			callback? err, res
 
 class UserDatabase extends BaseDatabase
