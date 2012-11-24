@@ -7,10 +7,9 @@ OpenGraph  = require 'facebook-open-graph'
 {TreeDatabase, UserDatabase} = require './database'
 
 class OpengraphProperties
-	properties: {}
-
 	constructor: (@request) ->
 		@url = @request.url
+		@properties = {}
 		@parsedUrl = parse(@url)
 		@matched = no
 		@doneCount = 0
@@ -96,6 +95,23 @@ module.exports = (app, config) ->
 			og.addOrSetProperty('og:description', 'See all of the drawings you have submitted to LightMyTree.')
 		og.done()
 
+	_addUserPageProperties = (og) ->
+		if og.isRequestFor '/user'
+			userId = decodeURIComponent og.parsedUrl.pathname.substring(6)
+			og.addOrSetProperty('og:type', 'profile')
+				.addOrSetProperty('og:url', config.opengraph.siteBase + '/user/' + userId)
+			userDb.findById userId, (err, user) ->
+				if user and not err
+					firstName = user.fullName.substring 0, user.fullName.indexOf(' ')
+					og.addOrSetProperty('og:image', user.imageUrl)
+						.addOrSetProperty('og:title', user.fullName)
+						.addOrSetProperty('profile:username', user.screenName or user.fullName)
+						.addOrSetProperty('profile:first_name', firstName)
+					og.addOrSetProperty('fb:profile_id', user.facebook.id) if user? and user.facebook?
+				og.done()
+		else
+			og.done()
+
 	_addTreePageProperties = (og) ->
 		if og.isRequestUnmatched()
 			og.addOrSetProperty('og:type', 'lightmytree:tree')
@@ -113,7 +129,7 @@ module.exports = (app, config) ->
 								.addOrSetProperty('lightmytree:charity_count', treeRes.charityIds.length)
 							network = 'twitter' if userRes.twitter?
 							network = 'facebook' if userRes.facebook?
-							og.addOrSetProperty('lightmytree:author', config[network].profileBaseUrl + userRes[network].id)
+							og.addOrSetProperty('lightmytree:author', config.opengraph.siteBase + '/user/' + userId)
 							donatedTotal = 0.0
 							if treeRes.donationData and treeRes.donationData.length
 								treeRes.donationData.forEach (donation) -> donatedTotal += parseFloat(donation.amount) if donation.amount?
@@ -131,9 +147,10 @@ module.exports = (app, config) ->
 
 	_getOgForPage = (request, callback) ->
 		og = _makeBaseOg request
-		og.expect 3, callback
+		og.expect 4, callback
 		_addSketchPageProperties og
 		_addMyTreesPageProperties og
+		_addUserPageProperties og
 		_addTreePageProperties og
 		og
 
