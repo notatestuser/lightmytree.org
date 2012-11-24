@@ -71,7 +71,8 @@ require(apiRoutes) app, envConfig
 
 og = require('./opengrapher') app, envConfig
 
-app.get /^\/([a-zA-Z0-9_.\- %]+)?(\/[a-z]+)?\/?$/, og (req, res, og) ->
+# /*/*
+app.get /^\/([a-zA-Z0-9_.\- %]+)?(\/[a-z0-9]+)?\/?$/, og (req, res, og) ->
 	res.render 'index',
 		title : 'LightMyTree'
 		loggedIn: req.loggedIn
