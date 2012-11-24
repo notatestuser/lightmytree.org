@@ -19,7 +19,7 @@ module.exports = (app, config) ->
 				callback? doc
 
 	# /img/trees/:id.svg
-	app.get /^\/img\/trees\/([a-zA-Z0-9_.-]+)\.svg$/, (req, res) ->
+	app.get /^\/img\/trees\/([a-zA-Z0-9_.\- %]+)\.svg$/, (req, res) ->
 		treeId = req.params[0] if req.params?
 		if treeId
 			treeDb.findById treeId, wrapError res, (treeDoc) ->
@@ -33,7 +33,7 @@ module.exports = (app, config) ->
 					res.end svg.replace('svg style="', 'svg style="background-color:#FEFDF8;')
 
 	# /img/trees/:id.png
-	app.get /^\/img\/trees\/([a-zA-Z0-9_.-]+)\.png$/, (req, res) ->
+	app.get /^\/img\/trees\/([a-zA-Z0-9_.\- %]+)\.png$/, (req, res) ->
 		treeId = req.params[0] if req.params?
 		width  = Math.min req.param('width', 250), 1000
 		if treeId
