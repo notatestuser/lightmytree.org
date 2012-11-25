@@ -265,7 +265,7 @@ define [
 			@sketchpad = Raphael.sketchpad @paper, strokes: @model.tree().get('strokes')
 			@sketchpad.change =>
 				@model.tree().save
-					strokes: strokes = sketchpad.strokes()
+					strokes: strokes = @sketchpad.strokes()
 					viewBoxWidth: @$container.width()
 					viewBoxHeight: @$container.height()
 			pen = @sketchpad.pen()

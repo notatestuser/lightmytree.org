@@ -385,12 +385,11 @@ define [
 
 		afterRender: ->
 			@$('.buttons').addClass 'hide' if not @model.id
-			self = @
 			$container = @$('.canvas')
-			new Raphael $container[0], 256, 256, ->
-				@setViewBox 0, 0,
-					self.model.get('viewBoxWidth') or 0, self.model.get('viewBoxHeight') or 0, true
-				@add self.model.get('strokes')
+			@paper = new Raphael $container[0], 256, 256
+			@paper.setViewBox 0, 0,
+				@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
+			@paper.add @model.get('strokes')
 
 		_goToTreePage: ->
 			app.go @model.id
