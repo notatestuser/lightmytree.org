@@ -259,23 +259,21 @@ define [
 				.on('redo', @_attemptRedo)
 
 		afterRender: ->
-			self = @
-			$container = @$container = @$el
+			@$container = @$el
 			# TODO: empty container in beforeRender() and trigger a render() on resizeCanvas event
-			new Raphael $container[0], $container.width(), $container.height(), ->
-				sketchpad = self.sketchpad = Raphael.sketchpad @,
-					strokes: self.model.tree().get('strokes')
-				sketchpad.change ->
-					self.model.tree().save
-						strokes: strokes = sketchpad.strokes()
-						viewBoxWidth: $container.width()
-						viewBoxHeight: $container.height()
-				pen = sketchpad.pen()
-				pen.color self.model.get('pencilColour')
-				pen.width self.model.get('pencilWidth')
+			@paper = new Raphael @$el[0], @$el.width(), @$el.height()
+			@sketchpad = Raphael.sketchpad @paper, strokes: @model.tree().get('strokes')
+			@sketchpad.change =>
+				@model.tree().save
+					strokes: strokes = sketchpad.strokes()
+					viewBoxWidth: @$container.width()
+					viewBoxHeight: @$container.height()
+			pen = @sketchpad.pen()
+			pen.color @model.get('pencilColour')
+			pen.width @model.get('pencilWidth')
 
-				# bind resize handler here in lieu of watching the element itself
-				$(window).resize self.resizeCanvas.bind(self)
+			# bind resize handler here in lieu of watching the element itself
+			$(window).resize @resizeCanvas.bind(@)
 
 		resizeCanvas: ->
 			if @$container

@@ -294,11 +294,9 @@ define [
 					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
 				@paper.add self.model.get('strokes')
 			else
-				new Raphael $container[0], $container.width(), $container.height(), ->
-					self.paper = @
-					@setViewBox 0, 0,
-						self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
-					@add self.model.get('strokes')
+				@paper = new Raphael $container[0], $container.width(), $container.height()
+				@paper.setViewBox 0, 0, @model.get('viewBoxWidth'), @model.get('viewBoxHeight'), true
+				@paper.add @model.get('strokes')
 
 		handleClick: =>
 			if @myDonationModel.get 'giftPlacing'
