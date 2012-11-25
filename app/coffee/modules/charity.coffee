@@ -21,9 +21,7 @@ define [
 
 		fetch: (options = {}) ->
 			_.extend options, dataType: 'jsonp'
-			options.data = _.extend(options.data or {},
-				format: 'json'
-			)
+			options.data = _.extend options.data or {}, format: 'json'
 			super options
 
 	class Charity.Collection extends Backbone.Collection
