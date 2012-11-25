@@ -421,6 +421,8 @@ header
 				height inherit
 				height 100%
 				z-index 90
+				.tooltip
+					z-index 200
 		.decoration
 			z-index 100
 			width 32px
@@ -1011,6 +1013,10 @@ header
 				float right
 			&.gift-3:before
 				float left
+
+			// Gift-less donation
+			&.none
+				display none
 
 		li,.decoration
 			cursor pointer

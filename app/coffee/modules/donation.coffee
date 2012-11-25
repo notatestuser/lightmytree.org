@@ -41,7 +41,8 @@ define [
 		template: 'tree/view/donation_gifts'
 
 		events:
-			"click .selectable": "_selectGift"
+			"click .selectable": "_beginSelectGift"
+			"click .btn-donate-anyway": "_beginSelectGift"
 			"click .btn-proceed": "_beginDonation"
 
 		initialize: ->
@@ -69,7 +70,7 @@ define [
 			$targets.data 'gift', newClass
 			$selected.fadeIn('fast', doneFn) if not $selected.is(':visible')
 
-		_selectGift: (e) ->
+		_beginSelectGift: (e) ->
 			$gift = $(e.target)
 			$selectedGift = @$('.selected-gift')
 			$selectedGiftEls = $selectedGift.find('.gifts *')
@@ -111,7 +112,7 @@ define [
 		_renderStateContent: =>
 			$proceedBtn = @$('.btn-proceed')
 			proceedBtnDisabled = yes
-			if not @model.get('giftPlacing') and @model.get('giftDropX') > 0
+			if (not @model.get('giftPlacing') and @model.get('giftDropX') > 0) or @model.get('gift') is 'none'
 				$heading = @$('.heading')
 				if @model.get('charityId') is -1
 					$heading.html 'Great! Now select your charity.'
