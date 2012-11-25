@@ -6,7 +6,7 @@
 # Application.
 define [
 	"jquery", "lodash", "backbone"
-	"plugins/jquery.ie.xdr"
+	"plugins/jquery.xdomainrequest"
 	"plugins/jquery.json-2.3.min"
 	"plugins/jquery.jstorage"
 	"plugins/backbone.layoutmanager"
