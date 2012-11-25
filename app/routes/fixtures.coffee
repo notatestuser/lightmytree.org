@@ -38,7 +38,8 @@ urls =
 		"/v1/charity/search" +
 		"?q=" + query +
 		"&pageSize=" + pageSize +
-		"&page=" + page
+		"&page=" + page +
+		"&format=json&callback=?"
 	).toString()
 
 module.exports = (app, config) ->
