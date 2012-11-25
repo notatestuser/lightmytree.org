@@ -158,8 +158,8 @@ module.exports = (app, config) ->
 							res.send err, 500
 		else
 			res.send "Not found", 404
-	app.post /^\/json\/trees\/([a-zA-Z0-9_.\- ]+)\/donations$/, donateFn
-	app.put /^\/json\/trees\/([a-zA-Z0-9_.\- ]+)\/donations$/, donateFn
+	app.post /^\/json\/trees\/([a-zA-Z0-9_.\- %]+)\/donations$/, donateFn
+	app.put /^\/json\/trees\/([a-zA-Z0-9_.\- %]+)\/donations$/, donateFn
 
 	# /callback/jg?id=<JUSTGIVING-DONATION-ID>&data=<our encoded json>
 	# e.g. http://dev.lightmytree.org:3000/callback/jg?id=35496621&data=eyJjaGFyaXR5SWQiOiIxODY2ODUiLCJuYW1lIjoiIiwibWVzc2FnZSI6IiIsImdpZnQiOiJnaWZ0LTEiLCJnaWZ0RHJvcFgiOjE3OC40LCJnaWZ0RHJvcFkiOjMzMy40fQ==
