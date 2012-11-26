@@ -203,7 +203,7 @@ define [
 			"pencil-darkgreen"
 			"pencil-yellow"
 			"pencil-purple"
-			"pencil-pink"
+			"pencil-brown"
 			"pencil-orange"
 			"pencil-black"
 		]
