@@ -12,6 +12,11 @@ class BaseDatabase
 			return callback err, res[0].value if res and res.length
 			callback err, null
 
+	findByView: (viewName, callback) ->
+		@db.view "#{@dbKey}/#{viewName}", (err, res) ->
+			return callback err, (doc.value for doc in res) if res
+			callback err, null
+
 	saveDocument: (doc, callback) ->
 		@db.save doc, (err, res) ->
 			if err?
