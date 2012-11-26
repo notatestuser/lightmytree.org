@@ -25,6 +25,7 @@ define [
 				_user: me = (new User.Model()).fetch() # will fetch authed user from server
 				_newTree: newTree = new Tree.MyModel()
 				_myTrees: me.trees # will return our stuff if authed
+				_templateTrees: new Tree.TemplateCollection()
 				_otherTrees: new Tree.Collection()
 				_otherUsers: new User.Collection()
 				_recentCharities: new Charity.RecentCharitiesCollection()

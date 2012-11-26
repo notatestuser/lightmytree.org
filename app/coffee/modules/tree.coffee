@@ -143,6 +143,9 @@ define [
 		comparator: (tree) ->
 			-new Date(tree.get 'updated_at')
 
+	class Tree.TemplateCollection extends Tree.Collection
+		url: "/json/tree_templates"
+
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"
 
