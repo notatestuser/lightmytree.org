@@ -28,6 +28,7 @@ define [
 			strokes: []
 			viewBoxWidth: 430
 			viewBoxHeight: 470
+			templateId: ''
 			publishGraphAction: no
 
 		initialize: ->
@@ -367,11 +368,16 @@ define [
 				# @insertView(new Tree.Partials.NothingToShow()).render()
 
 		_handleClickItem: (ev) ->
-			# only do something if we have a sketchModel
+			# only do something if we have a sketchModel (which means we're dealing with a list of possible templates)
 			if @sketchModel?
 				# get the selected tree's ID
 				treeId = $(ev.target).closest('.thumbnail').data('id')
 				@sketchModel.set 'templateTreeModel', @collection.get(treeId)
+
+				# scroll to the row-sketchpad
+				$('body').animate
+					scrollTop: $('.row-sketchpad').offset().top
+				, 500
 
 	class Tree.Partials.NothingToShow extends Backbone.View
 		tagName: "h4"

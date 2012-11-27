@@ -19,12 +19,17 @@ define [
 			templateTreeStrokes: 0
 
 		initialize: (options) ->
+			@on 'change:templateTreeModel', @_changeTemplateTreeModel, @
 			if options.tree
 				options.tree.fetch()
 				@set('tree', options.tree)
 
 		tree: ->
 			@get('tree')
+
+		_changeTemplateTreeModel: (model, newTemplateModel) ->
+			# when this happens, we'll want to set the template's ID in our Tree
+			@tree().set 'templateId', newTemplateModel.id
 
 	class Sketch.Views.Workspace extends Backbone.View
 		template: "sketch/workspace"
@@ -268,9 +273,8 @@ define [
 			@sketchpad = Raphael.sketchpad @paper, strokes: @model.tree().get('strokes')
 			@sketchpad.change =>
 				templateStrokesCount = @model.get('templateTreeStrokes')
-				console.log "templateStrokesCount is #{templateStrokesCount}"
 				@model.tree().save
-					strokes: strokes = _.last padStrokes = @sketchpad.strokes(), padStrokes.length - templateStrokesCount
+					strokes: _.last padStrokes = @model.tree().get('strokes'), padStrokes.length - templateStrokesCount
 					viewBoxWidth: @$container.width()
 					viewBoxHeight: @$container.height()
 			pen = @sketchpad.pen()

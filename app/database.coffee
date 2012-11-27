@@ -108,7 +108,7 @@ class TreeDatabase extends BaseDatabase
 		if not data.strokes?.length? or not data.charityIds?.length?
 			throw "`strokes` and `charityIds` must have some entries"
 		# list of whitelisted fields to cherry-pick
-		doc = _.pick data, 'strokes', 'charityIds', 'viewBoxWidth', 'viewBoxHeight', 'publishGraphAction'
+		doc = _.pick data, 'strokes', 'charityIds', 'viewBoxWidth', 'viewBoxHeight', 'templateId', 'publishGraphAction'
 		doc.user = id: userDoc._id
 		if makeId
 			makeSlugId.call @, userDoc, (slugId) ->
