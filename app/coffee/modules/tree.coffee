@@ -21,6 +21,8 @@ define [
 	class Tree.Model extends Backbone.Model
 		@LocalStorageKey = "Tree.Model"
 
+		urlRoot: "/json/trees"
+
 		defaults:
 			user: null
 			charityIds: []
@@ -31,14 +33,16 @@ define [
 			templateId: ''
 			publishGraphAction: no
 
-		initialize: ->
+		initialize: (options = {}) ->
 			@charities = new Charity.Collection()
 			@donations = new Donation.Collection null,
 				charities: @charities
+			@templates = options.templateCollection or null
 
 		fetch: (options = {}) ->
 			oldCallback = options.success
 			options.success = (model, response, options) =>
+				@loadTemplate() if @templates?
 				@loadCharities()
 				@loadDonations()
 				oldCallback? model, response, options
@@ -51,6 +55,11 @@ define [
 
 		loadDonations: ->
 			@donations.reset @get('donationData')
+
+		loadTemplate: ->
+			if @templates?
+				@templates.getOrFetch @get('templateId'), (templateModel) =>
+					@set 'strokes', _.union(templateModel.get('strokes'), @get('strokes'))
 
 		triggerGraphPublish: ->
 			# there's no point doing this if we haven't been asked to publish an action
@@ -146,6 +155,14 @@ define [
 
 	class Tree.TemplateCollection extends Tree.Collection
 		url: "/json/tree_templates"
+
+		getOrFetch: (id, callback) ->
+			return callback(model) if model = @get id
+			model = new Tree.Model id: id
+			model.fetch
+				success: (model) =>
+					@add model
+					callback(model)
 
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"

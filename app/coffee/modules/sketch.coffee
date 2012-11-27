@@ -24,8 +24,7 @@ define [
 				options.tree.fetch()
 				@set('tree', options.tree)
 
-		tree: ->
-			@get('tree')
+		tree: -> @get('tree')
 
 		_changeTemplateTreeModel: (model, newTemplateModel) ->
 			# when this happens, we'll want to set the template's ID in our Tree

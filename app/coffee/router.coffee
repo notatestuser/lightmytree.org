@@ -73,7 +73,9 @@ define [
 			# grab the cached tree or fetch one
 			treeModel = @_otherTrees.get treeId
 			unless treeModel
-				@_otherTrees.add treeModel = new Tree.Model(id: treeId)
+				@_otherTrees.add treeModel = new Tree.Model
+					id: treeId
+					templateCollection: @_templateTrees
 				treeModel.fetch
 					error: => @show404()
 
