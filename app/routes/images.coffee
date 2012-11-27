@@ -1,5 +1,6 @@
 {TreeDatabase} = require '../database'
 
+{_}     = require 'underscore'
 fs      = require 'fs'
 raphael = require 'node-raphael'
 gm      = require 'gm'
@@ -60,33 +61,37 @@ module.exports = (app, config) ->
 						stream.addListener 'end', -> res.end()
 
 					else
-						# generate the svg
-						svg = raphael.generate treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, (paper) ->
-							paper.setViewBox(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, true)
-							bg = paper.rect(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight)
-							bg.attr fill: '#FEFDF8'
-							paper.add(treeDoc.strokes)
-						buf = new Buffer svg
+						# get the template's strokes for the operation below
+						treeDb.findById treeDoc.templateId, (err, templateDoc) ->
+							supplementaryStrokes = if not err? then (templateDoc.strokes or []) else []
 
-						svgFilename = (time = (new Date()).getTime()) + '.svg'
+							# generate the svg
+							svg = raphael.generate treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, (paper) ->
+								paper.setViewBox(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight, true)
+								bg = paper.rect(0, 0, treeDoc.viewBoxWidth, treeDoc.viewBoxHeight)
+								bg.attr fill: '#FEFDF8'
+								paper.add _.union supplementaryStrokes, treeDoc.strokes
+							buf = new Buffer svg
 
-						# write out the svg
-						fs.writeFile svgFilename, buf, (err) ->
-							if err
-								console.error err
-							else
-								# call on graphicsmagick to convert our svg to a raster image
-								gm(svgFilename).scale(width, 1500).quality(80).stream fileExt, (err, stdout, stderr) ->
-									# open up a stream to our attachment
-									stream = treeDb.db.saveAttachment(
-										treeDoc,
-											name: imgFilename
-											contentType: "image/#{fileExt}"
-											# body: fs.createReadStream(outfile)
-										, (err, data) ->
-											console.log err if err
-											fs.unlink svgFilename
-									)
-									res.contentType "image/#{fileExt}"
-									stdout.pipe(stream)
-									stdout.pipe(res)
+							svgFilename = (time = (new Date()).getTime()) + '.svg'
+
+							# write out the svg
+							fs.writeFile svgFilename, buf, (err) ->
+								if err
+									console.error err
+								else
+									# call on graphicsmagick to convert our svg to a raster image
+									gm(svgFilename).scale(width, 1500).quality(80).stream fileExt, (err, stdout, stderr) ->
+										# open up a stream to our attachment
+										stream = treeDb.db.saveAttachment(
+											treeDoc,
+												name: imgFilename
+												contentType: "image/#{fileExt}"
+												# body: fs.createReadStream(outfile)
+											, (err, data) ->
+												console.log err if err
+												fs.unlink svgFilename
+										)
+										res.contentType "image/#{fileExt}"
+										stdout.pipe(stream)
+										stdout.pipe(res)
