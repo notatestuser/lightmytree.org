@@ -30,6 +30,7 @@ I'm leaving out the incredibly obvious stuff like TEST COVERAGE as this is merel
 
 ### Medium priority
 
+* Prevent unnecessarily repeated redraws
 * Limit drawing submissions in UI & data layer
 * Limit stroke submissions in UI & data layer
 * Limit charity selections in data layer
