@@ -343,16 +343,22 @@ define [
 		tagName: "ul"
 		className: "tree-list-view row-fluid"
 
+		events:
+			"click .thumbnail": "_handleClickItem"
+
+		initialize: (options = {}) ->
+			@itemView = options.itemView or Tree.Views.Item
+			@sketchModel = options.sketchModel if options.sketchModel?
+
 		beforeRender: ->
-			@collection.on 'reset', =>
-				@render()
+			@collection.on 'reset', => @render()
 
 			# TODO: dynamically create rows to prevent padding issues?
 			if @collection and @collection.length
 				@collection.forEach (treeModel) ->
 					treeModel.fetch
 						success: (model) =>
-							@insertView new Tree.Views.Item
+							@insertView new @itemView
 								model: treeModel
 							.render()
 				, @
@@ -360,11 +366,34 @@ define [
 				# TODO: fix this - it's rendering when it's not supposed to, messing up the layout
 				# @insertView(new Tree.Partials.NothingToShow()).render()
 
+		_handleClickItem: (ev) ->
+			# only do something if we have a sketchModel
+			if @sketchModel?
+				# get the selected tree's ID
+				treeId = $(ev.target).closest('.thumbnail').data('id')
+				@sketchModel.set 'templateTreeModel', @collection.get(treeId)
+
 	class Tree.Partials.NothingToShow extends Backbone.View
 		tagName: "h4"
 
 		beforeRender: ->
 			@$el.html "There's nothing here. <a href='#sketch'>Draw something</a>"
+
+	class Tree.Views.MiniItem extends Backbone.View
+		# template: "tree/mini_list_item"
+		tagName: "li"
+		className: "micro-tree-view span3 thumbnail"
+
+		beforeRender: ->
+			@$el.data 'id', @model.id if @model?
+
+		afterRender: ->
+			# $container = @$('.canvas')
+			$container = @$el
+			@paper = new Raphael $container[0], $container.width(), $container.height()
+			@paper.setViewBox 0, 0,
+				@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
+			@paper.add @model.get('strokes')
 
 	class Tree.Views.Item extends Backbone.View
 		template: "tree/list_item"

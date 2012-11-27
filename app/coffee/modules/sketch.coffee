@@ -15,6 +15,8 @@ define [
 			pencilColour: '#000000'
 			pencilOpacity: 1
 			erasing: no
+			templateTreeModel: null
+			templateTreeStrokes: 0
 
 		initialize: (options) ->
 			if options.tree
@@ -255,6 +257,7 @@ define [
 				.on('change:pencilWidth', @_changePencilWidth)
 				.on('change:pencilOpacity', @_changePencilOpacity)
 				.on('change:erasing', @_changeErasing)
+				.on('change:templateTreeModel', @_changeTemplate)
 				.on('undo', @_attemptUndo)
 				.on('redo', @_attemptRedo)
 
@@ -264,8 +267,10 @@ define [
 			@paper = new Raphael @$el[0], @$el.width(), @$el.height()
 			@sketchpad = Raphael.sketchpad @paper, strokes: @model.tree().get('strokes')
 			@sketchpad.change =>
+				templateStrokesCount = @model.get('templateTreeStrokes')
+				console.log "templateStrokesCount is #{templateStrokesCount}"
 				@model.tree().save
-					strokes: strokes = @sketchpad.strokes()
+					strokes: strokes = _.last padStrokes = @sketchpad.strokes(), padStrokes.length - templateStrokesCount
 					viewBoxWidth: @$container.width()
 					viewBoxHeight: @$container.height()
 			pen = @sketchpad.pen()
@@ -290,6 +295,19 @@ define [
 
 		_changeErasing: (model, newErasing) =>
 			@sketchpad.editing if newErasing then 'erase' else yes
+
+		_changeTemplate: (model, newTemplateModel) =>
+			# erase the first n strokes
+			strokes = @sketchpad.strokes()
+			strokes = _.last strokes, strokes.length - model.get('templateTreeStrokes')
+
+			# place the new strokes
+			newStrokes = newTemplateModel.get('strokes')
+			strokes = _.union newStrokes, strokes
+
+			# set templateTreeStrokes to the new value
+			model.set 'templateTreeStrokes', newStrokes.length
+			@sketchpad.strokes strokes
 
 		_attemptUndo: =>
 			@sketchpad.undo() if @sketchpad and @sketchpad.undoable()

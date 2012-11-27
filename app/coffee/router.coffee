@@ -41,6 +41,10 @@ define [
 
 		sketch: ->
 			app.useLayout('sketch_page').setViews
+				".templates": new Tree.Views.List
+					itemView: Tree.Views.MiniItem
+					sketchModel: @_sketch
+					collection: @_templateTrees
 				".sketchpad": new Sketch.Views.Workspace
 					model: @_sketch
 					views:
@@ -63,6 +67,7 @@ define [
 					model: @_newTree
 				".authenticate_modal": new Modal.Views.Authenticate
 			.render()
+			@_templateTrees.fetch() unless @_templateTrees.length
 
 		tree: (treeId, param) ->
 			# grab the cached tree or fetch one
