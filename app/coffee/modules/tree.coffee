@@ -59,7 +59,8 @@ define [
 		loadTemplate: ->
 			if @templates?
 				@templates.getOrFetch @get('templateId'), (templateModel) =>
-					@set 'strokes', _.union(templateModel.get('strokes'), @get('strokes'))
+					# @set 'strokes', _.union(templateModel.get('strokes'), @get('strokes'))
+					@set 'templateStrokes', templateModel.get('strokes')
 
 		triggerGraphPublish: ->
 			# there's no point doing this if we haven't been asked to publish an action
@@ -309,15 +310,13 @@ define [
 		afterRender: ->
 			self = @
 			$container = @$el # this should be empty due to actions taken by beforeRender()
+			strokes = _.union(@model.get('templateStrokes') or [], @model.get('strokes') or [])
 			if @paper?
 				@paper.clear()
-				@paper.setViewBox 0, 0,
-					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
-				@paper.add self.model.get('strokes')
 			else
 				@paper = new Raphael $container[0], $container.width(), $container.height()
-				@paper.setViewBox 0, 0, @model.get('viewBoxWidth'), @model.get('viewBoxHeight'), true
-				@paper.add @model.get('strokes')
+			@paper.setViewBox 0, 0, @model.get('viewBoxWidth'), @model.get('viewBoxHeight'), true
+			@paper.add strokes
 
 		handleClick: =>
 			if @myDonationModel.get 'giftPlacing'
@@ -441,10 +440,13 @@ define [
 		afterRender: ->
 			@$('.buttons').addClass 'hide' if not @model.id
 			$container = @$('.canvas')
+			strokes = _.union(@model.get('templateStrokes') or [], @model.get('strokes') or [])
+			# TODO reuse paper
 			@paper = new Raphael $container[0], 256, 256
 			@paper.setViewBox 0, 0,
 				@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
-			@paper.add @model.get('strokes')
+			@paper.clear()
+			@paper.add strokes
 
 		_goToTreePage: ->
 			app.go @model.id
