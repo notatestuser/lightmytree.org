@@ -163,6 +163,9 @@ define [
 	class Tree.TemplateCollection extends Tree.Collection
 		url: "/json/tree_templates"
 
+		# initialize: ->
+		# 	@on 'reset', @_removeDuplicates, @
+
 		getOrFetch: (id, callback) ->
 			return callback(model) if model = @get id
 			model = new Tree.Model id: id
@@ -170,6 +173,22 @@ define [
 				success: (model) =>
 					@add model
 					callback(model)
+
+		parse: (docs) ->
+			# call super() so that it 'maps' over the id field of our models
+			result = docs = super docs
+
+			ourModels = @models
+
+			# merge the lists of ids together to form a mega list of ids
+			models = _.uniq _.union(docs, @models), no, (obj) -> obj.id
+
+			# find the unique set and use it if it differs
+			uniqIds = _.uniq models
+			if uniqIds.length isnt @models.length
+				result = uniqIds
+
+			result
 
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"
@@ -379,11 +398,12 @@ define [
 			# TODO: dynamically create rows to prevent padding issues?
 			if @collection and @collection.length
 				@collection.forEach (treeModel) ->
-					treeModel.fetch
-						success: (model) =>
-							@insertView new @itemView
-								model: treeModel
-							.render()
+					if not treeModel.strokes? or not treeModel.strokes.length
+						treeModel.fetch
+							success: (model) =>
+								@insertView new @itemView
+									model: treeModel
+								.render()
 				, @
 			else
 				# TODO: fix this - it's rendering when it's not supposed to, messing up the layout
