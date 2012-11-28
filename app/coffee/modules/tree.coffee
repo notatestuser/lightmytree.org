@@ -38,6 +38,7 @@ define [
 			@donations = new Donation.Collection null,
 				charities: @charities
 			@templates = options.templateCollection or null
+			console.log "@templates is #{@templates}"
 
 		fetch: (options = {}) ->
 			oldCallback = options.success
@@ -56,11 +57,16 @@ define [
 		loadDonations: ->
 			@donations.reset @get('donationData')
 
-		loadTemplate: ->
+		loadTemplate: (callback) ->
+			console.log "in loadTemplate(), @templates is #{@templates}, templateId is #{@get('templateId')}"
+			console.log @templates
 			if @templates?
 				@templates.getOrFetch @get('templateId'), (templateModel) =>
 					# @set 'strokes', _.union(templateModel.get('strokes'), @get('strokes'))
 					@set 'templateStrokes', templateModel.get('strokes')
+					console.log "got our template, it's:"
+					console.log templateModel
+					callback? templateModel
 
 		triggerGraphPublish: ->
 			# there's no point doing this if we haven't been asked to publish an action
@@ -72,9 +78,9 @@ define [
 
 		url: -> "/json/my_tree"
 
-		initialize: ->
+		initialize: (options) ->
 			@remotePersist = false
-			super()
+			super options
 			@on 'change:strokes change:charityIds', (model) ->
 				model.save()
 
@@ -106,8 +112,8 @@ define [
 					$.jStorage.deleteKey Tree.Model.LocalStorageKey
 
 		validate: (attrs = @attributes) ->
-			if not attrs.strokes or attrs.strokes.length < 1
-				return "You must attempt to draw something!"
+			# if not attrs.strokes or attrs.strokes.length < 1
+			# 	return "You must attempt to draw something!"
 			# else if not attrs.charityIds or attrs.charityIds.length < 1
 			# 	"You must select at least one charity!"
 

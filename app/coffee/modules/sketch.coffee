@@ -22,6 +22,10 @@ define [
 			@on 'change:templateTreeModel', @_changeTemplateTreeModel, @
 			if options.tree
 				options.tree.fetch()
+				options.tree.loadTemplate (templateModel) =>
+					@set
+						templateTreeModel: templateModel
+						templateTreeStrokes: templateModel.get('strokes').length
 				@set('tree', options.tree)
 
 		tree: -> @get('tree')
@@ -29,6 +33,9 @@ define [
 		_changeTemplateTreeModel: (model, newTemplateModel) ->
 			# when this happens, we'll want to set the template's ID in our Tree
 			@tree().set 'templateId', newTemplateModel.id
+			console.log "change the tree model's templateId to #{newTemplateModel.id}"
+			console.log @tree()
+			console.log @tree().get 'templateId'
 
 	class Sketch.Views.Workspace extends Backbone.View
 		template: "sketch/workspace"
@@ -264,18 +271,22 @@ define [
 				.on('change:templateTreeModel', @_changeTemplate)
 				.on('undo', @_attemptUndo)
 				.on('redo', @_attemptRedo)
+			@model.tree()
+				.on('change:templateStrokes', @render, @)
 
 		afterRender: ->
 			@$container = @$el
 			# TODO: empty container in beforeRender() and trigger a render() on resizeCanvas event
+			strokes = _.union(@model.tree().get('templateStrokes') or [], @model.tree().get('strokes') or [])
 			@paper = new Raphael @$el[0], @$el.width(), @$el.height()
-			@sketchpad = Raphael.sketchpad @paper, strokes: @model.tree().get('strokes')
+			@sketchpad = Raphael.sketchpad @paper, strokes: strokes
 			@sketchpad.change =>
 				templateStrokesCount = @model.get('templateTreeStrokes')
 				@model.tree().save
-					strokes: _.last padStrokes = @model.tree().get('strokes'), padStrokes.length - templateStrokesCount
+					strokes: _.last padStrokes = @sketchpad.strokes(), padStrokes.length - templateStrokesCount
 					viewBoxWidth: @$container.width()
 					viewBoxHeight: @$container.height()
+				console.log @model.tree()
 			pen = @sketchpad.pen()
 			pen.color @model.get('pencilColour')
 			pen.width @model.get('pencilWidth')
@@ -300,17 +311,18 @@ define [
 			@sketchpad.editing if newErasing then 'erase' else yes
 
 		_changeTemplate: (model, newTemplateModel) =>
-			# erase the first n strokes
-			strokes = @sketchpad.strokes()
-			strokes = _.last strokes, strokes.length - model.get('templateTreeStrokes')
+			if @sketchpad?
+				# erase the first n strokes
+				strokes = @sketchpad.strokes()
+				strokes = _.last strokes, strokes.length - model.get('templateTreeStrokes')
 
-			# place the new strokes
-			newStrokes = newTemplateModel.get('strokes')
-			strokes = _.union newStrokes, strokes
+				# place the new strokes
+				newStrokes = newTemplateModel.get('strokes')
+				strokes = _.union newStrokes, strokes
 
-			# set templateTreeStrokes to the new value
-			model.set 'templateTreeStrokes', newStrokes.length
-			@sketchpad.strokes strokes
+				# set templateTreeStrokes to the new value
+				model.set 'templateTreeStrokes', newStrokes.length
+				@sketchpad.strokes strokes
 
 		_attemptUndo: =>
 			@sketchpad.undo() if @sketchpad and @sketchpad.undoable()

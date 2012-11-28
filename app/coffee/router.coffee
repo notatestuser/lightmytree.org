@@ -22,10 +22,11 @@ define [
 
 		initialize: ->
 			models =
-				_user: me = (new User.Model()).fetch() # will fetch authed user from server
-				_newTree: newTree = new Tree.MyModel()
-				_myTrees: me.trees # will return our stuff if authed
-				_templateTrees: new Tree.TemplateCollection()
+				_user: _me = (new User.Model()).fetch() # will fetch authed user from server
+				_myTrees: _me.trees # will return our stuff if authed
+				_templateTrees: _templates = new Tree.TemplateCollection()
+				_newTree: newTree = new Tree.MyModel
+					templateCollection: _templates
 				_otherTrees: new Tree.Collection()
 				_otherUsers: new User.Collection()
 				_recentCharities: new Charity.RecentCharitiesCollection()
@@ -35,9 +36,6 @@ define [
 
 		index: ->
 			app.useLayout('home_page').setViews({}).render()
-				#".create_tree": new Tree.Views.Sketch @
-				# ".existing_tree": new Tree.Views.List @
-			# .render()
 
 		sketch: ->
 			app.useLayout('sketch_page').setViews
