@@ -75,7 +75,7 @@ module.exports = (app, config) ->
 	# /json/tree_templates
 	app.get "/json/tree_templates", (req, res) ->
 		treeDb.findByView 'byIsTemplate', wrapError res, (results) ->
-			res.json (_id: result._id for result in results)
+			res.json (_id: result._id, strokesCount: result.strokes.length for result in results)
 
 	# /json/my_tree
 	myTreeFn = ensureAuth (req, res, userId) ->
