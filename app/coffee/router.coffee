@@ -38,11 +38,7 @@ define [
 			app.useLayout('home_page').setViews({}).render()
 
 		sketch: ->
-			app.useLayout('sketch_page').setViews
-				".templates": new Tree.Views.List
-					itemView: Tree.Views.MiniItem
-					sketchModel: @_sketch
-					collection: @_templateTrees
+			layout = app.useLayout('sketch_page').setViews
 				".sketchpad": new Sketch.Views.Workspace
 					model: @_sketch
 					views:
@@ -64,8 +60,16 @@ define [
 				".save": new Tree.Views.Save
 					model: @_newTree
 				".authenticate_modal": new Modal.Views.Authenticate
-			.render()
-			@_templateTrees.fetch() unless @_templateTrees.length
+			layout.render()
+
+			unless @_newTree.get('templateId')
+				@_templateTrees.fetch
+					success: =>
+						layout.insertView ".templates", new Tree.Views.List
+							itemView: Tree.Views.MiniItem
+							sketchModel: @_sketch
+							collection: @_templateTrees
+						.render()
 
 		tree: (treeId, param) ->
 			# grab the cached tree or fetch one
