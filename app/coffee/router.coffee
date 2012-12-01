@@ -22,12 +22,16 @@ define [
 
 		initialize: ->
 			models =
-				_user: _me = (new User.Model()).fetch() # will fetch authed user from server
-				_myTrees: _me.trees # will return our stuff if authed
 				_templateTrees: _templates = new Tree.TemplateCollection()
+				_myTrees: _myTrees = new Tree.Collection([],
+					templateCollection: _templates
+				)
+				_user: _me = (new User.Model( myTreesCollection: _myTrees )).fetch() # fetch authed user from server
 				_newTree: newTree = new Tree.MyModel
 					templateCollection: _templates
-				_otherTrees: new Tree.Collection()
+				_otherTrees: new Tree.Collection([],
+					templateCollection: _templates
+				)
 				_otherUsers: new User.Collection()
 				_recentCharities: new Charity.RecentCharitiesCollection()
 				_typeaheadCharities: new Charity.TypeaheadCollection()

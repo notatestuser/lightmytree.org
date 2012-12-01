@@ -19,8 +19,8 @@ define [
 			imageUrl: ''
 			treeIds: []
 
-		initialize: (attributes) ->
-			@trees = new Tree.Collection()
+		initialize: (attributes = {}) ->
+			@trees = attributes.myTreesCollection
 			super attributes
 			@_findFirstName()
 			@on 'change:fullName', @_findFirstName, @

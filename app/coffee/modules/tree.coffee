@@ -36,7 +36,7 @@ define [
 		initialize: (options = {}) ->
 			@charities = new Charity.Collection()
 			@donations = new Donation.Collection null, charities: @charities
-			@templates = options.templateCollection or null
+			@templates = options.templateCollection or @collection?.templateCollection or null
 
 		fetch: (options = {}) ->
 			oldCallback = options.success
@@ -149,14 +149,12 @@ define [
 			, silent: yes
 
 	class Tree.Collection extends Backbone.Collection
-		url: "/json/trees"
+		model: Tree.Model
+		url:   "/json/trees"
 		cache: yes
 
-		# initialize: (models, options) ->
-		# 	@userId = options.userId if options and options.userId?
-		# 	@url += @userId if @userId
-		# 	super models, options
-		# 	@fetch()
+		initialize: (models, options = {}) ->
+			@templateCollection = options.templateCollection
 
 		parse: (docs) ->
 			_.extend(doc, id: doc._id) for doc in docs
@@ -402,7 +400,7 @@ define [
 
 			# TODO: dynamically create rows to prevent padding issues?
 			if @collection and @collection.length
-				@collection.sort()
+				# @collection.sort()
 				@collection.forEach (treeModel, index) ->
 					if not treeModel.strokes? or not treeModel.strokes.length
 						treeModel.fetch
@@ -479,7 +477,7 @@ define [
 		afterRender: ->
 			@$('.buttons').addClass 'hide' if not @model.id
 			$container = @$('.canvas')
-			@model.getTemplateStrokes (templateStrokes = []) ->
+			@model.getTemplateStrokes? (templateStrokes = []) =>
 				strokes = _.union(templateStrokes, @model.get('strokes') or [])
 				# TODO reuse paper
 				@paper = new Raphael $container[0], 256, 256
