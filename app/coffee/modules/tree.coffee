@@ -35,15 +35,13 @@ define [
 
 		initialize: (options = {}) ->
 			@charities = new Charity.Collection()
-			@donations = new Donation.Collection null,
-				charities: @charities
+			@donations = new Donation.Collection null, charities: @charities
 			@templates = options.templateCollection or null
-			console.log "@templates is #{@templates}"
 
 		fetch: (options = {}) ->
 			oldCallback = options.success
 			options.success = (model, response, options) =>
-				@loadTemplate() if @templates?
+				# @loadTemplate() if @templates?
 				@loadCharities()
 				@loadDonations()
 				oldCallback? model, response, options
@@ -60,13 +58,14 @@ define [
 		loadTemplate: (callback) ->
 			console.log "in loadTemplate(), @templates is #{@templates}, templateId is #{@get('templateId')}"
 			console.log @templates
-			if @templates?
-				@templates.getOrFetch @get('templateId'), (templateModel) =>
-					# @set 'strokes', _.union(templateModel.get('strokes'), @get('strokes'))
-					@set 'templateStrokes', templateModel.get('strokes')
-					console.log "got our template, it's:"
-					console.log templateModel
-					callback? templateModel
+			@templates.getOrFetch @get('templateId'), (templateModel) =>
+				console.log "got our template, it's:"
+				console.log templateModel
+				callback? templateModel
+
+		getTemplateStrokes: (callback) ->
+			callback([]) if not @templates?
+			@templates.getStrokesForId @get('templateId'), callback
 
 		triggerGraphPublish: ->
 			# there's no point doing this if we haven't been asked to publish an action
@@ -86,6 +85,9 @@ define [
 
 		isNew: ->
 			@get('strokes').length and super()
+
+		toJSON: ->
+			_.omit @attributes, 'templateCollection'
 
 		sync: (method, model, options, first = true) ->
 			defaultSyncFn = ->
@@ -157,14 +159,24 @@ define [
 			# example handling of an error response from the server
 			#if obj.data.message isnt 'Error' then obj.data else @models
 
-		comparator: (tree) ->
-			-new Date(tree.get 'updated_at')
-
 	class Tree.TemplateCollection extends Tree.Collection
 		url: "/json/tree_templates"
 
-		# initialize: ->
-		# 	@on 'reset', @_removeDuplicates, @
+		parse: (docs) ->
+			# call super() so that it 'maps' over the id field of our models
+			result = docs = super docs
+
+			# find the unique set and use it if it differs;
+			# merge the lists of ids together to form a mega list of ids
+			uniqModels = _.uniq _.union(docs, @models), no, (obj) -> obj.id
+
+			if uniqModels.length isnt @models.length
+				result = uniqModels
+
+			result
+
+		comparator: (tree) ->
+			tree.get 'strokesCount'
 
 		getOrFetch: (id, callback) ->
 			return callback(model) if model = @get id
@@ -174,21 +186,9 @@ define [
 					@add model
 					callback(model)
 
-		parse: (docs) ->
-			# call super() so that it 'maps' over the id field of our models
-			result = docs = super docs
-
-			ourModels = @models
-
-			# merge the lists of ids together to form a mega list of ids
-			models = _.uniq _.union(docs, @models), no, (obj) -> obj.id
-
-			# find the unique set and use it if it differs
-			uniqIds = _.uniq models
-			if uniqIds.length isnt @models.length
-				result = uniqIds
-
-			result
+		getStrokesForId: (id, callback) ->
+			return callback([]) if not id? or not id.length
+			@getOrFetch id, (model) -> callback(model.get('strokes'))
 
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"
@@ -335,6 +335,7 @@ define [
 		afterRender: ->
 			self = @
 			$container = @$el # this should be empty due to actions taken by beforeRender()
+			@model.templates.getStrokesForId
 			strokes = _.union(@model.get('templateStrokes') or [], @model.get('strokes') or [])
 			if @paper?
 				@paper.clear()
@@ -363,7 +364,7 @@ define [
 				offsetX = ev.clientX - offset.left
 				offsetY = ev.pageY - offset.top
 
-				#  positional difference checking
+				# positional difference checking
 				# if @mouseOffsetX? and @mouseOffsetY?
 				# 	diffX = Math.abs(offsetX - @mouseOffsetX)
 				# 	diffY = Math.abs(offsetY - @mouseOffsetY)
@@ -397,10 +398,13 @@ define [
 
 			# TODO: dynamically create rows to prevent padding issues?
 			if @collection and @collection.length
-				@collection.forEach (treeModel) ->
+				@collection.sort()
+				@collection.forEach (treeModel, index) ->
 					if not treeModel.strokes? or not treeModel.strokes.length
 						treeModel.fetch
 							success: (model) =>
+								console.log "calling @insertView for #{model.id}, which has #{Object.keys(model.attributes).length} attributes"
+								console.log "there are #{@collection.length} models in the collection and this one's index is #{index}"
 								@insertView new @itemView
 									model: treeModel
 								.render()
@@ -414,7 +418,9 @@ define [
 			if @sketchModel?
 				# get the selected tree's ID
 				treeId = $(ev.target).closest('.thumbnail').data('id')
-				@sketchModel.set 'templateTreeModel', @collection.get(treeId)
+
+				# use the Sketch.Model as a proxy to set our template
+				@sketchModel.changeTemplate treeId
 
 				# scroll to the row-sketchpad
 				$('body').animate
@@ -438,7 +444,10 @@ define [
 		afterRender: ->
 			# $container = @$('.canvas')
 			$container = @$el
-			@paper = new Raphael $container[0], $container.width(), $container.height()
+			if @paper?
+				@paper.clear()
+			else
+				@paper = new Raphael $container[0], $container.width(), $container.height()
 			@paper.setViewBox 0, 0,
 				@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
 			@paper.add @model.get('strokes')
@@ -466,13 +475,14 @@ define [
 		afterRender: ->
 			@$('.buttons').addClass 'hide' if not @model.id
 			$container = @$('.canvas')
-			strokes = _.union(@model.get('templateStrokes') or [], @model.get('strokes') or [])
-			# TODO reuse paper
-			@paper = new Raphael $container[0], 256, 256
-			@paper.setViewBox 0, 0,
-				@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
-			@paper.clear()
-			@paper.add strokes
+			@model.getTemplateStrokes (templateStrokes = []) ->
+				strokes = _.union(templateStrokes, @model.get('strokes') or [])
+				# TODO reuse paper
+				@paper = new Raphael $container[0], 256, 256
+				@paper.setViewBox 0, 0,
+					@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
+				@paper.clear()
+				@paper.add strokes
 
 		_goToTreePage: ->
 			app.go @model.id
