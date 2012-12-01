@@ -337,14 +337,15 @@ define [
 		afterRender: ->
 			self = @
 			$container = @$el # this should be empty due to actions taken by beforeRender()
-			@model.templates.getStrokesForId
-			strokes = _.union(@model.get('templateStrokes') or [], @model.get('strokes') or [])
-			if @paper?
-				@paper.clear()
-			else
-				@paper = new Raphael $container[0], $container.width(), $container.height()
-			@paper.setViewBox 0, 0, @model.get('viewBoxWidth'), @model.get('viewBoxHeight'), true
-			@paper.add strokes
+
+			@model.getTemplateStrokes? (templateStrokes = []) =>
+				strokes = _.union(templateStrokes, @model.get('strokes') or [])
+				if @paper?
+					@paper.clear()
+				else
+					@paper = new Raphael $container[0], $container.width(), $container.height()
+				@paper.setViewBox 0, 0, @model.get('viewBoxWidth'), @model.get('viewBoxHeight'), true
+				@paper.add strokes
 
 		handleClick: =>
 			if @myDonationModel.get 'giftPlacing'
