@@ -224,7 +224,7 @@ header
 
 	h2
 		font-family 'Lobster',cursive
-		font-size 1.3rem
+		font-size 2em
 
 	.home_page
 		background transparent url('../img/stars-and-bits.png') no-repeat scroll 105% 52%
@@ -649,9 +649,32 @@ header
 					border-top-left-radius 5px
 					border-top-right-radius 5px
 
+	.row-templates,
+	.row-sketchpad
+		h2
+			background-image url('../img/liney-header-decor.png'), url('../img/liney-header-decor.png')
+			background-repeat no-repeat, no-repeat
+			cursor pointer
+			&:before
+				content "+"
+				font-size 90%
+				position relative
+				bottom 3px
+				right 10px
+				font-weight normal
+				font-style normal
+				color #444
+				cursor pointer
+
 	.row-templates
+		h2
+			background-position 93% 3%, 4% 29%
+		p
+			text-align center
 		.tree-list-view
 			clearfix()
+		.templates
+			margin-bottom 40px
 		.thumbnail
 			height 220px
 			cursor pointer
@@ -664,6 +687,7 @@ header
 	.row-sketchpad
 		margin-bottom -50px
 		h2
+			background-position 89% 90%, 11% 67%
 			margin-bottom 10px
 		p
 			text-align center
