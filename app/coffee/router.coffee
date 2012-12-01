@@ -45,7 +45,18 @@ define [
 			app.useLayout('home_page').setViews({}).render()
 
 		sketch: ->
-			layout = app.useLayout('sketch_page').setViews
+			# augment the layout with the revealingly named collapseRow()
+			layout = app.useLayout 'sketch_page',
+				collapseRowSection: (rowName, callback) ->
+					$("##{@id} .row-#{rowName}")
+						.addClass('collapsed')
+						.children('section')
+						.slideUp(500, callback)
+
+					# # this is crap but we know we'll be done in 500ms
+					# setTimeout callback, 500
+
+			layout.setViews
 				".sketchpad": new Sketch.Views.Workspace
 					model: @_sketch
 					views:
@@ -67,9 +78,13 @@ define [
 				".save": new Tree.Views.Save
 					model: @_newTree
 				".authenticate_modal": new Modal.Views.Authenticate
+
 			layout.render()
 
-			unless @_newTree.get('templateId')
+			if @_newTree.get('templateId')
+				layout.insertView ".templates", new Sketch.Partials.TemplateAlreadySelected
+					model: @_sketch
+			else
 				@_templateTrees.fetch
 					success: =>
 						layout.insertView ".templates", new Tree.Views.List

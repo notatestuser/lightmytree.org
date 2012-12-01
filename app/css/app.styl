@@ -337,7 +337,7 @@ header
 					width 26.6%
 					height 110px
 					padding 22px 0 0 10.5%
-					box-sizing border-box
+					box-sizing(border-box)
 					background transparent url('../img/ribbon-blocks.png') no-repeat scroll
 					border-radius 50px
 					box-shadow 0 0 5px rgba(255, 255, 255, 0.1)
@@ -649,11 +649,12 @@ header
 					border-top-left-radius 5px
 					border-top-right-radius 5px
 
-	.row-templates,
-	.row-sketchpad
+	.row-collapsible
+		> section
+			// transition(height .5s ease)
+			box-sizing(border-box)
+			overflow hidden
 		h2
-			background-image url('../img/liney-header-decor.png'), url('../img/liney-header-decor.png')
-			background-repeat no-repeat, no-repeat
 			cursor pointer
 			&:before
 				content "+"
@@ -665,6 +666,19 @@ header
 				font-style normal
 				color #444
 				cursor pointer
+		&.collapsed
+			// > section
+			// 	height 0
+			h2
+				&:before
+					content "—"
+
+
+	.row-templates,
+	.row-sketchpad
+		h2
+			background-image url('../img/liney-header-decor.png'), url('../img/liney-header-decor.png')
+			background-repeat no-repeat, no-repeat
 
 	.row-templates
 		h2

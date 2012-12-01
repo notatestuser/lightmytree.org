@@ -425,10 +425,12 @@ define [
 				# use the Sketch.Model as a proxy to set our template
 				@sketchModel.changeTemplate treeId
 
-				# scroll to the row-sketchpad
-				$('body').animate
-					scrollTop: $('.row-sketchpad').offset().top
-				, 500
+				# collapse the current row
+				app.layout.options.collapseRowSection 'templates', ->
+					# scroll to the row-sketchpad
+					$('body').animate
+						scrollTop: $('.row-sketchpad').offset().top
+					, 500
 
 	class Tree.Partials.NothingToShow extends Backbone.View
 		tagName: "h4"
@@ -454,6 +456,9 @@ define [
 			@paper.setViewBox 0, 0,
 				@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
 			@paper.add @model.get('strokes')
+
+			if @$el.is(':first-child')
+				@$el.addClass 'offset1'
 
 	class Tree.Views.Item extends Backbone.View
 		template: "tree/list_item"

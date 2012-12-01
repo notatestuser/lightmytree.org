@@ -89,19 +89,21 @@ define [
 			, additionalProps
 
 		# Helper for using layouts.
-		useLayout: (name, options) ->
+		useLayout: (name, options = {}) ->
 			# If already using this Layout, then don't re-inject into the DOM.
 			return @layout	if @layout and @layout.options.template is name
 
 			# If a layout already exists, remove it from the DOM.
 			@layout.remove()	if @layout
 
-			# Create a new Layout.
-			layout = new Backbone.Layout(
+			# Extend the 'base layout' (a hash of the bare minimum required) with optional stuff we've specified
+			baseLayout =
 				template: name
 				className: "layout " + name
 				id: "layout"
-			)
+
+			# Create a new Layout.
+			layout = new Backbone.Layout _.extend(baseLayout, options)
 
 			# Insert into the DOM.
 			$("#main").empty().append layout.el
