@@ -22,6 +22,7 @@ define [
 				@set
 					tree: options.tree
 					templateLoaded: no
+				options.tree.on 'getTemplateStrokes:done', @_handleGotTemplateStrokes, @
 				options.tree.fetch()
 
 		tree: -> @get('tree')
@@ -30,10 +31,14 @@ define [
 			# when this happens, we'll want to set the template's ID in our Tree
 			@set templateLoaded: no
 			@tree().set 'templateId', treeId
-			@tree().loadTemplate (templateModel) =>
-				@set
-					templateTreeStrokes: templateModel.get('strokes').length
-					templateLoaded: yes
+
+			# when this has finished, we'll end up in the event handler below
+			@tree().getTemplateStrokes()
+
+		_handleGotTemplateStrokes: (templateStrokes) ->
+			@set
+				templateTreeStrokes: templateStrokes.length
+				templateLoaded: yes
 
 	class Sketch.Views.Workspace extends Backbone.View
 		template: "sketch/workspace"
@@ -278,6 +283,7 @@ define [
 			# unless not @model.get 'templateLoaded'
 			@$container = @$el
 			@model.tree().getTemplateStrokes (templateStrokes = []) =>
+				console.log "got #{templateStrokes.length} templateStrokes"
 				# TODO: empty container in beforeRender() and trigger a render() on resizeCanvas event
 				strokes = _.union(templateStrokes, @model.tree().get('strokes') or [])
 				if @sketchpad?

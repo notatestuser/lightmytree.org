@@ -65,7 +65,11 @@ define [
 
 		getTemplateStrokes: (callback) ->
 			callback([]) if not @templates?
-			@templates.getStrokesForId @get('templateId'), callback
+			@templates.getStrokesForId @get('templateId'), (strokes) =>
+				# caught by the Sketch.Model, which likes to know how many strokes are in our template
+				@trigger 'getTemplateStrokes:done', strokes
+
+				callback? strokes
 
 		triggerGraphPublish: ->
 			# there's no point doing this if we haven't been asked to publish an action
