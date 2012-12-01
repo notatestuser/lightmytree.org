@@ -51,7 +51,7 @@ define [
 					$("##{@id} .row-#{rowName}")
 						.addClass('collapsed')
 						.children('section')
-						.slideUp(500, callback)
+						.slideUp(800, callback)
 
 					# # this is crap but we know we'll be done in 500ms
 					# setTimeout callback, 500

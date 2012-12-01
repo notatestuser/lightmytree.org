@@ -3,6 +3,7 @@ define [
 	"lodash"
 	"backbone"
 	"bootstrap/bootstrap-tooltip"
+	"plugins/jquery.inview"
 ],
 
 (app, _, Backbone) ->
@@ -249,10 +250,17 @@ define [
 				zIndex: 100 - (@position * 10)
 			@$el.css @pencilFloat, (@position * (@$el.outerWidth() - 1))
 
-			# animate slide out in a little bit
-			setTimeout =>
-				@$el.animate top: wouldBeOffset, 1500
-			, 200
+			# utilise the jquery.inview plugin to ensure we only animate when we're visible in the viewport
+			@$el.bind 'inview', (event, isInView, visiblePartX, visiblePartY) =>
+				if not @peeked? and isInView and visiblePartY isnt 'top' and visiblePartY isnt 'bottom'
+					# prevent multiple firings
+					@peeked = yes
+					@$el.unbind 'inview'
+					# animate pencil slide out in a little bit
+					setTimeout =>
+						@$el.animate top: wouldBeOffset, 1500
+					, 100
+
 
 		_setThisColour: ->
 			if @ourColour
@@ -339,5 +347,25 @@ define [
 
 		_attemptRedo: =>
 			@sketchpad.redo() if @sketchpad and @sketchpad.redoable()
+
+	class Sketch.Views.PageWrapper extends Backbone.View
+		className: "sketch-page-wrapper"
+
+		events:
+			"click section.collapsible h2": "_collapseOrExpandSection"
+
+		# we override default render() functionality to effectively do nothing instead
+		render: (template, context) ->
+			@$el.html()
+
+		_collapseOrExpandSection: (ev) ->
+			$(ev.target).closest('.collapsible').children('section').fadeOut()
+
+	class Sketch.Partials.TemplateAlreadySelected extends Backbone.View
+		tagName: "p"
+
+		beforeRender: ->
+			@$el.html('You have already selected a room. <a href="#sketch">Start again</a>')
+
 
 	Sketch
