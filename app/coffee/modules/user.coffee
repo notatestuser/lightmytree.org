@@ -19,14 +19,14 @@ define [
 			imageUrl: ''
 			treeIds: []
 
-		initialize: (attributes = {}) ->
-			@trees = attributes.myTreesCollection
-			super attributes
+		initialize: (attributes, options = {}) ->
+			@trees = options.myTreesCollection if options.myTreesCollection?
+			super attributes, options
 			@_findFirstName()
 			@on 'change:fullName', @_findFirstName, @
 
 		fetch: (options = {}) ->
-			options.success = => @loadTrees()
+			options.success = => @loadTrees() if @trees?
 			super options
 			@
 

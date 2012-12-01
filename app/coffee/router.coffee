@@ -26,7 +26,10 @@ define [
 				_myTrees: _myTrees = new Tree.Collection([],
 					templateCollection: _templates
 				)
-				_user: _me = (new User.Model( myTreesCollection: _myTrees )).fetch() # fetch authed user from server
+				# fetch the currently authed user from server
+				_user: _me = new User.Model({},
+					myTreesCollection: _myTrees
+				).fetch()
 				_newTree: newTree = new Tree.MyModel
 					templateCollection: _templates
 				_otherTrees: new Tree.Collection([],
