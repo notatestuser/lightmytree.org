@@ -33,9 +33,6 @@ define [
 		_changeTemplateTreeModel: (model, newTemplateModel) ->
 			# when this happens, we'll want to set the template's ID in our Tree
 			@tree().set 'templateId', newTemplateModel.id
-			console.log "change the tree model's templateId to #{newTemplateModel.id}"
-			console.log @tree()
-			console.log @tree().get 'templateId'
 
 	class Sketch.Views.Workspace extends Backbone.View
 		template: "sketch/workspace"
@@ -278,15 +275,18 @@ define [
 			@$container = @$el
 			# TODO: empty container in beforeRender() and trigger a render() on resizeCanvas event
 			strokes = _.union(@model.tree().get('templateStrokes') or [], @model.tree().get('strokes') or [])
-			@paper = new Raphael @$el[0], @$el.width(), @$el.height()
-			@sketchpad = Raphael.sketchpad @paper, strokes: strokes
-			@sketchpad.change =>
-				templateStrokesCount = @model.get('templateTreeStrokes')
-				@model.tree().save
-					strokes: _.last padStrokes = @sketchpad.strokes(), padStrokes.length - templateStrokesCount
-					viewBoxWidth: @$container.width()
-					viewBoxHeight: @$container.height()
-				console.log @model.tree()
+			if @sketchpad?
+				@sketchpad.paper().clear()
+				@sketchpad.strokes strokes
+			else
+				@paper = new Raphael @$el[0], @$el.width(), @$el.height()
+				@sketchpad = Raphael.sketchpad @paper, strokes: strokes
+				@sketchpad.change =>
+					templateStrokesCount = @model.get('templateTreeStrokes')
+					@model.tree().save
+						strokes: _.last padStrokes = @sketchpad.strokes(), padStrokes.length - templateStrokesCount
+						viewBoxWidth: @$container.width()
+						viewBoxHeight: @$container.height()
 			pen = @sketchpad.pen()
 			pen.color @model.get('pencilColour')
 			pen.width @model.get('pencilWidth')
