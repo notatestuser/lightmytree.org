@@ -383,7 +383,7 @@ define [
 			"click a": "_resetSketchState"
 
 		beforeRender: ->
-			@$el.html('You have already selected a room. <a href="#sketch">Start from scratch</a>')
+			@$el.html('You have already selected a canvas. <a href="#sketch">Start from scratch</a>')
 
 		_resetSketchState: (ev) ->
 			ev.preventDefault()
