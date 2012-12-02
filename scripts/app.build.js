@@ -1,8 +1,6 @@
 ({
-	appDir: "../assets",
-
 	baseUrl: "js",
-
+	appDir: "../assets",
 	dir: "../assets_live",
 
 	mainConfigFile: "../assets/js/config.js",
@@ -11,9 +9,14 @@
 	optimizeCss: "standard",
 	removeCombined: true,
 
-	modules: [
-		{
-			name: "main"
-		}
-	]
+	// https://github.com/jrburke/almond
+	name: "libs/almond",
+	// out: "libs/require",
+	include: [ "main" ],
+	// insertRequire: [ "config" ],
+	wrap: true,
+
+	paths: {
+		require: ':empty'
+	}
 })
