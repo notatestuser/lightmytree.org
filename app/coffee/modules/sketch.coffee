@@ -218,7 +218,7 @@ define [
 		@Classes = [
 			"pencil-red"
 			"pencil-blue"
-			"pencil-cyan"
+			"pencil-white"
 			"pencil-green"
 			"pencil-darkgreen"
 			"pencil-yellow"
