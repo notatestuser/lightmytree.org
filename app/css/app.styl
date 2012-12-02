@@ -700,13 +700,22 @@ header
 		p
 			text-align center
 		.tree-list-view
+			margin-left 0
 			clearfix()
 		.thumbnail
 			height 220px
-			cursor pointer
+			padding 0
 			opacity .8
-			background #fff url('../img/paper-lines-2.png') no-repeat scroll center center
-			background-size contain
+			border 8px solid transparent
+			border-image url("../img/template-thumbnail-frame.svg") 8 8 stretch
+			cursor pointer
+			> *
+				background-color white
+				background-image url("../img/paper-lines-2.png"), url("../img/blank-text-template-thumb-bg.png")
+				background-position center center, 50% 95%
+				background-repeat no-repeat, no-repeat
+				background-size contain, auto
+				border-radius 2px
 			&:hover
 				opacity 1
 

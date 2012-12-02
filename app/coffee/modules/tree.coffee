@@ -460,7 +460,7 @@ define [
 			@paper.add @model.get('strokes')
 
 			if @$el.is(':first-child')
-				@$el.addClass 'offset1'
+				@$el.addClass 'offset3'
 
 	class Tree.Views.Item extends Backbone.View
 		template: "tree/list_item"
