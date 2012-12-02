@@ -30,6 +30,8 @@ build:
 	@echo "${HR}\n"
 	r.js -o ${R_BUILD_FILE}
 	@echo "Require.JS Optimization...             ${CHECK} Done"
+	mv assets_live/js/libs/almond.js assets_live/js/libs/require.js
+	@echo "Rename almond.js to require.js...      ${CHECK} Done"
 	@echo "Successfully built at ${DATE}."
 	@echo "${HR}\n"
 	@echo "You're awesome."
