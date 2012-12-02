@@ -56,11 +56,7 @@ define [
 			@donations.reset @get('donationData')
 
 		loadTemplate: (callback) ->
-			console.log "in loadTemplate(), @templates is #{@templates}, templateId is #{@get('templateId')}"
-			console.log @templates
 			@templates.getOrFetch @get('templateId'), (templateModel) =>
-				console.log "got our template, it's:"
-				console.log templateModel
 				callback? templateModel
 
 		getTemplateStrokes: (callback) ->
@@ -240,8 +236,8 @@ define [
 				@model.save().done =>
 					@model.triggerGraphPublish()
 
-					# kill it out of local storage - forever
-					@model.destroy()
+					# # kill it out of local storage - forever
+					# @model.destroy()
 			else
 				view = new Tree.Partials.ShareNotLoggedIn
 					model: @model
@@ -272,11 +268,15 @@ define [
 
 		initialize: ->
 			@model.on 'sync', =>
+				@syncSuccess = yes
 				_showSuccessMessage.call @
 				@insertView new Tree.Views.ShareWidgets
 					model: @model
 					showPublishGraphActionNotice: yes
 				.render()
+
+		afterRender: ->
+			@_showSuccessMessage() if @syncSuccess?
 
 	class Tree.Partials.ShareNotLoggedIn extends Tree.Views.Save # inherit save event/handling
 		template: "tree/share/not_logged_in"
@@ -410,8 +410,6 @@ define [
 					if not treeModel.strokes? or not treeModel.strokes.length
 						treeModel.fetch
 							success: (model) =>
-								console.log "calling @insertView for #{model.id}, which has #{Object.keys(model.attributes).length} attributes"
-								console.log "there are #{@collection.length} models in the collection and this one's index is #{index}"
 								@insertView new @itemView
 									model: treeModel
 								.render()
@@ -490,9 +488,10 @@ define [
 			@model.getTemplateStrokes? (templateStrokes = []) =>
 				strokes = _.union(templateStrokes, @model.get('strokes') or [])
 				# TODO reuse paper
-				@paper = new Raphael $container[0], 256, 256
-				@paper.setViewBox 0, 0,
-					@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
+				if not @paper?
+					@paper = new Raphael $container[0], 256, 256
+					@paper.setViewBox 0, 0,
+						@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
 				@paper.clear()
 				@paper.add strokes
 

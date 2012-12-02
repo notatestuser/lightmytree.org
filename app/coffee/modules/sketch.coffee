@@ -218,7 +218,7 @@ define [
 		@Classes = [
 			"pencil-red"
 			"pencil-blue"
-			"pencil-cyan"
+			"pencil-white"
 			"pencil-green"
 			"pencil-darkgreen"
 			"pencil-yellow"
@@ -345,12 +345,8 @@ define [
 			@sketchpad.editing if newErasing then 'erase' else yes
 
 		_changeTemplateLoaded: (model, templateLoaded) =>
-			console.log "_changeTemplateLoaded(): templateLoaded is #{templateLoaded}"
 			if @sketchpad? and templateLoaded
-				console.log '_changeTemplateLoaded(): get template strokes'
 				@model.tree().getTemplateStrokes (tmplStrokes) => # also receives viewbox width + height as separate args
-					console.log '_changeTemplateLoaded(): got template strokes'
-
 					if not @paper?
 						# initialise the underlying template sheet
 						@paper = new Raphael @$el[0], @$el.width(), @$el.height()
