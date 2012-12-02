@@ -38,7 +38,6 @@ define [
 				_otherUsers: new User.Collection()
 				_recentCharities: new Charity.RecentCharitiesCollection()
 				_typeaheadCharities: new Charity.TypeaheadCollection()
-				_sketch: new Sketch.Model( tree: newTree )
 			_.extend @, models
 
 		index: ->
@@ -47,14 +46,32 @@ define [
 		sketch: ->
 			# augment the layout with the revealingly named collapseRow()
 			layout = app.useLayout 'sketch_page',
+				events:
+					"click .row-collapsible > h2": "_toggleRowCollapse"
+
 				collapseRowSection: (rowName, callback) ->
 					$("##{@id} .row-#{rowName}")
 						.addClass('collapsed')
 						.children('section')
-						.slideUp(800, callback)
+						.slideUp 800, ->
+							$(@)
+								.addClass('hide')
+								.css # reset it
+									height: ''
+									display: ''
+							callback()
 
 					# # this is crap but we know we'll be done in 500ms
 					# setTimeout callback, 500
+
+				_toggleRowCollapse: (ev) ->
+					$(ev.target).parent()
+						.toggleClass('collapsed')
+						.children('section')
+						.toggleClass('hide')
+
+			# we'll need a new Sketch.Model each time the user browses here
+			@_sketch = new Sketch.Model tree: @_newTree
 
 			layout.setViews
 				".sketchpad": new Sketch.Views.Workspace
@@ -84,6 +101,7 @@ define [
 			if @_newTree.get('templateId')
 				layout.insertView ".templates", new Sketch.Partials.TemplateAlreadySelected
 					model: @_sketch
+				.render()
 			else
 				@_templateTrees.fetch
 					success: =>

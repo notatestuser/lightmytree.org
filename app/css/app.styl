@@ -402,11 +402,19 @@ header
 		background radial-gradient(ellipse at center, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
 		background-prefixed-radial-gradient(center, ellipse cover, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
 		> div
-			z-index 40
+			z-index 1
 			height 100%
 			background transparent url('../img/paper-lines-2.png') no-repeat scroll center center
-			*
-				z-index 50
+			position relative
+			> *
+				z-index 10
+			.sketch-overlay
+				z-index 60
+				position absolute
+				top 0
+				left 0
+				> *
+					z-index 70
 		.tree-view
 			border 7px solid #468C40
 			border-radius 2px
@@ -454,6 +462,9 @@ header
 		background transparent url('../img/magical-pencil-shadow.png') no-repeat scroll
 		background-size 240px 20px
 		background-position -13px 448px
+
+		.tooltip
+			z-index 200 !important
 
 		.pencil-config
 			width 100%
@@ -654,7 +665,7 @@ header
 		> section
 			// transition(height .5s ease)
 			box-sizing(border-box)
-			overflow hidden
+			// overflow hidden
 		h2
 			cursor pointer
 			&:before

@@ -289,31 +289,44 @@ define [
 			@model.tree()
 				.on('change:templateId', @render, @)
 
+		beforeRender: ->
+			# if we don't have any child elements, add our 'overlay' container
+			$('<div class="sketch-overlay"></div>').appendTo(@$el) if @$el.is(':empty')
+
 		afterRender: ->
 			# # don't even try to do anything until we have our template
 			# unless not @model.get 'templateLoaded'
 			@$container = @$el
-			@model.tree().getTemplateStrokes (templateStrokes = []) =>
-				console.log "got #{templateStrokes.length} templateStrokes"
-				# TODO: empty container in beforeRender() and trigger a render() on resizeCanvas event
-				strokes = _.union(templateStrokes, @model.tree().get('strokes') or [])
-				if @sketchpad?
-					@sketchpad.clear()
-					@sketchpad.strokes strokes
-				else
-					@paper = new Raphael @$el[0], @$el.width(), @$el.height()
-					@sketchpad = Raphael.sketchpad @paper, strokes: strokes
-					@sketchpad.change =>
-						@model.tree().save
-							strokes: _.last padStrokes = @sketchpad.strokes(), padStrokes.length - @model.get('templateTreeStrokes')
-							viewBoxWidth: @$container.width()
-							viewBoxHeight: @$container.height()
-				pen = @sketchpad.pen()
-				pen.color @model.get('pencilColour')
-				pen.width @model.get('pencilWidth')
 
-				# bind resize handler here in lieu of watching the element itself
-				$(window).resize @resizeCanvas.bind(@)
+			# TODO: empty container in beforeRender() and trigger a render() on resizeCanvas event
+			# strokes = _.union(tmplStrokes, @model.tree().get('strokes') or [])
+			# @$el.empty() if @sketchpad?
+
+			# initialise the sketchpad and its paper
+			if @$('.sketch-overlay').is(':empty') and not @sketchpad?
+				@sketchpaper = new Raphael @$('.sketch-overlay')[0], @$el.width(), @$el.height()
+				@sketchpaper.setViewBox 0, 0, @$container.width(), @$container.height(), yes
+				@sketchpad = Raphael.sketchpad @sketchpaper,
+					editing: yes
+				@sketchpad.change =>
+					@model.tree().save
+						# strokes: _.last padStrokes = @sketchpad.strokes(), padStrokes.length - @model.get('templateTreeStrokes')
+						strokes: @sketchpad.strokes() # because we're no longer storing the template's strokes here
+						viewBoxWidth: @$container.width()
+						viewBoxHeight: @$container.height()
+				@sketchpad.editing yes
+
+			# add the DRAWING's strokes to the SKETCHPAD (and avoid polluting its internal state with crap)
+			@sketchpad.strokes @model.tree().get('strokes') or []
+
+			pen = @sketchpad.pen()
+			pen.color @model.get('pencilColour')
+			pen.width @model.get('pencilWidth')
+
+			@model.tree().getTemplateStrokes() if not @paper?
+
+			# bind resize handler here in lieu of watching the element itself
+			$(window).resize @resizeCanvas.bind(@)
 
 		resizeCanvas: ->
 			if @$container
@@ -332,18 +345,21 @@ define [
 			@sketchpad.editing if newErasing then 'erase' else yes
 
 		_changeTemplateLoaded: (model, templateLoaded) =>
-			console.log "_changeTemplate(): templateLoaded is #{templateLoaded}"
+			console.log "_changeTemplateLoaded(): templateLoaded is #{templateLoaded}"
 			if @sketchpad? and templateLoaded
-				console.log '_changeTemplate(): get template strokes'
-				@model.tree().getTemplateStrokes (newStrokes) =>
-					console.log '_changeTemplate(): got template strokes'
+				console.log '_changeTemplateLoaded(): get template strokes'
+				@model.tree().getTemplateStrokes (tmplStrokes) => # also receives viewbox width + height as separate args
+					console.log '_changeTemplateLoaded(): got template strokes'
 
-					# obtain the drawing's strokes
-					strokes = @model.tree().get 'strokes'
-
-					# place the new strokes
-					strokes = _.union newStrokes, strokes
-					@sketchpad.strokes strokes
+					if not @paper?
+						# initialise the underlying template sheet
+						@paper = new Raphael @$el[0], @$el.width(), @$el.height()
+						@paper.add tmplStrokes # add the TEMPLATE's strokes to the PAPER
+						@paper.setViewBox 0, 0, @$container.width(), @$container.height(), yes
+					else
+						# use the existing underlying template sheet
+						@paper.clear()
+						@paper.add tmplStrokes
 
 		_attemptUndo: =>
 			@sketchpad.undo() if @sketchpad and @sketchpad.undoable()
@@ -373,8 +389,11 @@ define [
 		beforeRender: ->
 			@$el.html('You have already selected a room. <a href="#sketch">Start from scratch</a>')
 
-		_resetSketchState: ->
+		_resetSketchState: (ev) ->
+			ev.preventDefault()
 			@model.resetEverything()
+			$.jStorage.flush() # just to be sure...
 			window.location.reload() # whatever
+			false
 
 	Sketch

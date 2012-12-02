@@ -65,11 +65,10 @@ define [
 
 		getTemplateStrokes: (callback) ->
 			callback([]) if not @templates?
-			@templates.getStrokesForId @get('templateId'), (strokes) =>
+			@templates.getStrokesForId @get('templateId'), (strokes, viewBoxWidth, viewBoxHeight) =>
 				# caught by the Sketch.Model, which likes to know how many strokes are in our template
-				@trigger 'getTemplateStrokes:done', strokes
-
-				callback? strokes
+				@trigger 'getTemplateStrokes:done', strokes, viewBoxWidth, viewBoxHeight
+				callback? strokes, viewBoxWidth, viewBoxHeight
 
 		triggerGraphPublish: ->
 			# there's no point doing this if we haven't been asked to publish an action
@@ -190,7 +189,8 @@ define [
 
 		getStrokesForId: (id, callback) ->
 			return callback([]) if not id? or not id.length
-			@getOrFetch id, (model) -> callback(model.get('strokes'))
+			@getOrFetch id, (model) ->
+				callback(model.get('strokes'), model.get('viewBoxWidth'), model.get('viewBoxHeight'))
 
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"
@@ -237,7 +237,11 @@ define [
 				view = new Tree.Partials.ShareLoggedIn
 					model: @model
 				@model.remotePersist = yes
-				@model.save().done => @model.triggerGraphPublish()
+				@model.save().done =>
+					@model.triggerGraphPublish()
+
+					# kill it out of local storage - forever
+					@model.destroy()
 			else
 				view = new Tree.Partials.ShareNotLoggedIn
 					model: @model

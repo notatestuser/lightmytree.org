@@ -6,10 +6,9 @@
 # Application.
 define [
 	"jquery", "lodash", "backbone"
-	# "plugins/jquery.xdomainrequest"
 	"plugins/jquery.json-2.3.min"
-	"plugins/jquery.jstorage"
 	"plugins/backbone.layoutmanager"
+	"plugins/jquery.jstorage"
 ],
 
 ($, _, Backbone) ->
