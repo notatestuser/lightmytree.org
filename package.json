@@ -1,6 +1,6 @@
 {
   "name": "lightmytree",
-  "version": "0.5.1",
+  "version": "0.5.3",
   "private": true,
   "dependencies": {
     "express": "2.5.x",
