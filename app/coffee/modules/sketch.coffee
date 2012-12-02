@@ -36,6 +36,9 @@ define [
 			# when this has finished, we'll end up in the event handler below
 			@tree().getTemplateStrokes()
 
+		resetEverything: ->
+			@tree().destroy()
+
 		_handleGotTemplateStrokes: (templateStrokes) ->
 			@set
 				templateTreeStrokes: templateStrokes.length
@@ -252,14 +255,14 @@ define [
 
 			# utilise the jquery.inview plugin to ensure we only animate when we're visible in the viewport
 			@$el.bind 'inview', (event, isInView, visiblePartX, visiblePartY) =>
-				if not @peeked? and isInView and visiblePartY isnt 'top' and visiblePartY isnt 'bottom'
+				if not @peeked? and isInView and visiblePartY is 'top'
 					# prevent multiple firings
 					@peeked = yes
 					@$el.unbind 'inview'
 					# animate pencil slide out in a little bit
 					setTimeout =>
 						@$el.animate top: wouldBeOffset, 1500
-					, 100
+					, 200
 
 
 		_setThisColour: ->
@@ -364,8 +367,14 @@ define [
 	class Sketch.Partials.TemplateAlreadySelected extends Backbone.View
 		tagName: "p"
 
-		beforeRender: ->
-			@$el.html('You have already selected a room. <a href="#sketch">Start again</a>')
+		events:
+			"click a": "_resetSketchState"
 
+		beforeRender: ->
+			@$el.html('You have already selected a room. <a href="#sketch">Start from scratch</a>')
+
+		_resetSketchState: ->
+			@model.resetEverything()
+			window.location.reload() # whatever
 
 	Sketch
