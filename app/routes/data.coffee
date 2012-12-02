@@ -72,6 +72,11 @@ module.exports = (app, config) ->
 	app.get "/json/recent_charities", (req, res) ->
 		res.json _.first(recentCharities, 4)
 
+	# /json/tree_templates
+	app.get "/json/tree_templates", (req, res) ->
+		treeDb.findByView 'byIsTemplate', wrapError res, (results) ->
+			res.json (_id: result._id, strokesCount: result.strokes.length for result in results)
+
 	# /json/my_tree
 	myTreeFn = ensureAuth (req, res, userId) ->
 		data = req.body
@@ -124,9 +129,9 @@ module.exports = (app, config) ->
 			res.send "Please authenticate or supply a user ID", 401
 
 	# /json/trees/:id
-	app.get /^\/json\/trees\/?([a-zA-Z0-9_.\- %]+)?$/, (req, res) ->
-		if req.params[0]
-			treeDb.findById req.params[0], (err, doc) ->
+	app.get /^\/json\/tree(s|\_templates)\/?([a-zA-Z0-9_.\- %]+)?$/, (req, res) ->
+		if req.params[1]
+			treeDb.findById req.params[1], (err, doc) ->
 				if err
 					sendDatabaseError(err, res)
 				else

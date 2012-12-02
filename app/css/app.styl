@@ -337,7 +337,7 @@ header
 					width 26.6%
 					height 110px
 					padding 22px 0 0 10.5%
-					box-sizing border-box
+					box-sizing(border-box)
 					background transparent url('../img/ribbon-blocks.png') no-repeat scroll
 					border-radius 50px
 					box-shadow 0 0 5px rgba(255, 255, 255, 0.1)
@@ -402,11 +402,19 @@ header
 		background radial-gradient(ellipse at center, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
 		background-prefixed-radial-gradient(center, ellipse cover, #ffffff 0%, #ffffff 54%, #faf9e4 100%)
 		> div
-			z-index 40
+			z-index 1
 			height 100%
 			background transparent url('../img/paper-lines-2.png') no-repeat scroll center center
-			*
-				z-index 50
+			position relative
+			> *
+				z-index 10
+			.sketch-overlay
+				z-index 60
+				position absolute
+				top 0
+				left 0
+				> *
+					z-index 70
 		.tree-view
 			border 7px solid #468C40
 			border-radius 2px
@@ -454,6 +462,9 @@ header
 		background transparent url('../img/magical-pencil-shadow.png') no-repeat scroll
 		background-size 240px 20px
 		background-position -13px 448px
+
+		.tooltip
+			z-index 200 !important
 
 		.pencil-config
 			width 100%
@@ -581,8 +592,8 @@ header
 			coloured-pencil(#fccf1d)
 		.pencil-purple
 			coloured-pencil(#f111a3)
-		.pencil-pink
-			coloured-pencil(#e90ae9)
+		.pencil-brown
+			coloured-pencil(#aa4400)
 		.pencil-orange
 			coloured-pencil(#f8a300)
 		.pencil-black
@@ -649,9 +660,60 @@ header
 					border-top-left-radius 5px
 					border-top-right-radius 5px
 
+	.row-collapsible
+		box-sizing(border-box)
+		> section
+			// transition(height .5s ease)
+			box-sizing(border-box)
+			// overflow hidden
+		h2
+			cursor pointer
+			&:before
+				content "+"
+				font-size 90%
+				position relative
+				bottom 3px
+				right 10px
+				font-weight normal
+				font-style normal
+				color #444
+				cursor pointer
+		&.collapsed
+			// > section
+			// 	height 0
+			h2
+				&:before
+					content "—"
+
+
+	.row-templates,
+	.row-sketchpad
+		h2
+			background-image url('../img/liney-header-decor.png'), url('../img/liney-header-decor.png')
+			background-repeat no-repeat, no-repeat
+			font-size 2em
+
+	.row-templates
+		margin-bottom 40px
+		h2
+			background-position 93% 3%, 4% 29%
+		p
+			text-align center
+		.tree-list-view
+			clearfix()
+		.thumbnail
+			height 220px
+			cursor pointer
+			opacity .8
+			background #fff url('../img/paper-lines-2.png') no-repeat scroll center center
+			background-size contain
+			&:hover
+				opacity 1
+
 	.row-sketchpad
 		margin-bottom -50px
 		h2
+			background-position 89% 90%, 11% 67%
 			margin-bottom 10px
 		p
 			text-align center
@@ -788,6 +850,7 @@ header
 	.row-post-intro,
 	.row-picker,
 	.row-pre-my-trees,
+	.row-templates,
 	.row-sketchpad
 		h2
 			text-align center

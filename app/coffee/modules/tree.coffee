@@ -21,6 +21,8 @@ define [
 	class Tree.Model extends Backbone.Model
 		@LocalStorageKey = "Tree.Model"
 
+		urlRoot: "/json/trees"
+
 		defaults:
 			user: null
 			charityIds: []
@@ -28,16 +30,18 @@ define [
 			strokes: []
 			viewBoxWidth: 430
 			viewBoxHeight: 470
+			templateId: ''
 			publishGraphAction: no
 
-		initialize: ->
+		initialize: (options = {}) ->
 			@charities = new Charity.Collection()
-			@donations = new Donation.Collection null,
-				charities: @charities
+			@donations = new Donation.Collection null, charities: @charities
+			@templates = options.templateCollection or @collection?.templateCollection or null
 
 		fetch: (options = {}) ->
 			oldCallback = options.success
 			options.success = (model, response, options) =>
+				# @loadTemplate() if @templates?
 				@loadCharities()
 				@loadDonations()
 				oldCallback? model, response, options
@@ -51,6 +55,21 @@ define [
 		loadDonations: ->
 			@donations.reset @get('donationData')
 
+		loadTemplate: (callback) ->
+			console.log "in loadTemplate(), @templates is #{@templates}, templateId is #{@get('templateId')}"
+			console.log @templates
+			@templates.getOrFetch @get('templateId'), (templateModel) =>
+				console.log "got our template, it's:"
+				console.log templateModel
+				callback? templateModel
+
+		getTemplateStrokes: (callback) ->
+			callback([]) if not @templates?
+			@templates.getStrokesForId @get('templateId'), (strokes, viewBoxWidth, viewBoxHeight) =>
+				# caught by the Sketch.Model, which likes to know how many strokes are in our template
+				@trigger 'getTemplateStrokes:done', strokes, viewBoxWidth, viewBoxHeight
+				callback? strokes, viewBoxWidth, viewBoxHeight
+
 		triggerGraphPublish: ->
 			# there's no point doing this if we haven't been asked to publish an action
 			if @get('publishGraphAction') and @id
@@ -61,14 +80,17 @@ define [
 
 		url: -> "/json/my_tree"
 
-		initialize: ->
+		initialize: (options) ->
 			@remotePersist = false
-			super()
+			super options
 			@on 'change:strokes change:charityIds', (model) ->
 				model.save()
 
 		isNew: ->
 			@get('strokes').length and super()
+
+		toJSON: ->
+			_.omit @attributes, 'templateCollection'
 
 		sync: (method, model, options, first = true) ->
 			defaultSyncFn = ->
@@ -95,8 +117,8 @@ define [
 					$.jStorage.deleteKey Tree.Model.LocalStorageKey
 
 		validate: (attrs = @attributes) ->
-			if not attrs.strokes or attrs.strokes.length < 1
-				return "You must attempt to draw something!"
+			# if not attrs.strokes or attrs.strokes.length < 1
+			# 	return "You must attempt to draw something!"
 			# else if not attrs.charityIds or attrs.charityIds.length < 1
 			# 	"You must select at least one charity!"
 
@@ -126,22 +148,49 @@ define [
 			, silent: yes
 
 	class Tree.Collection extends Backbone.Collection
-		url: "/json/trees"
+		model: Tree.Model
+		url:   "/json/trees"
 		cache: yes
 
-		# initialize: (models, options) ->
-		# 	@userId = options.userId if options and options.userId?
-		# 	@url += @userId if @userId
-		# 	super models, options
-		# 	@fetch()
+		initialize: (models, options = {}) ->
+			@templateCollection = options.templateCollection
 
 		parse: (docs) ->
 			_.extend(doc, id: doc._id) for doc in docs
 			# example handling of an error response from the server
 			#if obj.data.message isnt 'Error' then obj.data else @models
 
+	class Tree.TemplateCollection extends Tree.Collection
+		url: "/json/tree_templates"
+
+		parse: (docs) ->
+			# call super() so that it 'maps' over the id field of our models
+			result = docs = super docs
+
+			# find the unique set and use it if it differs;
+			# merge the lists of ids together to form a mega list of ids
+			uniqModels = _.uniq _.union(docs, @models), no, (obj) -> obj.id
+
+			if uniqModels.length isnt @models.length
+				result = uniqModels
+
+			result
+
 		comparator: (tree) ->
-			-new Date(tree.get 'updated_at')
+			tree.get 'strokesCount'
+
+		getOrFetch: (id, callback) ->
+			return callback(model) if model = @get id
+			model = new Tree.Model id: id
+			model.fetch
+				success: (model) =>
+					@add model
+					callback(model)
+
+		getStrokesForId: (id, callback) ->
+			return callback([]) if not id? or not id.length
+			@getOrFetch id, (model) ->
+				callback(model.get('strokes'), model.get('viewBoxWidth'), model.get('viewBoxHeight'))
 
 	class Tree.Views.Save extends Backbone.View
 		template: "tree/save"
@@ -188,7 +237,11 @@ define [
 				view = new Tree.Partials.ShareLoggedIn
 					model: @model
 				@model.remotePersist = yes
-				@model.save().done => @model.triggerGraphPublish()
+				@model.save().done =>
+					@model.triggerGraphPublish()
+
+					# kill it out of local storage - forever
+					@model.destroy()
 			else
 				view = new Tree.Partials.ShareNotLoggedIn
 					model: @model
@@ -288,15 +341,15 @@ define [
 		afterRender: ->
 			self = @
 			$container = @$el # this should be empty due to actions taken by beforeRender()
-			if @paper?
-				@paper.clear()
-				@paper.setViewBox 0, 0,
-					self.model.get('viewBoxWidth'), self.model.get('viewBoxHeight'), true
-				@paper.add self.model.get('strokes')
-			else
-				@paper = new Raphael $container[0], $container.width(), $container.height()
+
+			@model.getTemplateStrokes? (templateStrokes = []) =>
+				strokes = _.union(templateStrokes, @model.get('strokes') or [])
+				if @paper?
+					@paper.clear()
+				else
+					@paper = new Raphael $container[0], $container.width(), $container.height()
 				@paper.setViewBox 0, 0, @model.get('viewBoxWidth'), @model.get('viewBoxHeight'), true
-				@paper.add @model.get('strokes')
+				@paper.add strokes
 
 		handleClick: =>
 			if @myDonationModel.get 'giftPlacing'
@@ -318,7 +371,7 @@ define [
 				offsetX = ev.clientX - offset.left
 				offsetY = ev.pageY - offset.top
 
-				#  positional difference checking
+				# positional difference checking
 				# if @mouseOffsetX? and @mouseOffsetY?
 				# 	diffX = Math.abs(offsetX - @mouseOffsetX)
 				# 	diffY = Math.abs(offsetY - @mouseOffsetY)
@@ -340,28 +393,76 @@ define [
 		tagName: "ul"
 		className: "tree-list-view row-fluid"
 
+		events:
+			"click .thumbnail": "_handleClickItem"
+
+		initialize: (options = {}) ->
+			@itemView = options.itemView or Tree.Views.Item
+			@sketchModel = options.sketchModel if options.sketchModel?
+
 		beforeRender: ->
-			@collection.on 'reset', =>
-				@render()
+			@collection.on 'reset', => @render()
 
 			# TODO: dynamically create rows to prevent padding issues?
 			if @collection and @collection.length
-				@collection.forEach (treeModel) ->
-					treeModel.fetch
-						success: (model) =>
-							@insertView new Tree.Views.Item
-								model: treeModel
-							.render()
+				# @collection.sort()
+				@collection.forEach (treeModel, index) ->
+					if not treeModel.strokes? or not treeModel.strokes.length
+						treeModel.fetch
+							success: (model) =>
+								console.log "calling @insertView for #{model.id}, which has #{Object.keys(model.attributes).length} attributes"
+								console.log "there are #{@collection.length} models in the collection and this one's index is #{index}"
+								@insertView new @itemView
+									model: treeModel
+								.render()
 				, @
 			else
 				# TODO: fix this - it's rendering when it's not supposed to, messing up the layout
 				# @insertView(new Tree.Partials.NothingToShow()).render()
+
+		_handleClickItem: (ev) ->
+			# only do something if we have a sketchModel (which means we're dealing with a list of possible templates)
+			if @sketchModel?
+				# get the selected tree's ID
+				treeId = $(ev.target).closest('.thumbnail').data('id')
+
+				# use the Sketch.Model as a proxy to set our template
+				@sketchModel.changeTemplate treeId
+
+				# collapse the current row
+				app.layout.options.collapseRowSection 'templates', ->
+					# scroll to the row-sketchpad
+					$('body').animate
+						scrollTop: $('.row-sketchpad').offset().top
+					, 500
 
 	class Tree.Partials.NothingToShow extends Backbone.View
 		tagName: "h4"
 
 		beforeRender: ->
 			@$el.html "There's nothing here. <a href='#sketch'>Draw something</a>"
+
+	class Tree.Views.MiniItem extends Backbone.View
+		# template: "tree/mini_list_item"
+		tagName: "li"
+		className: "micro-tree-view span3 thumbnail"
+
+		beforeRender: ->
+			@$el.data 'id', @model.id if @model?
+
+		afterRender: ->
+			# $container = @$('.canvas')
+			$container = @$el
+			if @paper?
+				@paper.clear()
+			else
+				@paper = new Raphael $container[0], $container.width(), $container.height()
+			@paper.setViewBox 0, 0,
+				@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
+			@paper.add @model.get('strokes')
+
+			if @$el.is(':first-child')
+				@$el.addClass 'offset1'
 
 	class Tree.Views.Item extends Backbone.View
 		template: "tree/list_item"
@@ -386,10 +487,14 @@ define [
 		afterRender: ->
 			@$('.buttons').addClass 'hide' if not @model.id
 			$container = @$('.canvas')
-			@paper = new Raphael $container[0], 256, 256
-			@paper.setViewBox 0, 0,
-				@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
-			@paper.add @model.get('strokes')
+			@model.getTemplateStrokes? (templateStrokes = []) =>
+				strokes = _.union(templateStrokes, @model.get('strokes') or [])
+				# TODO reuse paper
+				@paper = new Raphael $container[0], 256, 256
+				@paper.setViewBox 0, 0,
+					@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
+				@paper.clear()
+				@paper.add strokes
 
 		_goToTreePage: ->
 			app.go @model.id

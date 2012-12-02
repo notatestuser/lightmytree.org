@@ -12,6 +12,10 @@
 		"byUserId": {
 			"map":
 				"function (doc) { if (doc.user && doc.user.id) { emit(doc.user.id, doc) } }"
+		},
+		"byIsTemplate": {
+			"map":
+				"function (doc) { if (doc._id && doc.isTemplate) { emit(doc._id, doc) } }"
 		}
 	}
 }

@@ -65,4 +65,5 @@ require.config
 		"plugins/jquery.json-2.3.min":		["jquery"] # for jstorage
 		"plugins/jquery.jstorage":				["jquery"]
 		"plugins/jquery.sharrre-1.3.4.min":	["jquery"]
+		"plugins/jquery.inview":				["jquery"]
 

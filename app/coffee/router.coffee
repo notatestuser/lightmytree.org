@@ -22,24 +22,58 @@ define [
 
 		initialize: ->
 			models =
-				_user: me = (new User.Model()).fetch() # will fetch authed user from server
-				_newTree: newTree = new Tree.MyModel()
-				_myTrees: me.trees # will return our stuff if authed
-				_otherTrees: new Tree.Collection()
+				_templateTrees: _templates = new Tree.TemplateCollection()
+				_myTrees: _myTrees = new Tree.Collection([],
+					templateCollection: _templates
+				)
+				# fetch the currently authed user from server
+				_user: _me = new User.Model({},
+					myTreesCollection: _myTrees
+				).fetch()
+				_newTree: newTree = new Tree.MyModel
+					templateCollection: _templates
+				_otherTrees: new Tree.Collection([],
+					templateCollection: _templates
+				)
 				_otherUsers: new User.Collection()
 				_recentCharities: new Charity.RecentCharitiesCollection()
 				_typeaheadCharities: new Charity.TypeaheadCollection()
-				_sketch: new Sketch.Model( tree: newTree )
 			_.extend @, models
 
 		index: ->
 			app.useLayout('home_page').setViews({}).render()
-				#".create_tree": new Tree.Views.Sketch @
-				# ".existing_tree": new Tree.Views.List @
-			# .render()
 
 		sketch: ->
-			app.useLayout('sketch_page').setViews
+			# augment the layout with the revealingly named collapseRow()
+			layout = app.useLayout 'sketch_page',
+				events:
+					"click .row-collapsible > h2": "_toggleRowCollapse"
+
+				collapseRowSection: (rowName, callback) ->
+					$("##{@id} .row-#{rowName}")
+						.addClass('collapsed')
+						.children('section')
+						.slideUp 800, ->
+							$(@)
+								.addClass('hide')
+								.css # reset it
+									height: ''
+									display: ''
+							callback()
+
+					# # this is crap but we know we'll be done in 500ms
+					# setTimeout callback, 500
+
+				_toggleRowCollapse: (ev) ->
+					$(ev.target).parent()
+						.toggleClass('collapsed')
+						.children('section')
+						.toggleClass('hide')
+
+			# we'll need a new Sketch.Model each time the user browses here
+			@_sketch = new Sketch.Model tree: @_newTree
+
+			layout.setViews
 				".sketchpad": new Sketch.Views.Workspace
 					model: @_sketch
 					views:
@@ -61,13 +95,29 @@ define [
 				".save": new Tree.Views.Save
 					model: @_newTree
 				".authenticate_modal": new Modal.Views.Authenticate
-			.render()
+
+			layout.render()
+
+			if @_newTree.get('templateId')
+				layout.insertView ".templates", new Sketch.Partials.TemplateAlreadySelected
+					model: @_sketch
+				.render()
+			else
+				@_templateTrees.fetch
+					success: =>
+						layout.insertView ".templates", new Tree.Views.List
+							itemView: Tree.Views.MiniItem
+							sketchModel: @_sketch
+							collection: @_templateTrees
+						.render()
 
 		tree: (treeId, param) ->
 			# grab the cached tree or fetch one
 			treeModel = @_otherTrees.get treeId
 			unless treeModel
-				@_otherTrees.add treeModel = new Tree.Model(id: treeId)
+				@_otherTrees.add treeModel = new Tree.Model
+					id: treeId
+					templateCollection: @_templateTrees
 				treeModel.fetch
 					error: => @show404()
 

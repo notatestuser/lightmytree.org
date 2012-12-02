@@ -3,6 +3,7 @@ define [
 	"lodash"
 	"backbone"
 	"bootstrap/bootstrap-tooltip"
+	"plugins/jquery.inview"
 ],
 
 (app, _, Backbone) ->
@@ -15,14 +16,33 @@ define [
 			pencilColour: '#000000'
 			pencilOpacity: 1
 			erasing: no
+			templateTreeStrokes: 0
 
 		initialize: (options) ->
 			if options.tree
+				@set
+					tree: options.tree
+					templateLoaded: no
+				options.tree.on 'getTemplateStrokes:done', @_handleGotTemplateStrokes, @
 				options.tree.fetch()
-				@set('tree', options.tree)
 
-		tree: ->
-			@get('tree')
+		tree: -> @get('tree')
+
+		changeTemplate: (treeId) ->
+			# when this happens, we'll want to set the template's ID in our Tree
+			@set templateLoaded: no
+			@tree().set 'templateId', treeId
+
+			# when this has finished, we'll end up in the event handler below
+			@tree().getTemplateStrokes()
+
+		resetEverything: ->
+			@tree().destroy()
+
+		_handleGotTemplateStrokes: (templateStrokes) ->
+			@set
+				templateTreeStrokes: templateStrokes.length
+				templateLoaded: yes
 
 	class Sketch.Views.Workspace extends Backbone.View
 		template: "sketch/workspace"
@@ -203,7 +223,7 @@ define [
 			"pencil-darkgreen"
 			"pencil-yellow"
 			"pencil-purple"
-			"pencil-pink"
+			"pencil-brown"
 			"pencil-orange"
 			"pencil-black"
 		]
@@ -233,10 +253,17 @@ define [
 				zIndex: 100 - (@position * 10)
 			@$el.css @pencilFloat, (@position * (@$el.outerWidth() - 1))
 
-			# animate slide out in a little bit
-			setTimeout =>
-				@$el.animate top: wouldBeOffset, 1500
-			, 200
+			# utilise the jquery.inview plugin to ensure we only animate when we're visible in the viewport
+			@$el.bind 'inview', (event, isInView, visiblePartX, visiblePartY) =>
+				if not @peeked? and isInView and visiblePartY is 'top'
+					# prevent multiple firings
+					@peeked = yes
+					@$el.unbind 'inview'
+					# animate pencil slide out in a little bit
+					setTimeout =>
+						@$el.animate top: wouldBeOffset, 1500
+					, 200
+
 
 		_setThisColour: ->
 			if @ourColour
@@ -255,22 +282,48 @@ define [
 				.on('change:pencilWidth', @_changePencilWidth)
 				.on('change:pencilOpacity', @_changePencilOpacity)
 				.on('change:erasing', @_changeErasing)
+				# .on('change:templateTreeModel', @_changeTemplate)
+				.on('change:templateLoaded', @_changeTemplateLoaded, @)
 				.on('undo', @_attemptUndo)
 				.on('redo', @_attemptRedo)
+			@model.tree()
+				.on('change:templateId', @render, @)
+
+		beforeRender: ->
+			# if we don't have any child elements, add our 'overlay' container
+			$('<div class="sketch-overlay"></div>').appendTo(@$el) if @$el.is(':empty')
 
 		afterRender: ->
+			# # don't even try to do anything until we have our template
+			# unless not @model.get 'templateLoaded'
 			@$container = @$el
+
 			# TODO: empty container in beforeRender() and trigger a render() on resizeCanvas event
-			@paper = new Raphael @$el[0], @$el.width(), @$el.height()
-			@sketchpad = Raphael.sketchpad @paper, strokes: @model.tree().get('strokes')
-			@sketchpad.change =>
-				@model.tree().save
-					strokes: strokes = @sketchpad.strokes()
-					viewBoxWidth: @$container.width()
-					viewBoxHeight: @$container.height()
+			# strokes = _.union(tmplStrokes, @model.tree().get('strokes') or [])
+			# @$el.empty() if @sketchpad?
+
+			# initialise the sketchpad and its paper
+			if @$('.sketch-overlay').is(':empty') and not @sketchpad?
+				@sketchpaper = new Raphael @$('.sketch-overlay')[0], @$el.width(), @$el.height()
+				@sketchpaper.setViewBox 0, 0, @$container.width(), @$container.height(), yes
+				@sketchpad = Raphael.sketchpad @sketchpaper,
+					editing: yes
+				@sketchpad.change =>
+					@model.tree().save
+						# strokes: _.last padStrokes = @sketchpad.strokes(), padStrokes.length - @model.get('templateTreeStrokes')
+						strokes: @sketchpad.strokes() # because we're no longer storing the template's strokes here
+						viewBoxWidth: @$container.width()
+						viewBoxHeight: @$container.height()
+				@sketchpad.editing yes
+
+			# add the DRAWING's strokes to the SKETCHPAD (and avoid polluting its internal state with crap)
+			@sketchpad.strokes @model.tree().get('strokes') or []
+
 			pen = @sketchpad.pen()
 			pen.color @model.get('pencilColour')
 			pen.width @model.get('pencilWidth')
+
+			@model.tree().getTemplateStrokes() if not @paper?
 
 			# bind resize handler here in lieu of watching the element itself
 			$(window).resize @resizeCanvas.bind(@)
@@ -291,10 +344,56 @@ define [
 		_changeErasing: (model, newErasing) =>
 			@sketchpad.editing if newErasing then 'erase' else yes
 
+		_changeTemplateLoaded: (model, templateLoaded) =>
+			console.log "_changeTemplateLoaded(): templateLoaded is #{templateLoaded}"
+			if @sketchpad? and templateLoaded
+				console.log '_changeTemplateLoaded(): get template strokes'
+				@model.tree().getTemplateStrokes (tmplStrokes) => # also receives viewbox width + height as separate args
+					console.log '_changeTemplateLoaded(): got template strokes'
+
+					if not @paper?
+						# initialise the underlying template sheet
+						@paper = new Raphael @$el[0], @$el.width(), @$el.height()
+						@paper.add tmplStrokes # add the TEMPLATE's strokes to the PAPER
+						@paper.setViewBox 0, 0, @$container.width(), @$container.height(), yes
+					else
+						# use the existing underlying template sheet
+						@paper.clear()
+						@paper.add tmplStrokes
+
 		_attemptUndo: =>
 			@sketchpad.undo() if @sketchpad and @sketchpad.undoable()
 
 		_attemptRedo: =>
 			@sketchpad.redo() if @sketchpad and @sketchpad.redoable()
+
+	class Sketch.Views.PageWrapper extends Backbone.View
+		className: "sketch-page-wrapper"
+
+		events:
+			"click section.collapsible h2": "_collapseOrExpandSection"
+
+		# we override default render() functionality to effectively do nothing instead
+		render: (template, context) ->
+			@$el.html()
+
+		_collapseOrExpandSection: (ev) ->
+			$(ev.target).closest('.collapsible').children('section').fadeOut()
+
+	class Sketch.Partials.TemplateAlreadySelected extends Backbone.View
+		tagName: "p"
+
+		events:
+			"click a": "_resetSketchState"
+
+		beforeRender: ->
+			@$el.html('You have already selected a room. <a href="#sketch">Start from scratch</a>')
+
+		_resetSketchState: (ev) ->
+			ev.preventDefault()
+			@model.resetEverything()
+			$.jStorage.flush() # just to be sure...
+			window.location.reload() # whatever
+			false
 
 	Sketch
