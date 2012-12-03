@@ -81,6 +81,10 @@ define [
 			super options
 			@on 'change:strokes change:charityIds', (model) ->
 				model.save()
+			@on 'change:id', (model) ->
+				if model.id? and model.id.length > 0
+					# remove this tree from local storage as it's now available on the server
+					$.jStorage.deleteKey Tree.Model.LocalStorageKey
 
 		isNew: ->
 			@get('strokes').length and super()
@@ -488,10 +492,10 @@ define [
 			@model.getTemplateStrokes? (templateStrokes = []) =>
 				strokes = _.union(templateStrokes, @model.get('strokes') or [])
 				# TODO reuse paper
-				if not @paper?
-					@paper = new Raphael $container[0], 256, 256
-					@paper.setViewBox 0, 0,
-						@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
+				# if @$el.is ':empty'
+				@paper = new Raphael $container[0], 256, 256
+				@paper.setViewBox 0, 0,
+					@model.get('viewBoxWidth') or 0, @model.get('viewBoxHeight') or 0, true
 				@paper.clear()
 				@paper.add strokes
 
