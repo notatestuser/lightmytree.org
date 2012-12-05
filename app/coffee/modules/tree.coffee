@@ -588,7 +588,7 @@ define [
 
 			$button = @$('.btn-publish')
 				.tooltip
-					title: 'Only if you logged in with Facebook'
+					title: 'Available if you logged in with Facebook'
 					placement: 'bottom'
 
 			# render the button's 'loading' state if we've already set the 'publish' attribute
