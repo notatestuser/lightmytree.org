@@ -50,7 +50,7 @@ module.exports = (app, config) ->
 				else
 					imgFilename = "#{width}.#{fileExt}"
 
-					if treeDoc._attachments?[imgFilename]? and treeDoc._attachments[imgFilename].length?
+					if treeDoc._attachments?[imgFilename] and treeDoc._attachments[imgFilename].length
 						# the file already exists in the database - just stream it out!
 						res.contentType "image/#{fileExt}"
 						stream = treeDb.db.getAttachment treeDoc._id, imgFilename
