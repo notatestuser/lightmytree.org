@@ -109,6 +109,15 @@ coloured-pencil($colour)
 			background-color $colour !important
 
 
+// Animation keyframes
+
+@keyframes greenFlash
+	0%
+		background-color #F0FFDD
+	100%
+		background-color white
+
+
 // Page styles
 
 html
@@ -1055,11 +1064,17 @@ header
 		.follow
 			z-index 100
 			padding 15px 0
-			background #FEFEFB
+			background-color #FEFEFB
+			box-shadow -3px -1px 3px #ccc
+			-webkit-transition background-color 1s linear
+			transition background-color 1s linear
 			&:before
 				content "^"
 				margin auto
 				font-weight bold
+			&.flash-fade
+				animation greenFlash 1s linear
+				-webkit-animation greenFlash 1s linear
 			h2
 				clearfix()
 			.gifts

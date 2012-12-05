@@ -121,6 +121,15 @@ define [
 					proceedBtnDisabled = no
 			$proceedBtn.prop 'disabled', proceedBtnDisabled
 
+			# flash the .follow's background color
+			$follow = @$('.follow')
+				.removeClass('flash-fade')
+
+			# this seems to be the easiest way to restart the animation! hmph...
+			setTimeout (->
+				$follow.addClass('flash-fade')
+			), 50
+
 	class Donation.Views.Gift extends Backbone.View
 		className: 'decoration'
 
