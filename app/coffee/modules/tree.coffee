@@ -8,7 +8,8 @@ define [
 	"modules/modal"
 	# "bootstrap/bootstrap-dropdown"
 	"bootstrap/bootstrap-popover"
-	# "bootstrap/bootstrap-button"
+	"bootstrap/bootstrap-button"
+	"bootstrap/bootstrap-tooltip"
 
 	"plugins/raphael.sketchpad"
 	"plugins/jquery.sharrre-1.3.4.min"
@@ -66,10 +67,11 @@ define [
 				@trigger 'getTemplateStrokes:done', strokes, viewBoxWidth, viewBoxHeight
 				callback? strokes, viewBoxWidth, viewBoxHeight
 
-		triggerGraphPublish: ->
+		triggerGraphPublish: (force = no) ->
 			# there's no point doing this if we haven't been asked to publish an action
-			if @get('publishGraphAction') and @id
-				$.get "/#{@id}"
+			if (@get('publishGraphAction') or force) and @id
+				$.get "/#{@id}?publishIfAuthed=true", =>
+					@fetch()
 
 	class Tree.MyModel extends Tree.Model
 		@MaxCharities: 4
@@ -507,6 +509,7 @@ define [
 
 		events:
 			"click a": "_nullifyHyperlink"
+			"click .btn-publish": "_setWallPublish"
 
 		_addContainer = ($container, networkName) ->
 			$("<div class='#{networkName}'></div>").appendTo $container
@@ -579,10 +582,25 @@ define [
 				'Your drawing will be posted to your Facebook wall.</p>'
 			$(notice).appendTo $container
 
+		_addPostToWallActionButton = ($container) ->
+			html = '<p class="evenpad"><button class="btn btn-primary btn-publish input-block-level" data-loading-text="Published to your wall">Publish to your Facebook wall</button></p>'
+			$(html).appendTo $container
+
+			$button = @$('.btn-publish')
+				.tooltip
+					title: 'Only if you logged in with Facebook'
+					placement: 'bottom'
+
+			# render the button's 'loading' state if we've already set the 'publish' attribute
+			if @model.get 'publishGraphAction'
+				$button
+					.button('toggle')
+					.button('loading')
+
 		initialize: (options = {}) ->
 			@_debouncedRenderShareButtons = _.debounce _renderShareButtons.bind(@), 300, no
 			@showPublishGraphActionNotice = options.showPublishGraphActionNotice or no
-			# @model.on 'change:id change:_id', @render, @
+			@model.on 'change:publishGraphAction', @render, @
 
 		beforeRender: ->
 			@$el.empty()
@@ -591,6 +609,8 @@ define [
 			_addContainer @$el, 'googlePlus'
 			if @showPublishGraphActionNotice and @model.get 'publishGraphAction'
 				_addPostedToWallNotification @$el
+			else
+				_addPostToWallActionButton.call @, @$el
 
 		afterRender: ->
 			@_debouncedRenderShareButtons()
@@ -598,5 +618,12 @@ define [
 		_nullifyHyperlink: (ev) ->
 			ev.preventDefault()
 			false
+
+		_setWallPublish: (ev) ->
+			if not @model.get 'publishGraphAction'
+				@$('.btn-publish')
+					.data('loading-text', 'Publishing...')
+					.button('loading')
+				@model.triggerGraphPublish yes
 
 	Tree

@@ -28,11 +28,16 @@ class OpengraphProperties
 			process.nextTick =>
 				@callback()
 
+		# return null so that we can do the 'if err? or og.done()' trick
+		null
+
 	addOrSetProperty: (property, content) ->
 		@properties[property] = content
 		@
 
 module.exports = (app, config) ->
+
+	PUBLISH_IF_AUTHED_PARAM = 'publishIfAuthed'
 
 	userDb = new UserDatabase config
 	treeDb = new TreeDatabase config
@@ -40,11 +45,11 @@ module.exports = (app, config) ->
 	openGraph = new OpenGraph(config.opengraph.namespace)
 	openGraphPublishLock = {}
 
-	_ensureGraphActionPublished = (treeDoc, userDoc) ->
+	_ensureGraphActionPublished = (treeDoc, userDoc, callback) ->
 		console.log '_ensureGraphActionPublished()'
 
 		# just to double check...
-		return if not treeDoc.publishGraphAction or treeDoc.graph or
+		return callback() if not treeDoc.publishGraphAction or treeDoc.graph or
 			not userDoc.facebook? or not treeDoc._id? or not userDoc._id? or openGraphPublishLock[treeDoc._id]
 
 		openGraphPublishLock[treeDoc._id] = yes
@@ -56,21 +61,23 @@ module.exports = (app, config) ->
 		console.log "Publishing graph action for #{treeDoc._id} (#{userDoc._id} #{userDoc.screenName}): #{action} #{object} #{objectUrl}"
 
 		openGraph.publish userDoc.facebook.id, userDoc.facebook.accessToken, action, object, objectUrl, yes, (err, res) ->
-			if err? or res.error?
-				console.error err
-				console.error res
-			else if res? and typeof res is 'object'
+			# if err? or res.error?
+			# 	console.error err
+			# 	console.error res
+			#  og.done()
+			# else if res? and typeof res is 'object'
 				# just set the 'graph' attribute to the response we got; it's something like {"id":"127771810711045"}
 				console.log treeDoc.graph = res
 
 				# save the tree document
 				treeDb.saveDocument treeDoc, (err, saveRes) ->
-					if err?
+					if err? or callback()
 						# try again (as it's possible the document has been revised in the meantime)
 						treeDb.findById treeDoc._id, (err, treeDoc) ->
-							if not err?
+							if not err? or callback()
 								treeDb.saveDocument treeDoc, (err, saveRes) ->
 									console.error err if err?
+									callback()
 							else console.error err
 
 			delete openGraphPublishLock[treeDoc._id]
@@ -134,10 +141,14 @@ module.exports = (app, config) ->
 							if treeRes.donationData and treeRes.donationData.length
 								treeRes.donationData.forEach (donation) -> donatedTotal += parseFloat(donation.amount) if donation.amount?
 							og.addOrSetProperty('lightmytree:donated_total', donatedTotal)
-								.done()
 
-							# take this opportunity to ensure we have successfully published this item to a Facebook profile
-							_ensureGraphActionPublished treeRes, userRes if treeRes.publishGraphAction
+							# before we finish up, let's check for a 'publishIfAuthed' parameter and set the 'publishGraphAction' if users match
+							if og.request.query?[PUBLISH_IF_AUTHED_PARAM] is 'true' and userId is og.request.user?._id
+								treeRes.publishGraphAction = true
+								console.log "Forcing publish of #{treeRes._id} upon matching userId to the authenticated user"
+
+							# take this opportunity to ensure we have successfully published this item to a Facebook profile (if applicable)
+							_ensureGraphActionPublished treeRes, userRes, -> og.done()
 						else
 							og.done()
 				else
