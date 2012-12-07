@@ -16,6 +16,7 @@ define [
 			"":                 "index"
 			"sketch":           "sketch"
 			"my_trees":         "myTrees"
+			"info/:anchor":     "info"
 			":treeName":        "tree"
 			":treeName/:param": "tree"
 			"*other":           "show404"
@@ -170,6 +171,9 @@ define [
 								hideShareWidgets: yes
 
 			app.useLayout('my_trees_page').setViews(views).render()
+
+		info: ->
+			app.useLayout('info_page').setViews({}).render()
 
 		show404: ->
 			@go()
