@@ -228,6 +228,30 @@ header
 			i.icon-share
 				margin-right 4px
 
+#footer
+	background #EEEBDC
+	border-top 1px solid white
+	margin-top 30px
+	.row-fluid
+		border-top 1px dotted white
+		min-height 80px
+		padding-top 10px
+		> div
+			padding 10px 0
+			font-weight bold
+			font-size 13px
+			letter-spacing 1px
+			&.centred
+				text-align center
+	h1
+		background url('../img/mini-tree-emblem.svg') no-repeat left center
+		background-size contain
+		line-height 20px
+		padding-left 26px
+		letter-spacing 1px
+		margin 0
+		font-size 13px
+
 #main
 	margin 0 auto 0 auto
 
@@ -270,7 +294,7 @@ header
 		z-index 1
 		position fixed
 		right 0
-		top 65px
+		top 60px
 		.googlePlus,.pinterest
 			display none
 		p  // contains the 'publish to wall' button
@@ -960,6 +984,7 @@ header
 		padding-top 60px
 
 	.row-donation
+		box-sizing(border-box)
 		&.well
 			// background #EDEAD7 - darker
 			background #EDE8DE // lighter
@@ -1011,7 +1036,7 @@ header
 					background-position -4px -3px
 					background-size 23%
 					padding 13px 10px 10px 38px
-					font-size 13px
+					font-size 12px
 		.column
 			position relative
 		.gift-chosen
