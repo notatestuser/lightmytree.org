@@ -172,8 +172,12 @@ define [
 
 			app.useLayout('my_trees_page').setViews(views).render()
 
-		info: ->
+		info: (anchor) ->
 			app.useLayout('info_page').setViews({}).render()
+
+			# jump to the relevant content anchor (id)
+			# offset = $("##{anchor}").offset().top
+			# $('html,body').animate({ scrollTop: offset }, 'fast')
 
 		show404: ->
 			@go()
